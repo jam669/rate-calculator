@@ -7,31 +7,39 @@
 <title>OA Discovery Call Rate Calculator</title>
 <style>
   :root{
-    --bg:#0f1419;
-    --panel:#1a212b;
-    --panel-2:#222c38;
-    --line:#2e3a48;
-    --text:#eef3f8;
-    --muted:#8a98a8;
-    --accent:#ff6b2c;       /* OA orange */
-    --accent-soft:#ff6b2c22;
+    --bg:#080c24;
+    --panel:#121734;
+    --panel-2:#1b2147;
+    --line:#2b3360;
+    --text:#eef1fb;
+    --muted:#9098be;
+    --brand:#001E94;        /* OA blue (logo) */
+    --accent:#3b5bfe;       /* brightened OA blue for highlights */
+    --accent-2:#c026d3;     /* OA magenta */
+    --accent-soft:rgba(59,91,254,.15);
+    --grad:linear-gradient(120deg,#001E94,#3b5bfe 50%,#c026d3);
     --green:#34d399;
-    --shadow:0 8px 30px rgba(0,0,0,.35);
+    --shadow:0 10px 34px rgba(3,6,28,.5);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:radial-gradient(1200px 600px at 50% -10%, #16202b, var(--bg));
+    background:
+      radial-gradient(900px 480px at 12% -8%, rgba(0,30,148,.55), transparent 60%),
+      radial-gradient(820px 460px at 102% 2%, rgba(192,38,211,.26), transparent 55%),
+      var(--bg);
+    background-attachment:fixed;
     color:var(--text);
     line-height:1.4;
     padding:24px 16px 60px;
   }
   .wrap{max-width:1080px;margin:0 auto}
 
-  header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px}
-  .brand{display:flex;align-items:center;gap:12px}
-  .logo{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#ff9357);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:18px}
+  header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:13px}
+  .logo{width:48px;height:42px;border-radius:11px;background:#fff;display:flex;align-items:center;justify-content:center;padding:8px 9px;box-shadow:0 3px 14px rgba(0,0,0,.35)}
+  .logo svg{width:100%;height:100%;display:block}
   .brand h1{font-size:18px;font-weight:700;letter-spacing:.2px}
   .brand p{font-size:12px;color:var(--muted)}
   .settings-btn{background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:9px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;transition:.15s}
@@ -106,9 +114,9 @@
   .res .bd{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
   .res .bd:first-of-type{margin-top:10px}
   .res .bd b{color:var(--text);font-weight:700}
-  .res .bd.fee b{color:var(--accent)}
+  .res .bd.fee b{color:var(--accent-2)}
   .res.primary{border-color:var(--accent);background:linear-gradient(180deg,var(--accent-soft),transparent);box-shadow:0 0 0 1px var(--accent),var(--shadow)}
-  .res.primary .badge{position:absolute;top:0;right:0;background:var(--accent);color:#fff;font-size:10px;font-weight:800;letter-spacing:.5px;padding:4px 9px;border-bottom-left-radius:9px}
+  .res.primary .badge{position:absolute;top:0;right:0;background:var(--grad);color:#fff;font-size:10px;font-weight:800;letter-spacing:.5px;padding:4px 9px;border-bottom-left-radius:9px}
   .res.primary .amount{color:#fff}
 
   .summary{margin-top:22px;background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:16px 18px;font-size:14px;color:var(--muted);display:none}
@@ -129,8 +137,8 @@
   .rate-row input{font-size:16px;padding:11px 14px}
   .drawer-actions{display:flex;gap:10px;margin-top:22px}
   .btn{flex:1;border:0;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
-  .btn-primary{background:var(--accent);color:#fff}
-  .btn-primary:hover{filter:brightness(1.08)}
+  .btn-primary{background:var(--grad);color:#fff}
+  .btn-primary:hover{filter:brightness(1.1)}
   .btn-ghost{background:var(--panel-2);color:var(--muted);border:1px solid var(--line)}
   .btn-ghost:hover{color:var(--text)}
   .updated{font-size:11px;color:var(--muted);margin-top:18px;text-align:center}
@@ -138,10 +146,14 @@
   .close-x:hover{color:var(--text)}
 
   /* ---- Passcode gate ---- */
-  .gate{position:fixed;inset:0;z-index:100;background:radial-gradient(1200px 600px at 50% -10%, #16202b, var(--bg));display:flex;align-items:center;justify-content:center;padding:24px}
+  .gate{position:fixed;inset:0;z-index:100;background:
+      radial-gradient(800px 460px at 18% -10%, rgba(0,30,148,.6), transparent 60%),
+      radial-gradient(760px 440px at 100% 4%, rgba(192,38,211,.3), transparent 55%),
+      var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
   .gate.hidden{display:none}
   .gate-card{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:32px 26px;box-shadow:var(--shadow);text-align:center}
-  .gate-logo{width:46px;height:46px;border-radius:11px;background:linear-gradient(135deg,var(--accent),#ff9357);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:20px;margin:0 auto 16px}
+  .gate-logo{width:74px;height:62px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;padding:12px 13px;margin:0 auto 18px;box-shadow:0 4px 18px rgba(0,0,0,.4)}
+  .gate-logo svg{width:100%;height:100%;display:block}
   .gate-card h1{font-size:19px;font-weight:700;margin-bottom:6px}
   .gate-card p{font-size:13px;color:var(--muted);margin-bottom:20px}
   .gate-card input{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;color:var(--text);font-size:17px;font-weight:600;padding:13px 16px;outline:none;text-align:center;letter-spacing:1px}
@@ -157,7 +169,7 @@
 <!-- Passcode gate -->
 <div class="gate" id="gate">
   <div class="gate-card">
-    <div class="gate-logo">OA</div>
+    <div class="gate-logo"><svg viewBox="0 0 216 175" xmlns="http://www.w3.org/2000/svg" fill="none" aria-label="Outsource Accelerator"><path fill-rule="evenodd" clip-rule="evenodd" d="M80.0151 153.565C67.6287 155.929 54.8273 154.77 43.0667 150.22C31.3062 145.67 21.0586 137.911 13.4893 127.825C5.91993 117.74 1.33267 105.733 0.249204 93.1692C-0.834262 80.6058 1.62955 67.9905 7.36041 56.758C13.0913 45.5255 21.8592 36.1265 32.667 29.63C43.4749 23.1335 55.8889 19.8003 68.4972 20.0093C81.1056 20.2183 93.4023 23.9611 103.989 30.8122C114.576 37.6633 123.027 47.3477 128.383 58.764L112.973 88.9678V87.6202C112.971 77.3598 109.495 67.4025 103.11 59.3708C96.7248 51.3391 87.808 45.7065 77.8122 43.391C67.8165 41.0754 57.3312 42.2133 48.065 46.6193C38.7987 51.0253 31.2978 58.4396 26.7846 67.6541C22.2714 76.8685 21.0119 87.3398 23.2114 97.3616C25.4108 107.383 30.9397 116.365 38.8968 122.843C46.854 129.32 56.7704 132.912 67.0301 133.033C77.2898 133.153 87.2881 129.796 95.3954 123.507L80.0151 153.565Z" fill="#001E94"/><path fill-rule="evenodd" clip-rule="evenodd" d="M191.721 155L136.059 45.3466L148.099 21.9102L215.714 155H191.721Z" fill="#001E94"/></svg></div>
     <h1>Rate Calculator</h1>
     <p>Enter the access code to continue.</p>
     <input type="password" id="gateInput" placeholder="Access code" autocomplete="off" spellcheck="false">
@@ -169,7 +181,7 @@
 <div class="wrap">
   <header>
     <div class="brand">
-      <div class="logo">OA</div>
+      <div class="logo"><svg viewBox="0 0 216 175" xmlns="http://www.w3.org/2000/svg" fill="none" aria-label="Outsource Accelerator"><path fill-rule="evenodd" clip-rule="evenodd" d="M80.0151 153.565C67.6287 155.929 54.8273 154.77 43.0667 150.22C31.3062 145.67 21.0586 137.911 13.4893 127.825C5.91993 117.74 1.33267 105.733 0.249204 93.1692C-0.834262 80.6058 1.62955 67.9905 7.36041 56.758C13.0913 45.5255 21.8592 36.1265 32.667 29.63C43.4749 23.1335 55.8889 19.8003 68.4972 20.0093C81.1056 20.2183 93.4023 23.9611 103.989 30.8122C114.576 37.6633 123.027 47.3477 128.383 58.764L112.973 88.9678V87.6202C112.971 77.3598 109.495 67.4025 103.11 59.3708C96.7248 51.3391 87.808 45.7065 77.8122 43.391C67.8165 41.0754 57.3312 42.2133 48.065 46.6193C38.7987 51.0253 31.2978 58.4396 26.7846 67.6541C22.2714 76.8685 21.0119 87.3398 23.2114 97.3616C25.4108 107.383 30.9397 116.365 38.8968 122.843C46.854 129.32 56.7704 132.912 67.0301 133.033C77.2898 133.153 87.2881 129.796 95.3954 123.507L80.0151 153.565Z" fill="#001E94"/><path fill-rule="evenodd" clip-rule="evenodd" d="M191.721 155L136.059 45.3466L148.099 21.9102L215.714 155H191.721Z" fill="#001E94"/></svg></div>
       <div>
         <h1>Discovery Call Rate Calculator</h1>
         <p>Offshore staffing pricing — instant local-currency comparison</p>
