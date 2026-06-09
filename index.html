@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>OA Discovery Call Rate Calculator</title>
+<style>
+  :root{
+    --bg:#0f1419;
+    --panel:#1a212b;
+    --panel-2:#222c38;
+    --line:#2e3a48;
+    --text:#eef3f8;
+    --muted:#8a98a8;
+    --accent:#ff6b2c;       /* OA orange */
+    --accent-soft:#ff6b2c22;
+    --green:#34d399;
+    --shadow:0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%, #16202b, var(--bg));
+    color:var(--text);
+    line-height:1.4;
+    padding:24px 16px 60px;
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+
+  header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#ff9357);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:18px}
+  .brand h1{font-size:18px;font-weight:700;letter-spacing:.2px}
+  .brand p{font-size:12px;color:var(--muted)}
+  .settings-btn{background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:9px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;transition:.15s}
+  .settings-btn:hover{color:var(--text);border-color:var(--accent)}
+  .fx-status{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:default}
+  .fx-status .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:none}
+  .fx-status.live .dot{background:var(--green)}
+  .fx-status.err .dot{background:#f5a623}
+  .fx-status.loading .dot{background:#f5a623;animation:fxpulse 1s infinite}
+  @keyframes fxpulse{50%{opacity:.25}}
+  .auto-box{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:14px;margin-bottom:8px}
+  .auto-row{display:flex;align-items:center;gap:10px;text-transform:none;font-size:14px;font-weight:600;letter-spacing:0;color:var(--text);margin:0;cursor:pointer}
+  .auto-row input{width:auto;flex:none;accent-color:var(--accent);width:17px;height:17px}
+  .fx-line{font-size:12px;color:var(--muted);margin-top:9px;line-height:1.45}
+  .refresh-btn{margin-top:11px;width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+  .refresh-btn:hover{border-color:var(--accent)}
+  .refresh-btn:disabled{opacity:.5;cursor:default}
+
+  /* ---- Input card ---- */
+  .input-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow);margin-bottom:22px}
+  .input-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+  @media(max-width:640px){.input-grid{grid-template-columns:1fr}}
+  label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px}
+  input[type=text],input[type=number],select{
+    width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;
+    color:var(--text);font-size:18px;font-weight:600;padding:14px 16px;outline:none;transition:.15s
+  }
+  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  select{cursor:pointer}
+  select option,select optgroup{background:#1a212b;color:var(--text)}
+  select optgroup{font-weight:700;color:var(--accent)}
+  .php-field{position:relative}
+  .php-prefix{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;font-size:18px;pointer-events:none}
+  .php-field input{padding-left:46px}
+
+  .seg{display:flex;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  .seg button{background:transparent;border:0;color:var(--muted);padding:13px 16px;cursor:pointer;font-size:14px;font-weight:700;transition:.15s}
+  .seg button.active{background:var(--accent);color:#fff}
+  .seg-full{width:100%}
+  .seg-full button{flex:1}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+
+  /* ---- Combo (type-to-search role) ---- */
+  .combo{position:relative}
+  .combo-list{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;max-height:330px;overflow-y:auto;box-shadow:var(--shadow);display:none}
+  .combo-list.open{display:block}
+  .combo-item{padding:11px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
+  .combo-item:last-child{border-bottom:0}
+  .combo-item.active,.combo-item:hover{background:var(--accent-soft)}
+  .combo-item .ci-title{font-size:15px;font-weight:600;color:var(--text)}
+  .combo-item .ci-cat{font-size:10.5px;font-weight:700;color:var(--accent);white-space:nowrap;text-transform:uppercase;letter-spacing:.4px}
+  .combo-empty{padding:12px 14px;font-size:13px;color:var(--muted);line-height:1.5}
+
+  /* ---- Location selector ---- */
+  .loc-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:24px 0 10px}
+  .loc-row{display:flex;gap:10px;flex-wrap:wrap}
+  .loc{flex:1;min-width:110px;background:var(--panel);border:1.5px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;text-align:center;transition:.15s;color:var(--muted)}
+  .loc:hover{border-color:var(--accent);color:var(--text)}
+  .loc.active{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+  .loc .flag{font-size:24px}
+  .loc .cur{font-size:13px;font-weight:700;margin-top:3px}
+
+  /* ---- Results ---- */
+  .results{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px}
+  @media(max-width:880px){.results{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:440px){.results{grid-template-columns:1fr}}
+  .res{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:18px;transition:.18s;position:relative;overflow:hidden}
+  .res .cur-head{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:700}
+  .res .flag{font-size:18px}
+  .res .amount{font-size:30px;font-weight:800;margin-top:10px;letter-spacing:-.5px;white-space:nowrap}
+  .res .sub{font-size:12px;color:var(--muted);margin-top:6px}
+  .res .bd{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+  .res .bd:first-of-type{margin-top:10px}
+  .res .bd b{color:var(--text);font-weight:700}
+  .res .bd.fee b{color:var(--accent)}
+  .res.primary{border-color:var(--accent);background:linear-gradient(180deg,var(--accent-soft),transparent);box-shadow:0 0 0 1px var(--accent),var(--shadow)}
+  .res.primary .badge{position:absolute;top:0;right:0;background:var(--accent);color:#fff;font-size:10px;font-weight:800;letter-spacing:.5px;padding:4px 9px;border-bottom-left-radius:9px}
+  .res.primary .amount{color:#fff}
+
+  .summary{margin-top:22px;background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:16px 18px;font-size:14px;color:var(--muted);display:none}
+  .summary b{color:var(--text)}
+  .summary .copy{float:right;background:var(--panel-2);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer}
+  .summary .copy:hover{color:var(--text);border-color:var(--accent)}
+
+  /* ---- Settings drawer ---- */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:40}
+  .overlay.open{display:block}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:380px;max-width:90vw;background:var(--panel);border-left:1px solid var(--line);box-shadow:var(--shadow);z-index:50;transform:translateX(100%);transition:.25s;padding:24px;overflow-y:auto}
+  .drawer.open{transform:translateX(0)}
+  .drawer h2{font-size:16px;margin-bottom:6px}
+  .drawer .desc{font-size:13px;color:var(--muted);margin-bottom:20px}
+  .rate-row{margin-bottom:16px}
+  .rate-row label{display:flex;align-items:center;gap:8px;text-transform:none;font-size:14px;font-weight:600;letter-spacing:0;color:var(--text);margin-bottom:7px}
+  .rate-row .eq{font-size:12px;color:var(--muted)}
+  .rate-row input{font-size:16px;padding:11px 14px}
+  .drawer-actions{display:flex;gap:10px;margin-top:22px}
+  .btn{flex:1;border:0;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{filter:brightness(1.08)}
+  .btn-ghost{background:var(--panel-2);color:var(--muted);border:1px solid var(--line)}
+  .btn-ghost:hover{color:var(--text)}
+  .updated{font-size:11px;color:var(--muted);margin-top:18px;text-align:center}
+  .close-x{position:absolute;top:18px;right:18px;background:none;border:0;color:var(--muted);font-size:22px;cursor:pointer}
+  .close-x:hover{color:var(--text)}
+
+  /* ---- Passcode gate ---- */
+  .gate{position:fixed;inset:0;z-index:100;background:radial-gradient(1200px 600px at 50% -10%, #16202b, var(--bg));display:flex;align-items:center;justify-content:center;padding:24px}
+  .gate.hidden{display:none}
+  .gate-card{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:32px 26px;box-shadow:var(--shadow);text-align:center}
+  .gate-logo{width:46px;height:46px;border-radius:11px;background:linear-gradient(135deg,var(--accent),#ff9357);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:20px;margin:0 auto 16px}
+  .gate-card h1{font-size:19px;font-weight:700;margin-bottom:6px}
+  .gate-card p{font-size:13px;color:var(--muted);margin-bottom:20px}
+  .gate-card input{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;color:var(--text);font-size:17px;font-weight:600;padding:13px 16px;outline:none;text-align:center;letter-spacing:1px}
+  .gate-card input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .gate-card button{width:100%;margin-top:12px;border:0;border-radius:11px;background:var(--accent);color:#fff;font-size:15px;font-weight:700;padding:13px;cursor:pointer;transition:.15s}
+  .gate-card button:hover{filter:brightness(1.08)}
+  .gate-err{display:none;color:#f5a623;font-size:13px;font-weight:600;margin-top:14px}
+  .shake{animation:shake .4s}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+</style>
+</head>
+<body>
+<!-- Passcode gate -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">OA</div>
+    <h1>Rate Calculator</h1>
+    <p>Enter the access code to continue.</p>
+    <input type="password" id="gateInput" placeholder="Access code" autocomplete="off" spellcheck="false">
+    <button id="gateBtn">Unlock</button>
+    <div class="gate-err" id="gateErr">Incorrect code — try again.</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">OA</div>
+      <div>
+        <h1>Discovery Call Rate Calculator</h1>
+        <p>Offshore staffing pricing — instant local-currency comparison</p>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px">
+      <button class="settings-btn" id="openSettings">⚙ Edit rates &amp; costs</button>
+      <span class="fx-status" id="fxStatus"><span class="dot"></span>Checking live FX…</span>
+    </div>
+  </header>
+
+  <div class="input-card">
+    <div class="input-grid">
+      <div>
+        <label for="roleSearch">Role / Job title <span style="text-transform:none;font-weight:600;color:var(--muted)">— type to search</span></label>
+        <div class="combo">
+          <input type="text" id="roleSearch" placeholder="Type a role… e.g. Customer Service, Accountant" autocomplete="off" spellcheck="false">
+          <div class="combo-list" id="roleList"></div>
+        </div>
+      </div>
+      <div>
+        <label>Experience tier</label>
+        <div class="seg seg-full" id="tierSeg">
+          <button data-tier="low">Junior</button>
+          <button data-tier="mid" class="active">Mid</button>
+          <button data-tier="high">Senior</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-grid" style="margin-top:16px">
+      <div>
+        <label for="phpRate">Base rate (PHP) <span style="text-transform:none;font-weight:600;color:var(--muted)">— auto-filled, editable</span></label>
+        <div class="php-field">
+          <span class="php-prefix">₱</span>
+          <input type="number" id="phpRate" placeholder="0" inputmode="decimal" autocomplete="off">
+        </div>
+      </div>
+      <div>
+        <label>Rate period</label>
+        <div class="seg seg-full" id="periodSeg">
+          <button data-period="monthly" class="active">Monthly</button>
+          <button data-period="annual">Annual</button>
+          <button data-period="hourly">Hourly</button>
+        </div>
+        <div class="hint" id="periodHint">Sheet rates are monthly PHP base salary.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px">
+      <label>Setup — OA service fee (on top of salary)</label>
+      <div class="seg seg-full" id="setupSeg">
+        <button data-setup="wfh" class="active">🏠 Work-from-home · <span id="feeWfhLbl">$350</span>/mo</button>
+        <button data-setup="onsite">🏢 Onsite · <span id="feeOnsiteLbl">$600</span>/mo</button>
+      </div>
+    </div>
+
+    <div class="loc-label">Client location — highlight their currency</div>
+    <div class="loc-row" id="locRow"></div>
+
+    <div class="results" id="results"></div>
+
+    <div class="summary" id="summary">
+      <button class="copy" id="copyBtn">Copy</button>
+      <span id="summaryText"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Settings drawer -->
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="drawer">
+  <button class="close-x" id="closeSettings">×</button>
+  <h2>Exchange rates</h2>
+  <p class="desc">How many Philippine Pesos (₱) per 1 unit of foreign currency. These auto-update daily from live FX — or edit any value manually.</p>
+  <div class="auto-box">
+    <label class="auto-row"><input type="checkbox" id="autoToggle"> Auto-update daily from live rates</label>
+    <div class="fx-line" id="fxLine">—</div>
+    <button class="refresh-btn" id="refreshFx">↻ Refresh rates now</button>
+  </div>
+  <div id="rateInputs"></div>
+
+  <h2 style="margin-top:30px">OA service fee</h2>
+  <p class="desc">Your monthly fee in USD, added on top of salary to give the all-in client cost.</p>
+  <div class="rate-row">
+    <label>🏠 Work-from-home setup</label>
+    <div class="eq" style="margin-bottom:7px">USD per month</div>
+    <input type="number" id="feeWfhInput" step="1" inputmode="decimal">
+  </div>
+  <div class="rate-row">
+    <label>🏢 Onsite setup</label>
+    <div class="eq" style="margin-bottom:7px">USD per month</div>
+    <input type="number" id="feeOnsiteInput" step="1" inputmode="decimal">
+  </div>
+
+  <h2 style="margin-top:30px">Statutory &amp; benefits (monthly)</h2>
+  <p class="desc">PH government contributions, HMO and 13th-month, added to salary in the all-in cost. SSS, Pag-IBIG and HMO are flat ₱ amounts; PhilHealth is a % of salary; 13th month is salary ÷ 12 (standard).</p>
+  <div class="rate-row">
+    <label>SSS (employer share)</label>
+    <div class="eq" style="margin-bottom:7px">₱ per month (flat)</div>
+    <input type="number" id="statSSS" step="1" inputmode="decimal">
+  </div>
+  <div class="rate-row">
+    <label>Pag-IBIG</label>
+    <div class="eq" style="margin-bottom:7px">₱ per month (flat)</div>
+    <input type="number" id="statPagibig" step="1" inputmode="decimal">
+  </div>
+  <div class="rate-row">
+    <label>HMO</label>
+    <div class="eq" style="margin-bottom:7px">₱ per month (flat)</div>
+    <input type="number" id="statHMO" step="1" inputmode="decimal">
+  </div>
+  <div class="rate-row">
+    <label>PhilHealth</label>
+    <div class="eq" style="margin-bottom:7px">% of monthly salary</div>
+    <input type="number" id="statPhil" step="0.1" inputmode="decimal">
+  </div>
+
+  <div class="drawer-actions">
+    <button class="btn btn-ghost" id="resetRates">Reset to defaults</button>
+    <button class="btn btn-primary" id="saveRates">Save</button>
+  </div>
+  <div class="updated" id="updatedAt"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // Currencies: PHP per 1 unit of the foreign currency (intuitive: "1 USD = 56 PHP")
+  var CURRENCIES = [
+    {code:"USD", name:"US Dollar",       symbol:"$",  flag:"🇺🇸", country:"United States",  def:57.0},
+    {code:"CAD", name:"Canadian Dollar", symbol:"C$", flag:"🇨🇦", country:"Canada",         def:41.5},
+    {code:"AUD", name:"Australian Dollar",symbol:"A$",flag:"🇦🇺", country:"Australia",      def:37.5},
+    {code:"GBP", name:"British Pound",   symbol:"£",  flag:"🇬🇧", country:"United Kingdom", def:72.0}
+  ];
+
+  // Market-research base salaries (monthly PHP) — from OA rate sheet. Tiers: low / mid / high.
+  var ROLES=[
+    {c:"Accounting & Finance", roles:[
+      {t:"Accounting Assistant/specialist",low:50000,mid:60000,high:85000},
+      {t:"Accounting Officer",low:50000,mid:60000,high:85000},
+      {t:"Finance Lead/Officer",low:90000,mid:110000,high:130000},
+      {t:"Accountant",low:80000,mid:100000,high:130000},
+      {t:"Accounts Payable/Receivable Manager",low:70000,mid:90000,high:120000},
+      {t:"Accounts Payable/Receivable",low:50000,mid:60000,high:90000},
+      {t:"Associate/Clerk/Adminstrator",low:50000,mid:60000,high:80000},
+      {t:"Fund Accountant",low:70000,mid:90000,high:120000},
+      {t:"General Accountant (AU/US)",low:70000,mid:90000,high:120000},
+      {t:"Accountant CPA",low:80000,mid:110000,high:150000},
+      {t:"Accountant Non-CPA",low:70000,mid:90000,high:120000},
+      {t:"Senior Accounting Officer/Team Lead",low:40000,mid:60000,high:80000},
+      {t:"Accounting Manager/Senior Manager",low:80000,mid:110000,high:150000},
+      {t:"Tax Agent",low:65000,mid:80000,high:100000},
+      {t:"Tax Accountant",low:80000,mid:100000,high:130000},
+      {t:"Trust Accountant",low:50000,mid:60000,high:85000},
+      {t:"Tax Preparer",low:60000,mid:80000,high:100000},
+      {t:"Bookkeeper",low:50000,mid:60000,high:80000},
+      {t:"Bookkeeping Manager/Lead",low:80000,mid:100000,high:130000},
+      {t:"Payroll Admin/Officer",low:50000,mid:60000,high:80000},
+      {t:"Payroll Manager",low:90000,mid:120000,high:150000},
+      {t:"Finance Administrator",low:50000,mid:75000,high:90000},
+      {t:"Financial Analyst",low:50000,mid:70000,high:90000},
+      {t:"Financial Planner",low:50000,mid:65000,high:85000},
+      {t:"Finance Controller",low:170000,mid:210000,high:300000},
+      {t:"Finance Manager",low:85000,mid:100000,high:130000},
+      {t:"Financial Reporting Manager",low:90000,mid:150000,high:190000},
+      {t:"Sr. Finance Controller/Director/Head",low:270000,mid:350000,high:410000},
+      {t:"External/Internal Auditor/Auditors",low:60000,mid:80000,high:100000},
+      {t:"Audit Manager",low:85000,mid:95000,high:130000},
+      {t:"Paraplanner",low:60000,mid:70000,high:90000},
+      {t:"Mergers & Acquisitions Corporate Deal Analyst",low:80000,mid:90000,high:115000},
+      {t:"Logistics and Finance Administrator",low:50000,mid:60000,high:80000}
+    ]},
+    {c:"IT & Software Development", roles:[
+      {t:"Web Developer (HTML, CSS, JS)",low:80000,mid:100000,high:120000},
+      {t:"Wordpress Developer",low:70000,mid:90000,high:130000},
+      {t:"Shopify Developer",low:70000,mid:90000,high:130000},
+      {t:"SQL Developer",low:90000,mid:120000,high:180000},
+      {t:"Magento Developer",low:90000,mid:130000,high:180000},
+      {t:"Drupal Developer",low:70000,mid:105000,high:150000},
+      {t:"Xamarin Developer",low:70000,mid:105000,high:150000},
+      {t:"iOS Developer",low:80000,mid:110000,high:180000},
+      {t:"Android Developer",low:80000,mid:110000,high:180000},
+      {t:"Fullstack Developer",low:90000,mid:120000,high:180000},
+      {t:"React Native Developer",low:70000,mid:105000,high:150000},
+      {t:"Data Analyst/Business Analyst",low:60000,mid:80000,high:120000},
+      {t:"Drafting Analyst",low:60000,mid:80000,high:120000},
+      {t:".Net Core Developer (Senior)",low:80000,mid:120000,high:170000},
+      {t:"Javascript Developer (2 or more: JQuery, React, Vue, Angular)",low:70000,mid:105000,high:150000},
+      {t:"Angular Developer",low:70000,mid:90000,high:130000},
+      {t:"ReactJS Developer",low:70000,mid:90000,high:130000},
+      {t:"VueJS Developer",low:70000,mid:90000,high:130000},
+      {t:"NodeJS Developer",low:70000,mid:90000,high:130000},
+      {t:"UX/UI Designer (Lead)",low:70000,mid:90000,high:120000},
+      {t:"UI Developer",low:70000,mid:90000,high:120000},
+      {t:"UI/UX Developer",low:70000,mid:105000,high:130000},
+      {t:"C#.Net Developer",low:80000,mid:110000,high:150000},
+      {t:"ASP.Net Developer",low:80000,mid:110000,high:150000},
+      {t:"PHP Developer",low:70000,mid:90000,high:130000},
+      {t:"Java Developer",low:70000,mid:90000,high:130000},
+      {t:"JavaScript Developer",low:70000,mid:90000,high:130000},
+      {t:"Oodo Developer",low:90000,mid:120000,high:170000},
+      {t:"PIMcore Developer",low:90000,mid:120000,high:170000},
+      {t:"Python Developer",low:90000,mid:120000,high:170000},
+      {t:"Ruby on Rails Developer",low:90000,mid:120000,high:190000},
+      {t:"MuleSoft Developer",low:90000,mid:120000,high:170000},
+      {t:"Cloud Engineer (AWS, Azure, Google Cloud)",low:90000,mid:120000,high:170000},
+      {t:"Zoho Developer",low:70000,mid:90000,high:130000},
+      {t:"Microsoft Dynamics CRM Developer",low:80000,mid:120000,high:150000},
+      {t:"Salesforce Developer",low:90000,mid:120000,high:170000},
+      {t:"Salesforce Administrator",low:75000,mid:85000,high:120000},
+      {t:"Salesforce Technical Analyst/Admin",low:100000,mid:130000,high:180000},
+      {t:"Salesforce Consultant Engineer",low:80000,mid:100000,high:130000},
+      {t:"Salesforce Functional Analyst",low:90000,mid:120000,high:180000},
+      {t:"CRM Specialist",low:80000,mid:100000,high:130000},
+      {t:"ERP Developer",low:90000,mid:120000,high:170000},
+      {t:"Acumatica Developer",low:70000,mid:90000,high:130000},
+      {t:"NetSuite Developer",low:90000,mid:120000,high:150000},
+      {t:"NetSuite Administrator",low:60000,mid:80000,high:120000},
+      {t:"NetSuite Specialist",low:60000,mid:80000,high:120000},
+      {t:"SAP Support Consultant",low:80000,mid:100000,high:130000},
+      {t:"Manual Tester",low:60000,mid:80000,high:110000},
+      {t:"Automation Tester",low:60000,mid:80000,high:110000},
+      {t:"DevOps Engineer",low:80000,mid:120000,high:180000},
+      {t:"DevOps Officer",low:70000,mid:90000,high:120000},
+      {t:"IT Project Manager / Software Development Project Manager",low:80000,mid:120000,high:170000},
+      {t:"Document Controller",low:60000,mid:80000,high:100000},
+      {t:"IT Infrastructure",low:60000,mid:80000,high:100000},
+      {t:"Business Analyst",low:60000,mid:80000,high:100000},
+      {t:"Solutions Architect",low:100000,mid:120000,high:170000},
+      {t:"Azure Solutions Architect",low:90000,mid:110000,high:140000},
+      {t:"System Administrator / Engineer/Support/Network",low:70000,mid:90000,high:130000},
+      {t:"Database Administrator",low:60000,mid:80000,high:120000},
+      {t:"Penetration Tester",low:60000,mid:80000,high:120000},
+      {t:"Security Analyst",low:70000,mid:90000,high:110000},
+      {t:"Head of IT",low:120000,mid:150000,high:180000},
+      {t:"IT Director",low:180000,mid:250000,high:410000},
+      {t:"RPA Developer",low:90000,mid:110000,high:160000},
+      {t:"Reports Analyst",low:60000,mid:80000,high:100000},
+      {t:"Application Security Engineer",low:60000,mid:80000,high:110000},
+      {t:"Security Engineer",low:70000,mid:90000,high:130000},
+      {t:"Network Security Engineer",low:90000,mid:120000,high:180000},
+      {t:"Senior Network Operations Engineer",low:90000,mid:120000,high:180000},
+      {t:"Network Engineer",low:90000,mid:120000,high:180000},
+      {t:"Information Security Analysts",low:80000,mid:110000,high:170000},
+      {t:"IT Security Specialist",low:80000,mid:110000,high:170000},
+      {t:"Cybersecurity Analyst",low:90000,mid:120000,high:180000},
+      {t:"IT Service Delivery Lead",low:110000,mid:130000,high:190000},
+      {t:"IT Systems Administrator",low:80000,mid:100000,high:120000},
+      {t:"IT Support Team Lead",low:70000,mid:90000,high:110000},
+      {t:"Software Tester",low:60000,mid:80000,high:100000},
+      {t:"Software Developer",low:80000,mid:120000,high:180000},
+      {t:"Software Engineer",low:80000,mid:120000,high:180000},
+      {t:"Software Architect",low:80000,mid:120000,high:180000},
+      {t:"Support Analyst",low:70000,mid:90000,high:110000},
+      {t:"Programmer Analyst",low:80000,mid:100000,high:120000},
+      {t:"IT Analyst / Analyst",low:70000,mid:90000,high:110000},
+      {t:"QA Engineer",low:90000,mid:140000,high:200000},
+      {t:"AI Automation Engineer",low:95000,mid:135000,high:230000},
+      {t:"QA Engineer (Automation)",low:90000,mid:120000,high:180000},
+      {t:"Mobile Developer",low:80000,mid:100000,high:120000},
+      {t:"Data Scientist",low:120000,mid:160000,high:210000},
+      {t:"Power BI Developer",low:90000,mid:120000,high:180000},
+      {t:"ERP Systems & Power BI Developer",low:80000,mid:100000,high:120000},
+      {t:"Master Data Specialist",low:80000,mid:100000,high:120000},
+      {t:"Joomla Web Developer",low:80000,mid:100000,high:120000},
+      {t:"Technical Project Manager",low:90000,mid:120000,high:170000},
+      {t:"Google Workspace Consultant",low:90000,mid:120000,high:170000},
+      {t:"Machine Learning Engineer",low:90000,mid:120000,high:180000},
+      {t:"Technical Support Engineer L1-L2",low:70000,mid:90000,high:120000},
+      {t:"Site Reliability Engineer",low:70000,mid:90000,high:120000},
+      {t:"Integration Consultant/Support",low:100000,mid:140000,high:190000},
+      {t:"Operations UC (Avaya) Engineer",low:70000,mid:90000,high:110000},
+      {t:"Marketing Cloud Specialist",low:70000,mid:90000,high:110000},
+      {t:"IT Audit",low:70000,mid:90000,high:110000},
+      {t:"IT Helpdesk",low:50000,mid:60000,high:110000},
+      {t:"IT Helpdesk & Cybersecuirty Specialist",low:70000,mid:120000,high:170000},
+      {t:"TIER 2 IT HELPDESK - TECHNICAL SUPPORT OFFICER",low:60000,mid:70000,high:90000},
+      {t:"TIER 3 IT HELPDESK - TECHNICAL SUPERVISOR",low:80000,mid:90000,high:120000}
+    ]},
+    {c:"Engineering & CAD", roles:[
+      {t:"Architect",low:60000,mid:80000,high:120000},
+      {t:"CAD Designer/Operator",low:60000,mid:80000,high:110000},
+      {t:"Civil Engineer",low:80000,mid:100000,high:130000},
+      {t:"Civil Estimator",low:60000,mid:80000,high:110000},
+      {t:"Control Engineer",low:70000,mid:90000,high:120000},
+      {t:"Cost Estimator",low:60000,mid:80000,high:110000},
+      {t:"Data Engineer",low:70000,mid:90000,high:120000},
+      {t:"Draftsperson/Drafter",low:60000,mid:80000,high:110000},
+      {t:"Engineering Technician",low:50000,mid:70000,high:90000},
+      {t:"Geological Engineer",low:70000,mid:90000,high:120000},
+      {t:"GIS Specialist",low:50000,mid:70000,high:90000},
+      {t:"Integration Engineer",low:70000,mid:90000,high:120000},
+      {t:"Industrial Engineer",low:70000,mid:90000,high:120000},
+      {t:"Marine Engineer",low:70000,mid:90000,high:120000},
+      {t:"Mechanical Engineer",low:60000,mid:80000,high:100000},
+      {t:"Nuclear Engineering",low:80000,mid:120000,high:150000},
+      {t:"Petroleum Engineer",low:70000,mid:90000,high:110000},
+      {t:"Design Support Specialist (CAD)",low:65000,mid:80000,high:100000},
+      {t:"Survey CAD Technician",low:50000,mid:70000,high:90000},
+      {t:"CAD Technician (Drone Data Processing)",low:70000,mid:90000,high:120000},
+      {t:"Technical Drawings CAD",low:60000,mid:80000,high:100000},
+      {t:"CAD Draftsman/Operator",low:60000,mid:80000,high:100000},
+      {t:"Plastic Injection Design Engineer",low:70000,mid:90000,high:110000},
+      {t:"HVAC Estimator",low:70000,mid:90000,high:110000},
+      {t:"Design Engineer II",low:50000,mid:70000,high:90000},
+      {t:"Engineer II",low:60000,mid:80000,high:100000},
+      {t:"Graphic Engineer II",low:50000,mid:70000,high:90000},
+      {t:"Sr. Design Engineer",low:70000,mid:90000,high:110000},
+      {t:"Senior Graphic Engineer",low:70000,mid:90000,high:110000},
+      {t:"Senior Structural Estimator",low:70000,mid:90000,high:110000},
+      {t:"Senior Technical Support",low:40000,mid:60000,high:80000},
+      {t:"Technical Support I 1 & 2",low:40000,mid:60000,high:80000},
+      {t:"Estimator",low:60000,mid:80000,high:100000},
+      {t:"Electrical Engineer",low:80000,mid:100000,high:130000},
+      {t:"Quantity Surveyor",low:60000,mid:80000,high:100000},
+      {t:"Bid Writer/Proposal Writer",low:60000,mid:80000,high:100000}
+    ]},
+    {c:"Creative & Marketing", roles:[
+      {t:"3D Artist",low:50000,mid:60000,high:75000},
+      {t:"3D Animator",low:60000,mid:70000,high:80000},
+      {t:"Affiliate Marketing Specialist",low:40000,mid:50000,high:60000},
+      {t:"Amazon FBA Specialist",low:50000,mid:60000,high:80000},
+      {t:"Amazon Marketing Manager",low:70000,mid:90000,high:120000},
+      {t:"Amazon Virtual Assistant",low:50000,mid:60000,high:70000},
+      {t:"Amazon & E-Commerce General Manager",low:90000,mid:120000,high:150000},
+      {t:"Animator",low:50000,mid:60000,high:80000},
+      {t:"Assistant Producer",low:50000,mid:60000,high:80000},
+      {t:"Business Development Specialist",low:80000,mid:100000,high:130000},
+      {t:"Inside Sales Specialist",low:80000,mid:100000,high:130000},
+      {t:"Campaign Coordinator",low:40000,mid:50000,high:70000},
+      {t:"Category Manager - Ecommerce",low:90000,mid:120000,high:150000},
+      {t:"Content Administrator",low:40000,mid:50000,high:60000},
+      {t:"Content Processing Agent",low:35000,mid:45000,high:55000},
+      {t:"Content Strategist",low:35000,mid:45000,high:55000},
+      {t:"Content Writer",low:40000,mid:50000,high:60000},
+      {t:"Copywriter",low:40000,mid:50000,high:70000},
+      {t:"CRM Administrator",low:75000,mid:115000,high:140000},
+      {t:"CRM Data Analyst",low:60000,mid:70000,high:90000},
+      {t:"Customer Insights and Data Analytics",low:50000,mid:70000,high:90000},
+      {t:"Digital Designer",low:45000,mid:55000,high:70000},
+      {t:"Digital Marketer",low:45000,mid:55000,high:70000},
+      {t:"Digital Marketing Coordinator",low:45000,mid:55000,high:70000},
+      {t:"Digital Marketing Specialist",low:45000,mid:55000,high:70000},
+      {t:"Digital Marketing Administrator",low:45000,mid:55000,high:70000},
+      {t:"Marketing Manager",low:90000,mid:120000,high:170000},
+      {t:"Digital Media Specialist/Buyer",low:60000,mid:70000,high:90000},
+      {t:"Digital Merchandise Manager",low:60000,mid:70000,high:90000},
+      {t:"Digital Platform and Community Support",low:50000,mid:60000,high:70000},
+      {t:"Digital Marketing Support Graphic Designer",low:50000,mid:60000,high:80000},
+      {t:"Digital Marketing Manager",low:90000,mid:110000,high:130000},
+      {t:"Ecommerce Digital Marketing Specialist/Assistant",low:50000,mid:60000,high:70000},
+      {t:"Ecommerce Digital Marketing Executive",low:50000,mid:60000,high:70000},
+      {t:"Ecommerce Marketing Manager",low:90000,mid:110000,high:130000},
+      {t:"Email Marketing",low:50000,mid:65000,high:80000},
+      {t:"Editor",low:45000,mid:55000,high:70000},
+      {t:"Director of Events/Events Director",low:90000,mid:120000,high:150000},
+      {t:"Google Ads Manager",low:50000,mid:60000,high:80000},
+      {t:"Graphic Animation",low:60000,mid:70000,high:80000},
+      {t:"Graphic Designer / Artist",low:60000,mid:70000,high:80000},
+      {t:"Graphic Design & Marketing Assistant",low:45000,mid:55000,high:65000},
+      {t:"Graphic Designer/ Video Editor",low:60000,mid:70000,high:80000},
+      {t:"Graphic Designer/WebMaster/Social Media",low:60000,mid:70000,high:80000},
+      {t:"HubSpot Reporting and Data Manager",low:80000,mid:90000,high:110000},
+      {t:"Investment Writer",low:40000,mid:50000,high:65000},
+      {t:"Lead Generation Specialist",low:35000,mid:45000,high:60000},
+      {t:"Learning & Content Lead",low:40000,mid:50000,high:60000},
+      {t:"Merchandising Specialist",low:35000,mid:40000,high:45000},
+      {t:"Marketing Analyst",low:40000,mid:50000,high:60000},
+      {t:"Marketing Assistant",low:45000,mid:55000,high:70000},
+      {t:"Marketing Expert",low:60000,mid:70000,high:90000},
+      {t:"Marketing Coordinator",low:45000,mid:55000,high:70000},
+      {t:"Marketing Director",low:150000,mid:180000,high:220000},
+      {t:"Marketing Specialist",low:35000,mid:45000,high:60000},
+      {t:"Marketing Automation Specialist",low:40000,mid:50000,high:60000},
+      {t:"Marketing Funnel Specialist",low:85000,mid:100000,high:130000},
+      {t:"Marketing Operations Specialist",low:50000,mid:70000,high:85000},
+      {t:"Marketing Operations Manager",low:80000,mid:100000,high:120000},
+      {t:"Marketing Project Manager",low:80000,mid:100000,high:130000},
+      {t:"Marketing Support",low:40000,mid:50000,high:65000},
+      {t:"Monday.com Administrator",low:50000,mid:60000,high:70000},
+      {t:"Multimedia Specialist",low:40000,mid:50000,high:60000},
+      {t:"Multimedia Designer",low:40000,mid:50000,high:60000},
+      {t:"MPR Specialist",low:60000,mid:80000,high:100000},
+      {t:"Paid Media Manager / Paid Advertising Manager",low:60000,mid:80000,high:100000},
+      {t:"Partner Marketing Manager",low:90000,mid:120000,high:160000},
+      {t:"Performance Marketing Manager",low:80000,mid:100000,high:130000},
+      {t:"Performance Marketing Specialist",low:60000,mid:80000,high:90000},
+      {t:"Photography Director",low:35000,mid:45000,high:55000},
+      {t:"PPC Specialist/Paid Social and PPC Specialist",low:50000,mid:70000,high:90000},
+      {t:"Prepress and Workflow Operator",low:40000,mid:50000,high:60000},
+      {t:"Producer",low:50000,mid:60000,high:70000},
+      {t:"Product Catalog Specialist",low:40000,mid:50000,high:60000},
+      {t:"Product Data Analyst",low:40000,mid:50000,high:60000},
+      {t:"Product Data Team Lead",low:50000,mid:60000,high:70000},
+      {t:"Product Management Consultant",low:50000,mid:60000,high:75000},
+      {t:"Product Marketing Director",low:90000,mid:130000,high:170000},
+      {t:"Product Specialist",low:40000,mid:50000,high:60000},
+      {t:"Production Assistant",low:40000,mid:50000,high:60000},
+      {t:"Production Manager (Media)",low:55000,mid:65000,high:80000},
+      {t:"Production Team Lead",low:45000,mid:55000,high:70000},
+      {t:"Property Administrator",low:35000,mid:45000,high:55000},
+      {t:"Property Marketing Executive",low:50000,mid:70000,high:90000},
+      {t:"Researcher",low:40000,mid:50000,high:60000},
+      {t:"Scheduler",low:40000,mid:50000,high:60000},
+      {t:"Script Writer",low:40000,mid:50000,high:65000},
+      {t:"Senior Project Designer",low:50000,mid:70000,high:90000},
+      {t:"Senior Vice President of Marketing (SVP)",low:280000,mid:350000,high:410000},
+      {t:"SEO Specialist/Coordinator",low:60000,mid:70000,high:90000},
+      {t:"Search and Social Media Manager",low:90000,mid:120000,high:150000},
+      {t:"Social Media Coordinator With Graphic Design",low:50000,mid:60000,high:70000},
+      {t:"Social Media Lead Gen Specialist",low:50000,mid:60000,high:70000},
+      {t:"Social Media Manager",low:60000,mid:70000,high:90000},
+      {t:"Social Media Marketer",low:45000,mid:55000,high:65000},
+      {t:"Sound & Lighting Tech",low:40000,mid:50000,high:60000},
+      {t:"Talent Marketing Insights Officer",low:70000,mid:90000,high:120000},
+      {t:"Technical SEO Specialist",low:50000,mid:70000,high:90000},
+      {t:"SEO Content Sepcialist",low:45000,mid:55000,high:65000},
+      {t:"Video Editor",low:50000,mid:60000,high:70000},
+      {t:"Video Production Specialist",low:40000,mid:50000,high:60000},
+      {t:"Videographer",low:40000,mid:50000,high:60000},
+      {t:"Voice Artist",low:40000,mid:50000,high:60000},
+      {t:"UX/UI Designer",low:70000,mid:80000,high:100000},
+      {t:"Website Administrator",low:45000,mid:55000,high:70000}
+    ]},
+    {c:"Healthcare", roles:[
+      {t:"Billing and Specialist",low:40000,mid:50000,high:60000},
+      {t:"Billing and Coding Specialist",low:40000,mid:50000,high:60000},
+      {t:"Company Nurse",low:35000,mid:45000,high:60000},
+      {t:"Clinical Support Specialis/ Virtual Assistant",low:40000,mid:45000,high:55000},
+      {t:"Dental Administration Assistant",low:35000,mid:45000,high:55000},
+      {t:"Healthcare CSR",low:35000,mid:45000,high:55000},
+      {t:"Insurance Verification Specialist CSR",low:32000,mid:40000,high:50000},
+      {t:"Medical Biller",low:35000,mid:45000,high:55000},
+      {t:"Medical Coder",low:40000,mid:50000,high:70000},
+      {t:"Medical Crendentialing Specialist",low:40000,mid:50000,high:60000},
+      {t:"Medical Scribe/Transcriptionist",low:35000,mid:45000,high:55000},
+      {t:"Medical Virtual Assistant",low:35000,mid:45000,high:55000},
+      {t:"Pharma Coder",low:45000,mid:55000,high:70000},
+      {t:"Registered Nurse",low:40000,mid:50000,high:60000},
+      {t:"US RNs",low:55000,mid:65000,high:80000}
+    ]},
+    {c:"Real Estate & Property", roles:[
+      {t:"Accounts Administrator",low:35000,mid:45000,high:55000},
+      {t:"Tenancy Applications Specialist",low:38000,mid:43000,high:60000},
+      {t:"Tenant Support Administrator",low:35000,mid:45000,high:55000},
+      {t:"Arrears Administrator",low:35000,mid:45000,high:55000},
+      {t:"Routine Inspection Administrator",low:35000,mid:45000,high:55000},
+      {t:"Maintenance Administrator",low:35000,mid:45000,high:55000},
+      {t:"Lease Renewals Specialist",low:35000,mid:45000,high:55000},
+      {t:"Invoicing Specialist",low:35000,mid:45000,high:55000},
+      {t:"Marketing Administrator",low:40000,mid:50000,high:60000},
+      {t:"New Business Administrator",low:50000,mid:60000,high:80000},
+      {t:"Smoke Alarm Administrator",low:35000,mid:45000,high:55000},
+      {t:"Data Entry Specialist",low:30000,mid:33000,high:38000},
+      {t:"Sales Assistant",low:30000,mid:40000,high:50000},
+      {t:"Contracts Admnistrator",low:35000,mid:45000,high:55000},
+      {t:"Listings Administrator",low:30000,mid:40000,high:50000},
+      {t:"Administration Support",low:30000,mid:40000,high:50000},
+      {t:"Receptionist",low:30000,mid:40000,high:50000},
+      {t:"Trust Accounting Assistant",low:40000,mid:50000,high:60000},
+      {t:"Commercial Property Manager",low:70000,mid:80000,high:100000},
+      {t:"Mortgage Broker Support / Loan Processing",low:60000,mid:80000,high:100000}
+    ]},
+    {c:"Sales, Customer Service, Admin & Ops", roles:[
+      {t:"Account Manager",low:70000,mid:90000,high:120000},
+      {t:"Account Manager, Programmatic",low:70000,mid:90000,high:120000},
+      {t:"Administrative Support / Admin Assistants / Admin Staff / Admin Specialist",low:40000,mid:50000,high:60000},
+      {t:"Admin Manager",low:75000,mid:90000,high:100000},
+      {t:"Admin Supervisor",low:50000,mid:60000,high:70000},
+      {t:"Allocation Officer",low:50000,mid:60000,high:70000},
+      {t:"Allocation Manager",low:80000,mid:100000,high:120000},
+      {t:"Appointment Setter",low:40000,mid:50000,high:60000},
+      {t:"Assistant Operations Manager",low:80000,mid:100000,high:120000},
+      {t:"Automotive Finance & Insurance Sales Manager",low:55000,mid:65000,high:75000},
+      {t:"Collections Specialist",low:33000,mid:38000,high:45000},
+      {t:"Collections Officer",low:40000,mid:45000,high:50000},
+      {t:"Commercial Analyst",low:38000,mid:45000,high:55000},
+      {t:"Branch Administrator/Coordinator",low:45000,mid:55000,high:65000},
+      {t:"Bid Coordinator/Manager",low:55000,mid:65000,high:80000},
+      {t:"BPO / Account Specialist",low:35000,mid:45000,high:50000},
+      {t:"Business Development",low:70000,mid:90000,high:100000},
+      {t:"Business Development Representative",low:60000,mid:70000,high:80000},
+      {t:"Business Development Manager",low:130000,mid:150000,high:200000},
+      {t:"Customer Service Consultant",low:32000,mid:35000,high:40000},
+      {t:"CSR/Customer Support",low:35000,mid:40000,high:43000},
+      {t:"Call Center Team Lead/Team Leader/Customer Care",low:55000,mid:65000,high:80000},
+      {t:"Chat Support Representative",low:30000,mid:33000,high:35000},
+      {t:"Client Renewal Executive",low:35000,mid:45000,high:50000},
+      {t:"Client Relation Manager",low:90000,mid:120000,high:150000},
+      {t:"Client Services",low:35000,mid:40000,high:45000},
+      {t:"Faults and Helpdesk",low:35000,mid:40000,high:45000},
+      {t:"Client Services Representative / Para Client Services Coordinator",low:35000,mid:40000,high:45000},
+      {t:"Contracts/Systems Administrator",low:45000,mid:55000,high:65000},
+      {t:"Contracts Management / Legal Support/ Legal Assistant",low:50000,mid:60000,high:80000},
+      {t:"Corporate Secretarial Consultant",low:35000,mid:45000,high:50000},
+      {t:"CRO Specialist",low:50000,mid:60000,high:80000},
+      {t:"Customer Experience Team Lead",low:55000,mid:65000,high:80000},
+      {t:"Customer Success Specialist",low:45000,mid:55000,high:65000},
+      {t:"Cyber Security Specialist",low:65000,mid:80000,high:100000},
+      {t:"Data Visualization Associate",low:30000,mid:33000,high:38000},
+      {t:"Dispute Consultant",low:60000,mid:80000,high:100000},
+      {t:"E-commerce Support",low:40000,mid:50000,high:60000},
+      {t:"Executive Assistant",low:35000,mid:45000,high:65000},
+      {t:"Excel Expert/Specialist",low:35000,mid:45000,high:55000},
+      {t:"General Admin Support",low:35000,mid:45000,high:55000},
+      {t:"Helpdesk Admin Assistant",low:35000,mid:40000,high:45000},
+      {t:"HR Assistant / Associate",low:30000,mid:35000,high:40000},
+      {t:"HR Administrator",low:35000,mid:45000,high:55000},
+      {t:"HR Executive/Specialist",low:40000,mid:55000,high:70000},
+      {t:"HR Manager / Human Resources Manager",low:90000,mid:120000,high:170000},
+      {t:"HR Supervisor",low:60000,mid:80000,high:120000},
+      {t:"Human Resources Officer",low:50000,mid:60000,high:70000},
+      {t:"Inbound Mail Specialist",low:30000,mid:33000,high:35000},
+      {t:"Sales Representative",low:35000,mid:45000,high:50000},
+      {t:"Inside Sales Representative",low:45000,mid:55000,high:70000},
+      {t:"Instructional Designer",low:45000,mid:55000,high:70000},
+      {t:"Inventory Coordinator | E-Commerce Admin",low:35000,mid:45000,high:55000},
+      {t:"Loan Assessor",low:35000,mid:45000,high:55000},
+      {t:"Loan Processor",low:35000,mid:45000,high:55000},
+      {t:"Logistic Coordinator",low:35000,mid:45000,high:55000},
+      {t:"Logistics/Shipping/Inventory",low:40000,mid:50000,high:70000},
+      {t:"Recruitment Market Research",low:50000,mid:60000,high:75000},
+      {t:"Management Consultant",low:50000,mid:70000,high:90000},
+      {t:"Merchandising Development Analyst/Merchandising Analyst",low:60000,mid:80000,high:100000},
+      {t:"Mortgage Administrator",low:35000,mid:45000,high:55000},
+      {t:"Mortgage Broker Support / Loan Processing (AU)",low:60000,mid:70000,high:90000},
+      {t:"Onboarding and Compliance Specialist",low:40000,mid:45000,high:50000},
+      {t:"Onboarding Coordinator",low:40000,mid:45000,high:50000},
+      {t:"Operations Director",low:210000,mid:280000,high:350000},
+      {t:"Operations Assistant",low:50000,mid:60000,high:70000},
+      {t:"Operations Coordinator",low:40000,mid:50000,high:60000},
+      {t:"Operations Manager",low:90000,mid:120000,high:150000},
+      {t:"Operations Supervisor",low:70000,mid:90000,high:120000},
+      {t:"Outbound Sales Representative",low:35000,mid:40000,high:45000},
+      {t:"Outbound Telemarketing",low:40000,mid:50000,high:60000},
+      {t:"Patient Monitoring Specialist",low:35000,mid:45000,high:55000},
+      {t:"Para Broker",low:40000,mid:45000,high:55000},
+      {t:"Paralegal",low:60000,mid:70000,high:90000},
+      {t:"Partner/Customer Success Manager",low:60000,mid:80000,high:100000},
+      {t:"Permitting Specialist/Licensing",low:45000,mid:50000,high:60000},
+      {t:"Prepress & Workflow Operator",low:40000,mid:50000,high:60000},
+      {t:"Planning Assistant",low:40000,mid:50000,high:60000},
+      {t:"Process Improvement Specialist",low:40000,mid:50000,high:60000},
+      {t:"Product Mapping Coordinator/Product Data Coordinator",low:35000,mid:45000,high:60000},
+      {t:"Procurement Manager",low:90000,mid:120000,high:170000},
+      {t:"Program Coordinator",low:60000,mid:75000,high:90000},
+      {t:"Project Coordinator",low:60000,mid:75000,high:90000},
+      {t:"Procurement Officer",low:45000,mid:55000,high:70000},
+      {t:"Project Manager",low:90000,mid:120000,high:170000},
+      {t:"Project Scheduler",low:40000,mid:50000,high:60000},
+      {t:"Property Management / Admin Assistant",low:40000,mid:45000,high:50000},
+      {t:"Property Manager",low:70000,mid:90000,high:120000},
+      {t:"Purchasing & Inventory Officer",low:50000,mid:60000,high:70000},
+      {t:"Purchasing & Inventory Manager",low:65000,mid:75000,high:100000},
+      {t:"Purchasing Officer",low:35000,mid:40000,high:48000},
+      {t:"Public Relations Manager",low:80000,mid:100000,high:120000},
+      {t:"Programmatic Trading Specialist",low:50000,mid:60000,high:70000},
+      {t:"QA Specialist",low:55000,mid:70000,high:90000},
+      {t:"Quality Control Assurance",low:35000,mid:40000,high:55000},
+      {t:"Real Estate Admins (AU/US RE VA - Leasing / Property Management / Maintenance)",low:40000,mid:50000,high:60000},
+      {t:"Recruiter",low:45000,mid:55000,high:70000},
+      {t:"Recruiter Technical",low:50000,mid:70000,high:90000},
+      {t:"Real Estate Assistant",low:35000,mid:45000,high:50000},
+      {t:"Real Estate Specialist",low:35000,mid:40000,high:45000},
+      {t:"Real Time Analyst",low:35000,mid:45000,high:55000},
+      {t:"Recruitment Coordinator/Administrator",low:35000,mid:40000,high:45000},
+      {t:"Recruitment Marketing",low:40000,mid:50000,high:60000},
+      {t:"Recruitment Manager",low:120000,mid:180000,high:250000},
+      {t:"Reservation & Guest Services Agent",low:35000,mid:40000,high:43000},
+      {t:"Sales Trainer/Membership Sales Trainer",low:35000,mid:40000,high:43000},
+      {t:"Sales Admin Specialist/Coordinator",low:35000,mid:40000,high:43000},
+      {t:"Sales Analyst / Pricing Analyst",low:35000,mid:45000,high:55000},
+      {t:"Sales Development Representative (B2B)",low:50000,mid:70000,high:90000},
+      {t:"Sales Account Manager (E2E Sales)",low:90000,mid:120000,high:150000},
+      {t:"Sales Team Leader",low:75000,mid:90000,high:110000},
+      {t:"Sales Support/Cold Caller",low:40000,mid:50000,high:70000},
+      {t:"Scheduling and Document Control Support",low:40000,mid:50000,high:60000},
+      {t:"Scrum Master",low:50000,mid:60000,high:70000},
+      {t:"Service Delivery Manager",low:70000,mid:90000,high:110000},
+      {t:"Service Desk Coordinator",low:35000,mid:45000,high:55000},
+      {t:"Service Desk Lead",low:60000,mid:80000,high:100000},
+      {t:"Senior Broker Administrator",low:40000,mid:50000,high:60000},
+      {t:"Senior Operations Manager",low:120000,mid:150000,high:180000},
+      {t:"Shopify Specialist",low:50000,mid:65000,high:80000},
+      {t:"Site Director / Executive Director",low:250000,mid:350000,high:430000},
+      {t:"Operation Director",low:250000,mid:350000,high:430000},
+      {t:"Sustainability Manager",low:50000,mid:60000,high:70000},
+      {t:"Surface Pattern Design",low:50000,mid:60000,high:70000},
+      {t:"Supply Chain Manager",low:70000,mid:80000,high:100000},
+      {t:"Supply Operations Supervisor",low:50000,mid:70000,high:90000},
+      {t:"Supply Operations Analyst",low:50000,mid:60000,high:75000},
+      {t:"Team Leader - Data Analysis & Campaigns Management",low:60000,mid:70000,high:90000},
+      {t:"Team Leader (Sales Operations)",low:50000,mid:70000,high:80000},
+      {t:"Technical Support Representative (TSR)",low:35000,mid:40000,high:45000},
+      {t:"Telecommunications Project Manager",low:70000,mid:90000,high:110000},
+      {t:"Telemarketing",low:35000,mid:40000,high:45000},
+      {t:"Training / Learning & Development",low:50000,mid:60000,high:70000},
+      {t:"Training Manager",low:80000,mid:100000,high:130000},
+      {t:"Travel Manager",low:60000,mid:70000,high:80000},
+      {t:"Travel Consultants/ Reservation Agents",low:40000,mid:50000,high:60000},
+      {t:"Virtual Assistant/Admin Assistant",low:35000,mid:45000,high:60000},
+      {t:"Digital Marketing & SEO/SEM Specialist",low:50000,mid:70000,high:90000}
+    ]}
+  ];
+
+  var LS_RATES="oa_calc_rates", LS_RATES_TS="oa_calc_rates_ts", LS_PRIMARY="oa_calc_primary", LS_PERIOD="oa_calc_period", LS_FEES="oa_calc_fees", LS_STAT="oa_calc_stat";
+  var LS_AUTO="oa_calc_auto_on", LS_AUTO_DATE="oa_calc_auto_date", LS_AUTO_SRC="oa_calc_auto_src";
+
+  var FEE_DEFAULTS={wfh:350, onsite:600}; // OA monthly service fee in USD
+  // Statutory + benefits (monthly), derived from the rate sheet: SSS/Pag-IBIG/HMO flat ₱, PhilHealth % of salary, 13th = salary/12
+  var STAT_DEFAULTS={sss:3220, pagibig:224, hmo:3413, philPct:2.5};
+
+  var HOURS_PER_MONTH=174; // ~40h/wk standard FTE month, for hourly conversion
+
+  // ---- State ----
+  var rates=loadRates();
+  var primary=localStorage.getItem(LS_PRIMARY)||"USD";
+  var period=localStorage.getItem(LS_PERIOD)||"monthly";
+  var tier="mid";
+  var setup="wfh";
+  var selectedRole=null;   // role object when chosen from search; null = custom/free text
+  var fees=loadFees();
+  var stat=loadStat();
+  var autoOn=localStorage.getItem(LS_AUTO)!=="0";   // default ON
+
+  function loadFees(){
+    var saved=null;
+    try{saved=JSON.parse(localStorage.getItem(LS_FEES)||"null");}catch(e){}
+    return {
+      wfh:(saved&&typeof saved.wfh==="number")?saved.wfh:FEE_DEFAULTS.wfh,
+      onsite:(saved&&typeof saved.onsite==="number")?saved.onsite:FEE_DEFAULTS.onsite
+    };
+  }
+  function saveFees(){ localStorage.setItem(LS_FEES,JSON.stringify(fees)); }
+
+  function loadStat(){
+    var s=null;
+    try{s=JSON.parse(localStorage.getItem(LS_STAT)||"null");}catch(e){}
+    return {
+      sss:(s&&typeof s.sss==="number")?s.sss:STAT_DEFAULTS.sss,
+      pagibig:(s&&typeof s.pagibig==="number")?s.pagibig:STAT_DEFAULTS.pagibig,
+      hmo:(s&&typeof s.hmo==="number")?s.hmo:STAT_DEFAULTS.hmo,
+      philPct:(s&&typeof s.philPct==="number")?s.philPct:STAT_DEFAULTS.philPct
+    };
+  }
+  function saveStat(){ localStorage.setItem(LS_STAT,JSON.stringify(stat)); }
+  // Monthly statutory cost in PHP for a given monthly salary (PHP)
+  function statMonthlyPHP(salaryMonthly){
+    return stat.sss + stat.pagibig + stat.hmo + (stat.philPct/100)*salaryMonthly + salaryMonthly/12;
+  }
+
+  // ---- Live FX (daily auto-update) ----
+  function round2(n){ return Math.round(n*100)/100; }
+  function todayStr(){ var d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+  function setFxStatus(text,cls){
+    var el=document.getElementById("fxStatus");
+    if(el){ el.className="fx-status"+(cls?" "+cls:""); el.innerHTML='<span class="dot"></span>'+text; }
+    var fl=document.getElementById("fxLine"); if(fl) fl.textContent=text;
+  }
+
+  // Fetch PHP-per-unit for USD/CAD/AUD/GBP from free, no-key, CORS-enabled APIs.
+  function fetchLiveRates(){
+    var wanted=CURRENCIES.map(function(c){return c.code;});
+    function extract(ratesObj){ // ratesObj = units of currency per 1 PHP → invert to PHP per unit
+      var out={}, ok=true;
+      wanted.forEach(function(c){ var v=ratesObj[c]; if(v>0) out[c]=1/v; else ok=false; });
+      return ok?out:null;
+    }
+    // Primary: open.er-api.com (base PHP)
+    return fetch("https://open.er-api.com/v6/latest/PHP").then(function(r){
+      if(!r.ok) throw 0; return r.json();
+    }).then(function(j){
+      if(j&&j.result==="success"&&j.rates){ var o=extract(j.rates); if(o) return {rates:o,src:"open.er-api.com",date:j.time_last_update_utc||""}; }
+      throw 0;
+    }).catch(function(){
+      // Fallback: frankfurter.dev (ECB, base PHP)
+      return fetch("https://api.frankfurter.dev/v1/latest?base=PHP&symbols="+wanted.join(",")).then(function(r){
+        if(!r.ok) throw 0; return r.json();
+      }).then(function(j){
+        if(j&&j.rates){ var o=extract(j.rates); if(o) return {rates:o,src:"frankfurter.dev",date:j.date||""}; }
+        throw 0;
+      });
+    });
+  }
+
+  function maybeAutoUpdate(force){
+    if(!autoOn && !force) return;
+    if(!force && localStorage.getItem(LS_AUTO_DATE)===todayStr()) { showFxSaved(); return; }
+    setFxStatus("Updating live FX…","loading");
+    return fetchLiveRates().then(function(res){
+      CURRENCIES.forEach(function(c){ if(res.rates[c.code]>0) rates[c.code]=round2(res.rates[c.code]); });
+      localStorage.setItem(LS_RATES,JSON.stringify(rates));
+      localStorage.setItem(LS_RATES_TS,new Date().toISOString());
+      localStorage.setItem(LS_AUTO_DATE,todayStr());
+      localStorage.setItem(LS_AUTO_SRC,res.src);
+      renderResults();
+      if(drawer.classList.contains("open")) buildRateInputs();
+      showFxSaved();
+    }).catch(function(){
+      setFxStatus("Live update failed — using saved rates","err");
+    });
+  }
+  function showFxSaved(){
+    var ts=localStorage.getItem(LS_RATES_TS), src=localStorage.getItem(LS_AUTO_SRC);
+    if(!autoOn){ setFxStatus("Auto-update off — manual rates",""); return; }
+    if(ts){
+      var when=new Date(ts).toLocaleDateString(undefined,{day:"numeric",month:"short"});
+      setFxStatus("Live FX · updated "+when+(src?" · "+src:""),"live");
+    } else { setFxStatus("Live FX ready","live"); }
+  }
+
+  // Flat lookup of roles by title
+  var ROLE_MAP={};
+  ROLES.forEach(function(g){ g.roles.forEach(function(r){ ROLE_MAP[r.t]=r; }); });
+
+  function loadRates(){
+    var saved=null;
+    try{saved=JSON.parse(localStorage.getItem(LS_RATES)||"null");}catch(e){}
+    var r={};
+    CURRENCIES.forEach(function(c){ r[c.code]=(saved&&typeof saved[c.code]==="number")?saved[c.code]:c.def; });
+    return r;
+  }
+  function saveRates(){
+    localStorage.setItem(LS_RATES,JSON.stringify(rates));
+    localStorage.setItem(LS_RATES_TS,new Date().toISOString());
+  }
+
+  // ---- Formatting ----
+  function fmt(code,val){
+    if(!isFinite(val)) val=0;
+    var dec=(code==="USD"||code==="GBP")?(val<100?2:0):(val<100?2:0);
+    var c=CURRENCIES.find(function(x){return x.code===code;});
+    return c.symbol+Number(val).toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:val<1000?2:0});
+  }
+  function fmtPHP(val){
+    return "₱"+Number(val||0).toLocaleString("en-US",{maximumFractionDigits:0});
+  }
+
+  // ---- Conversion ----
+  // base PHP entered is per the selected period. We convert the SAME period value across currencies.
+  function convert(phpVal,code){
+    var rate=rates[code]; if(!rate) return 0;
+    return phpVal/rate;
+  }
+
+  // ---- Render results ----
+  var resultsEl=document.getElementById("results");
+  // Fee scales with the selected period (it's a monthly fee by default)
+  function feePeriodMultiplier(){
+    return period==="annual"?12 : period==="hourly"?(1/HOURS_PER_MONTH) : 1;
+  }
+
+  function renderResults(){
+    var php=parseFloat(document.getElementById("phpRate").value)||0;
+    var has=php>0;
+    var pm=feePeriodMultiplier();
+    var salaryMonthly=pm?php/pm:0;
+    var statPHP=has?statMonthlyPHP(salaryMonthly)*pm:0;   // govt + HMO + 13th, in selected period
+    var feePHP=has?(fees[setup]*pm)*rates.USD:0;          // OA fee (USD) → PHP
+    var periodWord=period==="annual"?"per year":period==="hourly"?"per hour":"per month";
+    resultsEl.innerHTML="";
+    CURRENCIES.forEach(function(c){
+      var salary=php/rates[c.code];
+      var statc=statPHP/rates[c.code];
+      var fee=feePHP/rates[c.code];
+      var total=salary+statc+fee;
+      var div=document.createElement("div");
+      div.className="res"+(c.code===primary?" primary":"");
+      div.innerHTML=
+        (c.code===primary?'<div class="badge">CLIENT</div>':'')+
+        '<div class="cur-head"><span class="flag">'+c.flag+'</span>'+c.code+' · '+c.name+'</div>'+
+        '<div class="amount">'+fmt(c.code,total)+'</div>'+
+        '<div class="sub">All-in '+periodWord+' · 1 '+c.code+' = ₱'+rates[c.code]+'</div>'+
+        '<div class="bd"><span>Salary</span><b>'+fmt(c.code,salary)+'</b></div>'+
+        '<div class="bd"><span>Gov’t, HMO, 13th</span><b>'+fmt(c.code,statc)+'</b></div>'+
+        '<div class="bd fee"><span>OA fee</span><b>'+fmt(c.code,fee)+'</b></div>';
+      resultsEl.appendChild(div);
+    });
+    renderSummary(php,statPHP,feePHP);
+  }
+
+  // ---- Current role title (search selection or free text) ----
+  function currentTitle(){
+    return document.getElementById("roleSearch").value.trim();
+  }
+
+  // ---- Summary line for the call ----
+  function renderSummary(php,statPHP,feePHP){
+    var s=document.getElementById("summary");
+    var title=currentTitle();
+    if(!php){ s.style.display="none"; return; }
+    s.style.display="block";
+    var salary=php/rates[primary];
+    var stt=statPHP/rates[primary];
+    var fee=feePHP/rates[primary];
+    var total=salary+stt+fee;
+    var periodWord=period==="annual"?"per year":period==="hourly"?"per hour":"per month";
+    var tierWord={low:"Junior",mid:"Mid-level",high:"Senior"}[tier];
+    var setupWord=setup==="onsite"?"onsite":"work-from-home";
+    var roleTxt=title?("<b>"+title+"</b>"+(selectedRole?" ("+tierWord+")":"")+" — "):"";
+    document.getElementById("summaryText").innerHTML=
+      roleTxt+"all-in <b>"+fmt(primary,total)+" "+primary+"</b> "+periodWord+
+      ' <span style="opacity:.7">('+fmt(primary,salary)+" salary + "+fmt(primary,stt)+" gov’t/HMO/13th + "+fmt(primary,fee)+" OA "+setupWord+" fee)</span>";
+  }
+
+  // ---- Location selector ----
+  var locRow=document.getElementById("locRow");
+  function renderLocs(){
+    locRow.innerHTML="";
+    CURRENCIES.forEach(function(c){
+      var d=document.createElement("div");
+      d.className="loc"+(c.code===primary?" active":"");
+      d.innerHTML='<div class="flag">'+c.flag+'</div><div class="cur">'+c.country+'</div><div class="sub" style="font-size:11px;color:var(--muted)">'+c.code+'</div>';
+      d.onclick=function(){ primary=c.code; localStorage.setItem(LS_PRIMARY,primary); renderLocs(); renderResults(); };
+      locRow.appendChild(d);
+    });
+  }
+
+  // ---- Period toggle ----
+  var periodHints={
+    monthly:"Enter the PHP monthly figure from market research.",
+    annual:"Enter the PHP annual figure (monthly × 12).",
+    hourly:"Enter the PHP hourly figure."
+  };
+  document.getElementById("periodSeg").addEventListener("click",function(e){
+    var b=e.target.closest("button"); if(!b) return;
+    period=b.dataset.period;
+    localStorage.setItem(LS_PERIOD,period);
+    Array.prototype.forEach.call(this.children,function(x){x.classList.toggle("active",x===b);});
+    document.getElementById("periodHint").textContent=periodHints[period];
+    renderResults();
+  });
+  // restore period UI
+  Array.prototype.forEach.call(document.getElementById("periodSeg").children,function(x){
+    x.classList.toggle("active",x.dataset.period===period);
+  });
+  document.getElementById("periodHint").textContent=periodHints[period];
+
+  // ---- Type-to-search role combo ----
+  var roleSearch=document.getElementById("roleSearch");
+  var roleList=document.getElementById("roleList");
+  var CAT_SHORT={
+    "Accounting & Finance":"Finance",
+    "IT & Software Development":"IT / Dev",
+    "Engineering & CAD":"Eng / CAD",
+    "Creative & Marketing":"Marketing",
+    "Healthcare":"Health",
+    "Real Estate & Property":"Real Estate",
+    "Sales, Customer Service, Admin & Ops":"Sales / CS / Admin"
+  };
+  var FLAT=[];
+  ROLES.forEach(function(g){ g.roles.forEach(function(r){ FLAT.push({t:r.t,cat:g.c,low:r.low,mid:r.mid,high:r.high}); }); });
+  var matches=[], activeIdx=-1;
+
+  function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function filterRoles(q){
+    q=q.trim().toLowerCase();
+    if(!q) return FLAT.slice(0,60);
+    var starts=[], incl=[];
+    FLAT.forEach(function(r){
+      var t=r.t.toLowerCase();
+      if(t.indexOf(q)===0) starts.push(r);
+      else if(t.indexOf(q)>=0 || r.cat.toLowerCase().indexOf(q)>=0) incl.push(r);
+    });
+    return starts.concat(incl).slice(0,60);
+  }
+  function openList(items){
+    matches=items; activeIdx=-1;
+    if(!items.length){
+      roleList.innerHTML='<div class="combo-empty">No match. You can still use what you typed as a custom role — just enter the PHP rate manually below.</div>';
+    } else {
+      roleList.innerHTML=items.map(function(r,i){
+        return '<div class="combo-item" data-i="'+i+'"><span class="ci-title">'+esc(r.t)+'</span><span class="ci-cat">'+esc(CAT_SHORT[r.cat]||r.cat)+'</span></div>';
+      }).join("");
+    }
+    roleList.classList.add("open");
+  }
+  function closeList(){ roleList.classList.remove("open"); activeIdx=-1; }
+  function paintActive(){
+    var items=roleList.querySelectorAll(".combo-item");
+    Array.prototype.forEach.call(items,function(it,i){
+      it.classList.toggle("active",i===activeIdx);
+      if(i===activeIdx) it.scrollIntoView({block:"nearest"});
+    });
+  }
+  function selectRole(r){
+    selectedRole=r;
+    roleSearch.value=r.t;
+    document.getElementById("phpRate").value=r[tier];
+    closeList();
+    renderResults();
+  }
+
+  roleSearch.addEventListener("input",function(){
+    selectedRole=null;               // typing breaks the auto-fill link until they pick again
+    openList(filterRoles(this.value));
+    renderResults();                 // keep summary title in sync for custom roles
+  });
+  roleSearch.addEventListener("focus",function(){ openList(filterRoles(this.value)); });
+  roleSearch.addEventListener("keydown",function(e){
+    if(!roleList.classList.contains("open")){ if(e.key==="ArrowDown") openList(filterRoles(this.value)); return; }
+    if(e.key==="ArrowDown"){ e.preventDefault(); activeIdx=Math.min(activeIdx+1,matches.length-1); paintActive(); }
+    else if(e.key==="ArrowUp"){ e.preventDefault(); activeIdx=Math.max(activeIdx-1,0); paintActive(); }
+    else if(e.key==="Enter"){ if(activeIdx>=0&&matches[activeIdx]){ e.preventDefault(); selectRole(matches[activeIdx]); } else { closeList(); } }
+    else if(e.key==="Escape"){ closeList(); }
+  });
+  roleList.addEventListener("mousedown",function(e){   // mousedown fires before input blur
+    var it=e.target.closest(".combo-item"); if(!it) return;
+    e.preventDefault();
+    var i=parseInt(it.getAttribute("data-i"),10);
+    if(matches[i]) selectRole(matches[i]);
+  });
+  document.addEventListener("click",function(e){ if(!e.target.closest(".combo")) closeList(); });
+
+  // ---- Auto-fill PHP from selected role + tier ----
+  function applyRoleRate(){
+    if(selectedRole){ document.getElementById("phpRate").value=selectedRole[tier]; }
+    renderResults();
+  }
+
+  // ---- Tier toggle ----
+  document.getElementById("tierSeg").addEventListener("click",function(e){
+    var b=e.target.closest("button"); if(!b) return;
+    tier=b.dataset.tier;
+    Array.prototype.forEach.call(this.children,function(x){x.classList.toggle("active",x===b);});
+    applyRoleRate();
+  });
+
+  // ---- Setup / service-fee toggle ----
+  function updateFeeLabels(){
+    document.getElementById("feeWfhLbl").textContent="$"+fees.wfh;
+    document.getElementById("feeOnsiteLbl").textContent="$"+fees.onsite;
+  }
+  document.getElementById("setupSeg").addEventListener("click",function(e){
+    var b=e.target.closest("button"); if(!b) return;
+    setup=b.dataset.setup;
+    Array.prototype.forEach.call(this.children,function(x){x.classList.toggle("active",x===b);});
+    renderResults();
+  });
+
+  // ---- PHP manual edit ----
+  document.getElementById("phpRate").addEventListener("input",renderResults);
+
+  // ---- Copy summary ----
+  document.getElementById("copyBtn").addEventListener("click",function(){
+    var txt=document.getElementById("summaryText").innerText.replace(/\s+/g," ").trim();
+    navigator.clipboard.writeText(txt).then(function(){
+      var b=document.getElementById("copyBtn"); var o=b.textContent;
+      b.textContent="Copied ✓"; setTimeout(function(){b.textContent=o;},1300);
+    });
+  });
+
+  // ---- Settings drawer ----
+  var overlay=document.getElementById("overlay"), drawer=document.getElementById("drawer");
+  function openDrawer(){ buildRateInputs(); overlay.classList.add("open"); drawer.classList.add("open"); }
+  function closeDrawer(){ overlay.classList.remove("open"); drawer.classList.remove("open"); }
+  document.getElementById("openSettings").onclick=openDrawer;
+  document.getElementById("closeSettings").onclick=closeDrawer;
+  overlay.onclick=closeDrawer;
+
+  function buildRateInputs(){
+    var box=document.getElementById("rateInputs"); box.innerHTML="";
+    CURRENCIES.forEach(function(c){
+      var row=document.createElement("div"); row.className="rate-row";
+      row.innerHTML=
+        '<label><span class="flag">'+c.flag+'</span> '+c.code+' — '+c.name+'</label>'+
+        '<div class="eq" style="margin-bottom:7px">1 '+c.code+' equals how many ₱?</div>'+
+        '<input type="number" inputmode="decimal" data-code="'+c.code+'" value="'+rates[c.code]+'" step="0.01">';
+      box.appendChild(row);
+    });
+    document.getElementById("feeWfhInput").value=fees.wfh;
+    document.getElementById("feeOnsiteInput").value=fees.onsite;
+    document.getElementById("statSSS").value=stat.sss;
+    document.getElementById("statPagibig").value=stat.pagibig;
+    document.getElementById("statHMO").value=stat.hmo;
+    document.getElementById("statPhil").value=stat.philPct;
+    document.getElementById("autoToggle").checked=autoOn;
+    showFxSaved();
+    showUpdated();
+  }
+  function showUpdated(){
+    var ts=localStorage.getItem(LS_RATES_TS);
+    document.getElementById("updatedAt").textContent= ts? ("Rates last saved "+new Date(ts).toLocaleString()) : "Using default rates";
+  }
+  document.getElementById("saveRates").onclick=function(){
+    var inputs=document.querySelectorAll("#rateInputs input");
+    Array.prototype.forEach.call(inputs,function(i){
+      var v=parseFloat(i.value);
+      if(isFinite(v)&&v>0) rates[i.dataset.code]=v;
+    });
+    var fw=parseFloat(document.getElementById("feeWfhInput").value);
+    var fo=parseFloat(document.getElementById("feeOnsiteInput").value);
+    if(isFinite(fw)&&fw>=0) fees.wfh=fw;
+    if(isFinite(fo)&&fo>=0) fees.onsite=fo;
+    var ss=parseFloat(document.getElementById("statSSS").value);
+    var pg=parseFloat(document.getElementById("statPagibig").value);
+    var hm=parseFloat(document.getElementById("statHMO").value);
+    var ph=parseFloat(document.getElementById("statPhil").value);
+    if(isFinite(ss)&&ss>=0) stat.sss=ss;
+    if(isFinite(pg)&&pg>=0) stat.pagibig=pg;
+    if(isFinite(hm)&&hm>=0) stat.hmo=hm;
+    if(isFinite(ph)&&ph>=0) stat.philPct=ph;
+    saveRates(); saveFees(); saveStat(); updateFeeLabels(); renderResults(); showUpdated(); closeDrawer();
+  };
+  document.getElementById("resetRates").onclick=function(){
+    CURRENCIES.forEach(function(c){ rates[c.code]=c.def; });
+    fees={wfh:FEE_DEFAULTS.wfh, onsite:FEE_DEFAULTS.onsite};
+    stat={sss:STAT_DEFAULTS.sss, pagibig:STAT_DEFAULTS.pagibig, hmo:STAT_DEFAULTS.hmo, philPct:STAT_DEFAULTS.philPct};
+    saveRates(); saveFees(); saveStat(); updateFeeLabels(); buildRateInputs(); renderResults();
+  };
+
+  // ---- Live-FX controls ----
+  document.getElementById("autoToggle").addEventListener("change",function(){
+    autoOn=this.checked;
+    localStorage.setItem(LS_AUTO, autoOn?"1":"0");
+    if(autoOn) maybeAutoUpdate(true); else showFxSaved();
+  });
+  document.getElementById("refreshFx").addEventListener("click",function(){
+    var b=this; b.disabled=true; b.textContent="↻ Refreshing…";
+    Promise.resolve(maybeAutoUpdate(true)).finally(function(){
+      setTimeout(function(){ b.disabled=false; b.textContent="↻ Refresh rates now"; },600);
+    });
+  });
+
+  // ---- Init ----
+  updateFeeLabels();
+  renderLocs();
+  renderResults();
+  roleSearch.focus();
+  showFxSaved();          // show last-known status immediately
+  maybeAutoUpdate(false); // then refresh from live FX if it's a new day
+})();
+</script>
+
+<script>
+/* ===== Passcode gate =====
+   Change ACCESS_CODE below to whatever you want to hand out.
+   Note: this is light, client-side protection — fine for keeping a shared
+   link from spreading casually, but not a substitute for true security. */
+(function(){
+  "use strict";
+  var ACCESS_CODE = "oa-rates";   // <-- CHANGE THIS to your code
+  var KEY = "oa_calc_unlocked";
+  var gate = document.getElementById("gate");
+  var input = document.getElementById("gateInput");
+  var err = document.getElementById("gateErr");
+
+  function unlock(){ gate.classList.add("hidden"); }
+  if (sessionStorage.getItem(KEY) === "1") { unlock(); return; }
+
+  function tryCode(){
+    if (input.value.trim().toLowerCase() === ACCESS_CODE.toLowerCase()) {
+      sessionStorage.setItem(KEY, "1");
+      unlock();
+    } else {
+      err.style.display = "block";
+      var card = gate.querySelector(".gate-card");
+      card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
+      input.select();
+    }
+  }
+  document.getElementById("gateBtn").addEventListener("click", tryCode);
+  input.addEventListener("keydown", function(e){ if (e.key === "Enter") tryCode(); });
+  input.focus();
+})();
+</script>
+</body>
+</html>
