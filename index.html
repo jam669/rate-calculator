@@ -124,6 +124,17 @@
   .summary .copy{float:right;background:var(--panel-2);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer}
   .summary .copy:hover{color:var(--text);border-color:var(--accent)}
 
+  /* ---- Part-time quick check ---- */
+  .pt-toggle{display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer}
+  .pt-toggle .pt-h{font-size:16px;font-weight:700;display:flex;align-items:center}
+  .pt-tag{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:2px 7px;margin-left:9px}
+  .pt-sub{font-size:12.5px;color:var(--muted);margin-top:5px;max-width:64ch}
+  .pt-chev{color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;transition:.2s;border:1px solid var(--line);border-radius:8px;padding:7px 12px;white-space:nowrap}
+  .pt-card.open .pt-chev{color:#fff;background:var(--accent);border-color:var(--accent)}
+  .pt-body{display:none;margin-top:20px}
+  .pt-card.open .pt-body{display:block}
+  .pt-empty{margin-top:18px;font-size:13px;color:var(--muted)}
+
   /* ---- Settings drawer ---- */
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:40}
   .overlay.open{display:block}
@@ -247,6 +258,38 @@
     <div class="summary" id="summary">
       <button class="copy" id="copyBtn">Copy</button>
       <span id="summaryText"></span>
+    </div>
+  </div>
+
+  <!-- Part-time quick check (optional, collapsed by default) -->
+  <div class="input-card pt-card" id="ptCard">
+    <div class="pt-toggle" id="ptToggle">
+      <div>
+        <div class="pt-h">Part-time rates <span class="pt-tag">optional</span></div>
+        <div class="pt-sub">Same roles at 50% of full-time salary, remote setup. Open only if the client needs part-time.</div>
+      </div>
+      <div class="pt-chev" id="ptChev">Show</div>
+    </div>
+    <div class="pt-body">
+      <div class="input-grid">
+        <div>
+          <label for="ptSearch">Part-time role <span style="text-transform:none;font-weight:600;color:var(--muted)">— type to search</span></label>
+          <div class="combo">
+            <input type="text" id="ptSearch" placeholder="Type a role… e.g. Customer Service" autocomplete="off" spellcheck="false">
+            <div class="combo-list" id="ptList"></div>
+          </div>
+        </div>
+        <div>
+          <label>Experience tier</label>
+          <div class="seg seg-full" id="ptTierSeg">
+            <button data-tier="low">Junior</button>
+            <button data-tier="mid" class="active">Mid</button>
+            <button data-tier="high">Senior</button>
+          </div>
+        </div>
+      </div>
+      <div class="results pt-results" id="ptResults"></div>
+      <div class="pt-empty" id="ptEmpty">Pick a part-time role to see the all-in monthly rate (≈ half the full-time cost).</div>
     </div>
   </div>
 </div>
@@ -963,6 +1006,7 @@
       resultsEl.appendChild(div);
     });
     renderSummary(php,statPHP,feePHP);
+    ptRender();
   }
 
   // ---- Current role title (search selection or free text) ----
@@ -1126,6 +1170,70 @@
 
   // ---- PHP manual edit ----
   document.getElementById("phpRate").addEventListener("input",renderResults);
+
+  // ---- Part-time quick check (optional, collapsible) ----
+  var ptCard=document.getElementById("ptCard");
+  document.getElementById("ptToggle").addEventListener("click",function(){
+    var open=ptCard.classList.toggle("open");
+    document.getElementById("ptChev").textContent=open?"Hide":"Show";
+    if(open) setTimeout(function(){ document.getElementById("ptSearch").focus(); },60);
+  });
+
+  var ptSearch=document.getElementById("ptSearch");
+  var ptList=document.getElementById("ptList");
+  var ptSelected=null, ptTier="mid", ptMatches=[], ptActive=-1;
+
+  function ptOpenList(items){
+    ptMatches=items; ptActive=-1;
+    if(!items.length){ ptList.innerHTML='<div class="combo-empty">No match. Part-time is available for any role at ~50% of full-time.</div>'; }
+    else { ptList.innerHTML=items.map(function(r,i){ return '<div class="combo-item" data-i="'+i+'"><span class="ci-title">'+esc(r.t)+'</span><span class="ci-cat">'+esc(CAT_SHORT[r.cat]||r.cat)+'</span></div>'; }).join(""); }
+    ptList.classList.add("open");
+  }
+  function ptCloseList(){ ptList.classList.remove("open"); ptActive=-1; }
+  function ptPaint(){ var its=ptList.querySelectorAll(".combo-item"); Array.prototype.forEach.call(its,function(it,i){ it.classList.toggle("active",i===ptActive); if(i===ptActive) it.scrollIntoView({block:"nearest"}); }); }
+  function ptSelect(r){ ptSelected=r; ptSearch.value=r.t; ptCloseList(); ptRender(); }
+
+  ptSearch.addEventListener("input",function(){ ptSelected=null; ptOpenList(filterRoles(this.value)); ptRender(); });
+  ptSearch.addEventListener("focus",function(){ closeList(); ptOpenList(filterRoles(this.value)); });
+  ptSearch.addEventListener("keydown",function(e){
+    if(!ptList.classList.contains("open")){ if(e.key==="ArrowDown") ptOpenList(filterRoles(this.value)); return; }
+    if(e.key==="ArrowDown"){ e.preventDefault(); ptActive=Math.min(ptActive+1,ptMatches.length-1); ptPaint(); }
+    else if(e.key==="ArrowUp"){ e.preventDefault(); ptActive=Math.max(ptActive-1,0); ptPaint(); }
+    else if(e.key==="Enter"){ if(ptActive>=0&&ptMatches[ptActive]){ e.preventDefault(); ptSelect(ptMatches[ptActive]); } else { ptCloseList(); } }
+    else if(e.key==="Escape"){ ptCloseList(); }
+  });
+  ptList.addEventListener("mousedown",function(e){ var it=e.target.closest(".combo-item"); if(!it) return; e.preventDefault(); var i=parseInt(it.getAttribute("data-i"),10); if(ptMatches[i]) ptSelect(ptMatches[i]); });
+  document.addEventListener("click",function(e){ if(!e.target.closest(".combo")) ptCloseList(); });
+  document.getElementById("ptTierSeg").addEventListener("click",function(e){
+    var b=e.target.closest("button"); if(!b) return;
+    ptTier=b.dataset.tier;
+    Array.prototype.forEach.call(this.children,function(x){x.classList.toggle("active",x===b);});
+    ptRender();
+  });
+
+  function ptRender(){
+    var box=document.getElementById("ptResults"), empty=document.getElementById("ptEmpty");
+    if(!box) return;
+    if(!ptSelected){ box.innerHTML=""; if(empty) empty.style.display="block"; return; }
+    if(empty) empty.style.display="none";
+    var salaryMonthly=ptSelected[ptTier]/2;        // part-time = 50% of full-time
+    var statPHP=statMonthlyPHP(salaryMonthly);     // statutory on the part-time salary
+    var feePHP=fees.wfh*rates.USD;                 // remote setup ($350 default)
+    box.innerHTML="";
+    CURRENCIES.forEach(function(c){
+      var salary=salaryMonthly/rates[c.code];
+      var total=(salaryMonthly+statPHP+feePHP)/rates[c.code];
+      var div=document.createElement("div");
+      div.className="res"+(c.code===primary?" primary":"");
+      div.innerHTML=
+        (c.code===primary?'<div class="badge">CLIENT</div>':'')+
+        '<div class="cur-head"><span class="flag">'+c.flag+'</span>'+c.code+' · '+c.name+'</div>'+
+        '<div class="amount">'+fmt(c.code,total)+'</div>'+
+        '<div class="sub">Part-time all-in / mo</div>'+
+        '<div class="bd"><span>Salary (½ FT)</span><b>'+fmt(c.code,salary)+'</b></div>';
+      box.appendChild(div);
+    });
+  }
 
   // ---- Copy summary ----
   document.getElementById("copyBtn").addEventListener("click",function(){
