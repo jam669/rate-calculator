@@ -232,7 +232,7 @@
 
     <div class="input-grid" style="margin-top:16px">
       <div>
-        <label for="phpRate">Base rate (PHP) <span style="text-transform:none;font-weight:600;color:var(--muted)">— auto-filled, editable</span></label>
+        <label for="phpRate">Base rate (PHP) <span style="text-transform:none;font-weight:600;color:var(--muted)">— monthly, auto-filled & editable</span></label>
         <div class="php-field">
           <span class="php-prefix">₱</span>
           <input type="number" id="phpRate" placeholder="0" inputmode="decimal" autocomplete="off">
@@ -1485,21 +1485,21 @@
   }
 
   function renderResults(){
-    var php=parseFloat(document.getElementById("phpRate").value)||0;
+    var php=parseFloat(document.getElementById("phpRate").value)||0;   // MONTHLY base salary (PHP)
     var has=php>0;
-    var pm=feePeriodMultiplier();
-    var salaryMonthly=pm?php/pm:0;
-    var statPHP=has?statMonthlyPHP(salaryMonthly)*pm:0;   // govt + HMO + 13th, in selected period
-    var feePHP=has?(fees[setup]*pm)*rates.USD:0;          // OA fee (USD) → PHP
-    var oaMonthlyPHP=has?(salaryMonthly + statMonthlyPHP(salaryMonthly) + fees[setup]*rates.USD):0; // period-independent monthly all-in
+    var pf=feePeriodMultiplier();        // display factor: monthly 1, annual 12, hourly 1/174
+    var statMonthly=has?statMonthlyPHP(php):0;
+    var feeMonthly=has?fees[setup]*rates.USD:0;
+    var oaMonthlyPHP=has?(php + statMonthly + feeMonthly):0;            // monthly all-in (period-independent)
+    var salaryDisp=php*pf, statDisp=statMonthly*pf, feeDisp=feeMonthly*pf;  // amounts for the selected period
     var periodWord=period==="annual"?"per year":period==="hourly"?"per hour":"per month";
     var CSHORT={USD:"US",CAD:"Canada",AUD:"Australia",GBP:"UK"};
     var od0=(has&&selectedRole&&ONSHORE[selectedRole.t])?ONSHORE[selectedRole.t]:null;
     resultsEl.innerHTML="";
     CURRENCIES.forEach(function(c){
-      var salary=php/rates[c.code];
-      var statc=statPHP/rates[c.code];
-      var fee=feePHP/rates[c.code];
+      var salary=salaryDisp/rates[c.code];
+      var statc=statDisp/rates[c.code];
+      var fee=feeDisp/rates[c.code];
       var total=salary+statc+fee;
       var vsHtml="";
       if(od0){
@@ -1528,7 +1528,7 @@
         vsHtml;
       resultsEl.appendChild(div);
     });
-    renderSummary(php,statPHP,feePHP);
+    renderSummary(php,salaryDisp,statDisp,feeDisp);
     ptRender();
   }
 
@@ -1538,14 +1538,14 @@
   }
 
   // ---- Summary line for the call ----
-  function renderSummary(php,statPHP,feePHP){
+  function renderSummary(php,salaryDisp,statDisp,feeDisp){
     var s=document.getElementById("summary");
     var title=currentTitle();
     if(!php){ s.style.display="none"; return; }
     s.style.display="block";
-    var salary=php/rates[primary];
-    var stt=statPHP/rates[primary];
-    var fee=feePHP/rates[primary];
+    var salary=salaryDisp/rates[primary];
+    var stt=statDisp/rates[primary];
+    var fee=feeDisp/rates[primary];
     var total=salary+stt+fee;
     var periodWord=period==="annual"?"per year":period==="hourly"?"per hour":"per month";
     var tierWord={low:"Junior",mid:"Mid-level",high:"Senior"}[tier];
@@ -1571,9 +1571,9 @@
 
   // ---- Period toggle ----
   var periodHints={
-    monthly:"Enter the PHP monthly figure from market research.",
-    annual:"Enter the PHP annual figure (monthly × 12).",
-    hourly:"Enter the PHP hourly figure."
+    monthly:"Showing monthly cost. Base rate is the monthly PHP salary.",
+    annual:"Showing annual cost (monthly × 12).",
+    hourly:"Showing hourly cost (monthly ÷ "+HOURS_PER_MONTH+" hrs/mo)."
   };
   document.getElementById("periodSeg").addEventListener("click",function(e){
     var b=e.target.closest("button"); if(!b) return;
