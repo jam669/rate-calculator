@@ -118,6 +118,13 @@
   .res.primary{border-color:var(--accent);background:linear-gradient(180deg,var(--accent-soft),transparent);box-shadow:0 0 0 1px var(--accent),var(--shadow)}
   .res.primary .badge{position:absolute;top:0;right:0;background:var(--grad);color:#fff;font-size:10px;font-weight:800;letter-spacing:.5px;padding:4px 9px;border-bottom-left-radius:9px}
   .res.primary .amount{color:#fff}
+  .res .vs{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+  .res .vs-row{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--muted);gap:8px}
+  .res .vs-row b{color:var(--text);font-weight:700;font-size:14px}
+  .res .vs-mo{font-size:11.5px;margin-top:2px}
+  .res .vs-mo b{font-size:12px;font-weight:600;color:var(--muted)}
+  .res .save{margin-top:9px;background:rgba(52,211,153,.14);color:var(--green);font-size:12px;font-weight:800;text-align:center;padding:6px 8px;border-radius:8px;letter-spacing:.2px}
+  .onshore-note{margin-top:14px;font-size:11.5px;color:var(--muted);line-height:1.5;font-style:italic}
 
   .summary{margin-top:22px;background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:16px 18px;font-size:14px;color:var(--muted);display:none}
   .summary b{color:var(--text)}
@@ -254,6 +261,7 @@
     <div class="loc-row" id="locRow"></div>
 
     <div class="results" id="results"></div>
+    <div class="onshore-note">Onshore = indicative local-market benchmark, fully-loaded (base salary + employer on-costs). Pick a role to see the comparison. Loading % editable in ⚙.</div>
 
     <div class="summary" id="summary">
       <button class="copy" id="copyBtn">Copy</button>
@@ -341,6 +349,29 @@
     <label>PhilHealth</label>
     <div class="eq" style="margin-bottom:7px">% of monthly salary</div>
     <input type="number" id="statPhil" step="0.1" inputmode="decimal">
+  </div>
+
+  <h2 style="margin-top:30px">Onshore employer loading</h2>
+  <p class="desc">% added to local base salary for the fully-loaded cost of hiring onshore (payroll taxes, benefits, super/pension, paid leave). Used in the local-hire comparison.</p>
+  <div class="rate-row">
+    <label>🇺🇸 United States</label>
+    <div class="eq" style="margin-bottom:7px">% on top of base salary</div>
+    <input type="number" id="loadUS" step="1" inputmode="decimal">
+  </div>
+  <div class="rate-row">
+    <label>🇨🇦 Canada</label>
+    <div class="eq" style="margin-bottom:7px">% on top of base salary</div>
+    <input type="number" id="loadCA" step="1" inputmode="decimal">
+  </div>
+  <div class="rate-row">
+    <label>🇦🇺 Australia</label>
+    <div class="eq" style="margin-bottom:7px">% on top of base salary</div>
+    <input type="number" id="loadAU" step="1" inputmode="decimal">
+  </div>
+  <div class="rate-row">
+    <label>🇬🇧 United Kingdom</label>
+    <div class="eq" style="margin-bottom:7px">% on top of base salary</div>
+    <input type="number" id="loadUK" step="1" inputmode="decimal">
   </div>
 
   <div class="drawer-actions">
@@ -832,12 +863,471 @@
     ]}
   ];
 
+  // Onshore (local-hire) BASE annual salary ranges [low,high] in local currency. Indicative market benchmarks.
+  var ONSHORE={
+    "Accounting Assistant/specialist":{us:[42000,62000],ca:[45000,65000],au:[55000,78000],uk:[24000,38000]},
+    "Accounting Officer":{us:[45000,68000],ca:[48000,70000],au:[58000,82000],uk:[26000,42000]},
+    "Finance Lead/Officer":{us:[70000,105000],ca:[72000,105000],au:[85000,120000],uk:[42000,68000]},
+    "Accountant":{us:[58000,95000],ca:[55000,92000],au:[70000,110000],uk:[32000,58000]},
+    "Accounts Payable/Receivable Manager":{us:[68000,110000],ca:[68000,105000],au:[85000,125000],uk:[40000,65000]},
+    "Accounts Payable/Receivable":{us:[42000,62000],ca:[44000,62000],au:[55000,78000],uk:[24000,38000]},
+    "Associate/Clerk/Adminstrator":{us:[38000,55000],ca:[40000,56000],au:[52000,70000],uk:[22000,34000]},
+    "Fund Accountant":{us:[62000,100000],ca:[60000,95000],au:[75000,115000],uk:[35000,62000]},
+    "General Accountant (AU/US)":{us:[58000,95000],ca:[56000,90000],au:[70000,108000],uk:[32000,56000]},
+    "Accountant CPA":{us:[70000,125000],ca:[68000,115000],au:[80000,130000],uk:[42000,80000]},
+    "Accountant Non-CPA":{us:[55000,90000],ca:[54000,88000],au:[68000,105000],uk:[30000,55000]},
+    "Senior Accounting Officer/Team Lead":{us:[68000,105000],ca:[68000,102000],au:[82000,120000],uk:[40000,65000]},
+    "Accounting Manager/Senior Manager":{us:[95000,150000],ca:[90000,140000],au:[110000,165000],uk:[55000,95000]},
+    "Tax Agent":{us:[55000,90000],ca:[54000,85000],au:[68000,105000],uk:[30000,55000]},
+    "Tax Accountant":{us:[62000,105000],ca:[60000,98000],au:[75000,120000],uk:[35000,62000]},
+    "Trust Accountant":{us:[52000,82000],ca:[52000,80000],au:[65000,98000],uk:[30000,52000]},
+    "Tax Preparer":{us:[45000,72000],ca:[46000,72000],au:[58000,88000],uk:[26000,45000]},
+    "Bookkeeper":{us:[42000,68000],ca:[44000,68000],au:[58000,82000],uk:[24000,40000]},
+    "Bookkeeping Manager/Lead":{us:[62000,98000],ca:[62000,95000],au:[78000,115000],uk:[35000,60000]},
+    "Payroll Admin/Officer":{us:[44000,68000],ca:[46000,68000],au:[58000,82000],uk:[25000,42000]},
+    "Payroll Manager":{us:[75000,120000],ca:[72000,112000],au:[90000,135000],uk:[42000,72000]},
+    "Finance Administrator":{us:[42000,65000],ca:[44000,66000],au:[55000,80000],uk:[24000,40000]},
+    "Financial Analyst":{us:[62000,110000],ca:[58000,100000],au:[80000,125000],uk:[35000,65000]},
+    "Financial Planner":{us:[58000,100000],ca:[55000,95000],au:[72000,115000],uk:[32000,60000]},
+    "Finance Controller":{us:[120000,210000],ca:[110000,185000],au:[140000,210000],uk:[70000,130000]},
+    "Finance Manager":{us:[90000,145000],ca:[88000,135000],au:[110000,160000],uk:[55000,95000]},
+    "Financial Reporting Manager":{us:[95000,155000],ca:[92000,145000],au:[115000,170000],uk:[58000,100000]},
+    "Sr. Finance Controller/Director/Head":{us:[160000,280000],ca:[145000,250000],au:[180000,290000],uk:[95000,180000]},
+    "External/Internal Auditor/Auditors":{us:[58000,100000],ca:[56000,95000],au:[72000,115000],uk:[32000,62000]},
+    "Audit Manager":{us:[95000,150000],ca:[90000,140000],au:[115000,170000],uk:[55000,95000]},
+    "Paraplanner":{us:[52000,82000],ca:[52000,80000],au:[70000,100000],uk:[30000,52000]},
+    "Mergers & Acquisitions Corporate Deal Analyst":{us:[90000,160000],ca:[80000,140000],au:[100000,165000],uk:[50000,100000]},
+    "Logistics and Finance Administrator":{us:[42000,65000],ca:[44000,66000],au:[55000,80000],uk:[24000,40000]},
+    "Web Developer (HTML, CSS, JS)":{us:[58000,105000],ca:[55000,95000],au:[70000,115000],uk:[30000,60000]},
+    "Wordpress Developer":{us:[52000,95000],ca:[50000,88000],au:[65000,105000],uk:[28000,55000]},
+    "Shopify Developer":{us:[55000,100000],ca:[52000,90000],au:[68000,110000],uk:[30000,58000]},
+    "SQL Developer":{us:[70000,125000],ca:[68000,115000],au:[85000,135000],uk:[38000,72000]},
+    "Magento Developer":{us:[70000,125000],ca:[66000,112000],au:[82000,130000],uk:[38000,70000]},
+    "Drupal Developer":{us:[65000,120000],ca:[62000,108000],au:[78000,125000],uk:[35000,68000]},
+    "Xamarin Developer":{us:[68000,125000],ca:[64000,110000],au:[80000,128000],uk:[36000,68000]},
+    "iOS Developer":{us:[80000,150000],ca:[72000,130000],au:[90000,145000],uk:[42000,85000]},
+    "Android Developer":{us:[80000,150000],ca:[72000,130000],au:[90000,145000],uk:[42000,85000]},
+    "Fullstack Developer":{us:[75000,150000],ca:[70000,135000],au:[88000,145000],uk:[40000,85000]},
+    "React Native Developer":{us:[72000,135000],ca:[68000,120000],au:[82000,135000],uk:[38000,75000]},
+    "Data Analyst/Business Analyst":{us:[62000,115000],ca:[55000,100000],au:[78000,125000],uk:[32000,65000]},
+    "Drafting Analyst":{us:[50000,85000],ca:[50000,82000],au:[65000,105000],uk:[28000,52000]},
+    ".Net Core Developer (Senior)":{us:[105000,160000],ca:[90000,135000],au:[100000,150000],uk:[55000,90000]},
+    "Javascript Developer (2 or more: JQuery, React, Vue, Angular)":{us:[80000,140000],ca:[70000,115000],au:[80000,135000],uk:[40000,80000]},
+    "Angular Developer":{us:[80000,135000],ca:[68000,110000],au:[80000,130000],uk:[40000,78000]},
+    "ReactJS Developer":{us:[82000,140000],ca:[70000,115000],au:[82000,135000],uk:[42000,82000]},
+    "VueJS Developer":{us:[80000,135000],ca:[68000,112000],au:[80000,130000],uk:[40000,78000]},
+    "NodeJS Developer":{us:[82000,140000],ca:[70000,115000],au:[82000,135000],uk:[42000,82000]},
+    "UX/UI Designer (Lead)":{us:[95000,150000],ca:[80000,125000],au:[95000,145000],uk:[48000,90000]},
+    "UI Developer":{us:[75000,125000],ca:[65000,105000],au:[75000,120000],uk:[38000,72000]},
+    "UI/UX Developer":{us:[78000,130000],ca:[68000,110000],au:[78000,128000],uk:[40000,78000]},
+    "C#.Net Developer":{us:[85000,140000],ca:[72000,118000],au:[85000,135000],uk:[42000,82000]},
+    "ASP.Net Developer":{us:[85000,140000],ca:[72000,118000],au:[85000,135000],uk:[42000,82000]},
+    "PHP Developer":{us:[72000,120000],ca:[62000,102000],au:[72000,118000],uk:[35000,70000]},
+    "Java Developer":{us:[85000,145000],ca:[72000,120000],au:[85000,140000],uk:[42000,85000]},
+    "JavaScript Developer":{us:[80000,135000],ca:[70000,112000],au:[80000,132000],uk:[40000,80000]},
+    "Oodo Developer":{us:[80000,135000],ca:[70000,112000],au:[80000,130000],uk:[42000,82000]},
+    "PIMcore Developer":{us:[80000,135000],ca:[70000,112000],au:[80000,130000],uk:[42000,82000]},
+    "Python Developer":{us:[90000,155000],ca:[78000,128000],au:[90000,145000],uk:[45000,90000]},
+    "Ruby on Rails Developer":{us:[95000,165000],ca:[80000,135000],au:[92000,150000],uk:[48000,95000]},
+    "MuleSoft Developer":{us:[95000,160000],ca:[82000,132000],au:[95000,150000],uk:[50000,95000]},
+    "Cloud Engineer (AWS, Azure, Google Cloud)":{us:[95000,165000],ca:[82000,135000],au:[100000,155000],uk:[48000,95000]},
+    "Zoho Developer":{us:[70000,115000],ca:[60000,98000],au:[70000,112000],uk:[35000,68000]},
+    "Microsoft Dynamics CRM Developer":{us:[88000,145000],ca:[75000,122000],au:[90000,140000],uk:[45000,88000]},
+    "Salesforce Developer":{us:[100000,170000],ca:[85000,140000],au:[95000,155000],uk:[50000,95000]},
+    "Salesforce Administrator":{us:[80000,130000],ca:[68000,108000],au:[80000,125000],uk:[40000,78000]},
+    "Salesforce Technical Analyst/Admin":{us:[95000,155000],ca:[80000,128000],au:[92000,145000],uk:[48000,90000]},
+    "Salesforce Consultant Engineer":{us:[90000,150000],ca:[78000,122000],au:[88000,140000],uk:[45000,88000]},
+    "Salesforce Functional Analyst":{us:[90000,150000],ca:[78000,122000],au:[88000,138000],uk:[45000,88000]},
+    "CRM Specialist":{us:[70000,115000],ca:[60000,98000],au:[72000,115000],uk:[35000,68000]},
+    "ERP Developer":{us:[90000,150000],ca:[78000,124000],au:[90000,145000],uk:[45000,90000]},
+    "Acumatica Developer":{us:[85000,140000],ca:[72000,116000],au:[85000,135000],uk:[42000,82000]},
+    "NetSuite Developer":{us:[90000,150000],ca:[78000,122000],au:[88000,140000],uk:[45000,88000]},
+    "NetSuite Administrator":{us:[75000,120000],ca:[64000,102000],au:[75000,118000],uk:[38000,72000]},
+    "NetSuite Specialist":{us:[72000,118000],ca:[62000,100000],au:[72000,115000],uk:[36000,70000]},
+    "SAP Support Consultant":{us:[85000,140000],ca:[72000,118000],au:[88000,138000],uk:[45000,85000]},
+    "Manual Tester":{us:[60000,100000],ca:[52000,85000],au:[65000,105000],uk:[30000,58000]},
+    "Automation Tester":{us:[70000,120000],ca:[60000,100000],au:[75000,120000],uk:[35000,70000]},
+    "DevOps Engineer":{us:[100000,180000],ca:[85000,140000],au:[105000,160000],uk:[50000,100000]},
+    "DevOps Officer":{us:[80000,135000],ca:[70000,112000],au:[85000,130000],uk:[42000,80000]},
+    "IT Project Manager / Software Development Project Manager":{us:[95000,160000],ca:[82000,135000],au:[100000,155000],uk:[50000,95000]},
+    "Document Controller":{us:[50000,80000],ca:[48000,75000],au:[60000,90000],uk:[28000,48000]},
+    "IT Infrastructure":{us:[65000,110000],ca:[58000,95000],au:[70000,115000],uk:[35000,65000]},
+    "Business Analyst":{us:[70000,125000],ca:[60000,105000],au:[75000,125000],uk:[35000,72000]},
+    "Solutions Architect":{us:[130000,210000],ca:[105000,165000],au:[130000,185000],uk:[65000,120000]},
+    "Azure Solutions Architect":{us:[120000,190000],ca:[100000,155000],au:[120000,175000],uk:[60000,110000]},
+    "System Administrator / Engineer/Support/Network":{us:[65000,115000],ca:[58000,98000],au:[70000,120000],uk:[32000,65000]},
+    "Database Administrator":{us:[80000,140000],ca:[68000,115000],au:[85000,140000],uk:[40000,80000]},
+    "Penetration Tester":{us:[80000,160000],ca:[75000,140000],au:[85000,160000],uk:[40000,90000]},
+    "Security Analyst":{us:[75000,140000],ca:[70000,125000],au:[80000,140000],uk:[38000,80000]},
+    "Head of IT":{us:[130000,210000],ca:[115000,180000],au:[130000,200000],uk:[75000,130000]},
+    "IT Director":{us:[150000,250000],ca:[130000,210000],au:[150000,230000],uk:[85000,150000]},
+    "RPA Developer":{us:[85000,150000],ca:[78000,130000],au:[90000,150000],uk:[42000,85000]},
+    "Reports Analyst":{us:[60000,105000],ca:[58000,95000],au:[70000,115000],uk:[32000,60000]},
+    "Application Security Engineer":{us:[100000,180000],ca:[90000,155000],au:[100000,175000],uk:[50000,100000]},
+    "Security Engineer":{us:[95000,175000],ca:[88000,150000],au:[100000,170000],uk:[48000,95000]},
+    "Network Security Engineer":{us:[95000,170000],ca:[88000,145000],au:[100000,165000],uk:[48000,95000]},
+    "Senior Network Operations Engineer":{us:[90000,160000],ca:[85000,140000],au:[95000,155000],uk:[45000,90000]},
+    "Network Engineer":{us:[80000,150000],ca:[75000,130000],au:[85000,150000],uk:[40000,85000]},
+    "Information Security Analysts":{us:[80000,155000],ca:[75000,135000],au:[85000,150000],uk:[42000,90000]},
+    "IT Security Specialist":{us:[80000,150000],ca:[75000,130000],au:[85000,150000],uk:[42000,88000]},
+    "Cybersecurity Analyst":{us:[85000,160000],ca:[78000,140000],au:[88000,155000],uk:[42000,90000]},
+    "IT Service Delivery Lead":{us:[90000,150000],ca:[85000,135000],au:[100000,160000],uk:[50000,95000]},
+    "IT Systems Administrator":{us:[70000,120000],ca:[65000,105000],au:[75000,120000],uk:[35000,65000]},
+    "IT Support Team Lead":{us:[65000,110000],ca:[60000,98000],au:[75000,115000],uk:[35000,62000]},
+    "Software Tester":{us:[60000,110000],ca:[58000,98000],au:[70000,115000],uk:[32000,62000]},
+    "Software Developer":{us:[80000,160000],ca:[72000,135000],au:[80000,150000],uk:[40000,90000]},
+    "Software Engineer":{us:[85000,170000],ca:[75000,140000],au:[82000,155000],uk:[42000,95000]},
+    "Software Architect":{us:[120000,200000],ca:[105000,170000],au:[120000,190000],uk:[65000,120000]},
+    "Support Analyst":{us:[55000,95000],ca:[52000,85000],au:[65000,100000],uk:[28000,55000]},
+    "Programmer Analyst":{us:[70000,125000],ca:[65000,110000],au:[75000,125000],uk:[35000,70000]},
+    "IT Analyst / Analyst":{us:[65000,115000],ca:[60000,100000],au:[72000,115000],uk:[32000,65000]},
+    "QA Engineer":{us:[75000,140000],ca:[68000,120000],au:[80000,135000],uk:[38000,80000]},
+    "AI Automation Engineer":{us:[100000,185000],ca:[90000,155000],au:[100000,175000],uk:[50000,105000]},
+    "QA Engineer (Automation)":{us:[80000,150000],ca:[72000,128000],au:[85000,145000],uk:[40000,85000]},
+    "Mobile Developer":{us:[80000,150000],ca:[72000,130000],au:[82000,145000],uk:[40000,85000]},
+    "Data Scientist":{us:[100000,185000],ca:[88000,150000],au:[100000,175000],uk:[45000,100000]},
+    "Power BI Developer":{us:[80000,140000],ca:[72000,120000],au:[85000,140000],uk:[40000,80000]},
+    "ERP Systems & Power BI Developer":{us:[80000,135000],ca:[72000,118000],au:[85000,138000],uk:[40000,80000]},
+    "Master Data Specialist":{us:[65000,110000],ca:[60000,98000],au:[72000,115000],uk:[32000,62000]},
+    "Joomla Web Developer":{us:[60000,105000],ca:[55000,92000],au:[65000,105000],uk:[30000,58000]},
+    "Technical Project Manager":{us:[95000,160000],ca:[88000,140000],au:[100000,165000],uk:[50000,100000]},
+    "Google Workspace Consultant":{us:[75000,130000],ca:[68000,115000],au:[80000,130000],uk:[38000,75000]},
+    "Machine Learning Engineer":{us:[100000,190000],ca:[90000,155000],au:[105000,180000],uk:[48000,105000]},
+    "Technical Support Engineer L1-L2":{us:[55000,95000],ca:[50000,85000],au:[62000,98000],uk:[28000,52000]},
+    "Site Reliability Engineer":{us:[110000,195000],ca:[95000,165000],au:[110000,185000],uk:[55000,110000]},
+    "Integration Consultant/Support":{us:[85000,150000],ca:[78000,130000],au:[90000,150000],uk:[45000,90000]},
+    "Operations UC (Avaya) Engineer":{us:[70000,120000],ca:[65000,105000],au:[75000,120000],uk:[35000,68000]},
+    "Marketing Cloud Specialist":{us:[70000,120000],ca:[64000,105000],au:[78000,125000],uk:[35000,68000]},
+    "IT Audit":{us:[75000,135000],ca:[70000,118000],au:[85000,140000],uk:[40000,80000]},
+    "IT Helpdesk":{us:[45000,80000],ca:[42000,72000],au:[55000,88000],uk:[24000,48000]},
+    "IT Helpdesk & Cybersecuirty Specialist":{us:[60000,110000],ca:[55000,95000],au:[68000,110000],uk:[32000,65000]},
+    "TIER 2 IT HELPDESK - TECHNICAL SUPPORT OFFICER":{us:[50000,85000],ca:[46000,76000],au:[58000,92000],uk:[26000,50000]},
+    "TIER 3 IT HELPDESK - TECHNICAL SUPERVISOR":{us:[60000,100000],ca:[55000,88000],au:[68000,105000],uk:[32000,60000]},
+    "Architect":{us:[62000,115000],ca:[58000,105000],au:[70000,120000],uk:[32000,70000]},
+    "CAD Designer/Operator":{us:[48000,80000],ca:[48000,80000],au:[60000,95000],uk:[26000,48000]},
+    "Civil Engineer":{us:[68000,135000],ca:[65000,125000],au:[70000,130000],uk:[28000,65000]},
+    "Civil Estimator":{us:[58000,110000],ca:[55000,105000],au:[70000,120000],uk:[30000,62000]},
+    "Control Engineer":{us:[70000,125000],ca:[65000,115000],au:[80000,135000],uk:[32000,68000]},
+    "Cost Estimator":{us:[58000,110000],ca:[55000,100000],au:[70000,120000],uk:[30000,62000]},
+    "Data Engineer":{us:[85000,160000],ca:[75000,135000],au:[90000,150000],uk:[38000,85000]},
+    "Draftsperson/Drafter":{us:[45000,78000],ca:[45000,78000],au:[60000,95000],uk:[24000,45000]},
+    "Engineering Technician":{us:[45000,80000],ca:[45000,78000],au:[60000,95000],uk:[24000,48000]},
+    "Geological Engineer":{us:[70000,130000],ca:[68000,125000],au:[85000,145000],uk:[32000,68000]},
+    "GIS Specialist":{us:[55000,100000],ca:[52000,90000],au:[70000,115000],uk:[28000,55000]},
+    "Integration Engineer":{us:[80000,140000],ca:[72000,125000],au:[85000,140000],uk:[35000,75000]},
+    "Industrial Engineer":{us:[68000,120000],ca:[63000,110000],au:[78000,130000],uk:[30000,62000]},
+    "Marine Engineer":{us:[70000,130000],ca:[68000,120000],au:[85000,150000],uk:[32000,70000]},
+    "Mechanical Engineer":{us:[68000,125000],ca:[60000,115000],au:[72000,125000],uk:[30000,65000]},
+    "Nuclear Engineering":{us:[85000,160000],ca:[78000,140000],au:[90000,150000],uk:[38000,80000]},
+    "Petroleum Engineer":{us:[90000,165000],ca:[80000,150000],au:[95000,170000],uk:[40000,90000]},
+    "Design Support Specialist (CAD)":{us:[50000,85000],ca:[48000,82000],au:[62000,98000],uk:[26000,50000]},
+    "Survey CAD Technician":{us:[45000,78000],ca:[45000,75000],au:[60000,95000],uk:[24000,46000]},
+    "CAD Technician (Drone Data Processing)":{us:[52000,90000],ca:[50000,85000],au:[65000,105000],uk:[28000,55000]},
+    "Technical Drawings CAD":{us:[45000,80000],ca:[45000,78000],au:[60000,95000],uk:[24000,46000]},
+    "CAD Draftsman/Operator":{us:[45000,80000],ca:[45000,78000],au:[60000,95000],uk:[24000,46000]},
+    "Plastic Injection Design Engineer":{us:[65000,115000],ca:[60000,105000],au:[75000,125000],uk:[30000,60000]},
+    "HVAC Estimator":{us:[60000,110000],ca:[58000,100000],au:[72000,120000],uk:[30000,60000]},
+    "Design Engineer II":{us:[65000,105000],ca:[60000,98000],au:[72000,115000],uk:[30000,58000]},
+    "Engineer II":{us:[68000,110000],ca:[62000,102000],au:[75000,120000],uk:[32000,60000]},
+    "Graphic Engineer II":{us:[55000,95000],ca:[52000,88000],au:[65000,105000],uk:[28000,52000]},
+    "Sr. Design Engineer":{us:[85000,135000],ca:[78000,122000],au:[95000,140000],uk:[40000,72000]},
+    "Senior Graphic Engineer":{us:[75000,120000],ca:[68000,108000],au:[80000,125000],uk:[35000,65000]},
+    "Senior Structural Estimator":{us:[80000,135000],ca:[72000,120000],au:[90000,145000],uk:[40000,75000]},
+    "Senior Technical Support":{us:[55000,90000],ca:[52000,85000],au:[65000,105000],uk:[28000,52000]},
+    "Technical Support I 1 & 2":{us:[40000,68000],ca:[40000,65000],au:[55000,80000],uk:[22000,40000]},
+    "Estimator":{us:[55000,105000],ca:[52000,98000],au:[68000,115000],uk:[28000,58000]},
+    "Electrical Engineer":{us:[72000,135000],ca:[65000,122000],au:[78000,135000],uk:[32000,70000]},
+    "Quantity Surveyor":{us:[65000,125000],ca:[60000,110000],au:[75000,135000],uk:[32000,75000]},
+    "Bid Writer/Proposal Writer":{us:[50000,95000],ca:[45000,85000],au:[60000,105000],uk:[28000,60000]},
+    "3D Artist":{us:[48000,90000],ca:[48000,85000],au:[60000,100000],uk:[26000,52000]},
+    "3D Animator":{us:[50000,95000],ca:[55000,90000],au:[62000,100000],uk:[28000,55000]},
+    "Affiliate Marketing Specialist":{us:[45000,85000],ca:[42000,78000],au:[55000,95000],uk:[26000,50000]},
+    "Amazon FBA Specialist":{us:[42000,75000],ca:[40000,68000],au:[55000,90000],uk:[24000,48000]},
+    "Amazon Marketing Manager":{us:[65000,120000],ca:[58000,105000],au:[75000,130000],uk:[35000,68000]},
+    "Amazon Virtual Assistant":{us:[35000,60000],ca:[35000,58000],au:[50000,75000],uk:[22000,38000]},
+    "Amazon & E-Commerce General Manager":{us:[90000,170000],ca:[80000,140000],au:[100000,170000],uk:[45000,95000]},
+    "Animator":{us:[48000,90000],ca:[48000,85000],au:[60000,100000],uk:[26000,52000]},
+    "Assistant Producer":{us:[45000,80000],ca:[45000,78000],au:[58000,92000],uk:[25000,48000]},
+    "Business Development Specialist":{us:[55000,110000],ca:[52000,100000],au:[68000,120000],uk:[30000,65000]},
+    "Inside Sales Specialist":{us:[45000,80000],ca:[48000,82000],au:[60000,95000],uk:[26000,48000]},
+    "Campaign Coordinator":{us:[45000,72000],ca:[48000,72000],au:[60000,85000],uk:[26000,42000]},
+    "Category Manager - Ecommerce":{us:[70000,125000],ca:[68000,120000],au:[85000,140000],uk:[40000,75000]},
+    "Content Administrator":{us:[42000,68000],ca:[44000,68000],au:[58000,82000],uk:[24000,40000]},
+    "Content Processing Agent":{us:[38000,58000],ca:[40000,60000],au:[55000,72000],uk:[22000,34000]},
+    "Content Strategist":{us:[55000,100000],ca:[55000,95000],au:[70000,115000],uk:[30000,58000]},
+    "Content Writer":{us:[45000,80000],ca:[46000,78000],au:[60000,90000],uk:[25000,48000]},
+    "Copywriter":{us:[48000,90000],ca:[48000,85000],au:[62000,100000],uk:[26000,52000]},
+    "CRM Administrator":{us:[60000,105000],ca:[60000,100000],au:[75000,120000],uk:[32000,62000]},
+    "CRM Data Analyst":{us:[58000,100000],ca:[58000,95000],au:[72000,115000],uk:[32000,60000]},
+    "Customer Insights and Data Analytics":{us:[60000,110000],ca:[60000,105000],au:[75000,125000],uk:[34000,68000]},
+    "Digital Designer":{us:[48000,90000],ca:[48000,85000],au:[62000,105000],uk:[26000,52000]},
+    "Digital Marketer":{us:[48000,90000],ca:[48000,85000],au:[62000,100000],uk:[26000,52000]},
+    "Digital Marketing Coordinator":{us:[45000,72000],ca:[46000,72000],au:[60000,85000],uk:[25000,42000]},
+    "Digital Marketing Specialist":{us:[50000,90000],ca:[50000,85000],au:[65000,100000],uk:[28000,55000]},
+    "Digital Marketing Administrator":{us:[44000,70000],ca:[45000,70000],au:[58000,82000],uk:[24000,42000]},
+    "Marketing Manager":{us:[70000,130000],ca:[68000,120000],au:[85000,140000],uk:[40000,75000]},
+    "Digital Media Specialist/Buyer":{us:[52000,95000],ca:[52000,90000],au:[68000,110000],uk:[30000,60000]},
+    "Digital Merchandise Manager":{us:[60000,105000],ca:[58000,100000],au:[75000,120000],uk:[34000,65000]},
+    "Digital Platform and Community Support":{us:[45000,75000],ca:[46000,74000],au:[60000,88000],uk:[25000,45000]},
+    "Digital Marketing Support Graphic Designer":{us:[46000,80000],ca:[46000,78000],au:[60000,95000],uk:[25000,48000]},
+    "Digital Marketing Manager":{us:[70000,125000],ca:[68000,118000],au:[85000,140000],uk:[40000,75000]},
+    "Ecommerce Digital Marketing Specialist/Assistant":{us:[46000,80000],ca:[46000,78000],au:[60000,95000],uk:[25000,48000]},
+    "Ecommerce Digital Marketing Executive":{us:[48000,85000],ca:[48000,82000],au:[62000,98000],uk:[26000,50000]},
+    "Ecommerce Marketing Manager":{us:[70000,125000],ca:[68000,118000],au:[85000,140000],uk:[40000,75000]},
+    "Email Marketing":{us:[50000,90000],ca:[50000,85000],au:[65000,105000],uk:[28000,55000]},
+    "Editor":{us:[48000,90000],ca:[48000,85000],au:[62000,100000],uk:[26000,52000]},
+    "Director of Events/Events Director":{us:[75000,140000],ca:[72000,130000],au:[90000,150000],uk:[45000,85000]},
+    "Google Ads Manager":{us:[52000,95000],ca:[52000,90000],au:[68000,110000],uk:[30000,60000]},
+    "Graphic Animation":{us:[50000,95000],ca:[50000,90000],au:[65000,110000],uk:[28000,58000]},
+    "Graphic Designer / Artist":{us:[45000,90000],ca:[46000,85000],au:[60000,110000],uk:[25000,52000]},
+    "Graphic Design & Marketing Assistant":{us:[42000,70000],ca:[44000,70000],au:[58000,85000],uk:[24000,42000]},
+    "Graphic Designer/ Video Editor":{us:[48000,90000],ca:[48000,85000],au:[62000,105000],uk:[26000,52000]},
+    "Graphic Designer/WebMaster/Social Media":{us:[48000,90000],ca:[48000,85000],au:[62000,105000],uk:[26000,52000]},
+    "HubSpot Reporting and Data Manager":{us:[65000,115000],ca:[62000,108000],au:[78000,128000],uk:[36000,68000]},
+    "Investment Writer":{us:[60000,110000],ca:[58000,100000],au:[75000,125000],uk:[35000,70000]},
+    "Lead Generation Specialist":{us:[42000,72000],ca:[44000,72000],au:[58000,88000],uk:[24000,45000]},
+    "Learning & Content Lead":{us:[58000,100000],ca:[56000,95000],au:[72000,115000],uk:[32000,62000]},
+    "Merchandising Specialist":{us:[42000,68000],ca:[44000,68000],au:[58000,82000],uk:[24000,40000]},
+    "Marketing Analyst":{us:[50000,90000],ca:[50000,85000],au:[65000,105000],uk:[28000,55000]},
+    "Marketing Assistant":{us:[42000,68000],ca:[44000,68000],au:[58000,80000],uk:[23000,40000]},
+    "Marketing Expert":{us:[55000,100000],ca:[54000,95000],au:[70000,115000],uk:[32000,62000]},
+    "Marketing Coordinator":{us:[45000,72000],ca:[46000,72000],au:[60000,85000],uk:[25000,42000]},
+    "Marketing Director":{us:[120000,200000],ca:[115000,190000],au:[140000,220000],uk:[70000,130000]},
+    "Marketing Specialist":{us:[45000,80000],ca:[46000,78000],au:[60000,95000],uk:[26000,50000]},
+    "Marketing Automation Specialist":{us:[55000,100000],ca:[54000,92000],au:[70000,115000],uk:[32000,62000]},
+    "Marketing Funnel Specialist":{us:[58000,95000],ca:[55000,90000],au:[70000,110000],uk:[32000,55000]},
+    "Marketing Operations Specialist":{us:[55000,90000],ca:[52000,85000],au:[68000,105000],uk:[30000,52000]},
+    "Marketing Operations Manager":{us:[80000,135000],ca:[75000,120000],au:[95000,150000],uk:[45000,80000]},
+    "Marketing Project Manager":{us:[65000,115000],ca:[62000,105000],au:[80000,135000],uk:[38000,68000]},
+    "Marketing Support":{us:[42000,65000],ca:[42000,62000],au:[58000,80000],uk:[24000,40000]},
+    "Monday.com Administrator":{us:[55000,90000],ca:[52000,85000],au:[70000,110000],uk:[32000,55000]},
+    "Multimedia Specialist":{us:[48000,80000],ca:[45000,72000],au:[60000,95000],uk:[27000,48000]},
+    "Multimedia Designer":{us:[48000,82000],ca:[45000,75000],au:[60000,95000],uk:[27000,50000]},
+    "MPR Specialist":{us:[55000,90000],ca:[52000,82000],au:[68000,105000],uk:[30000,55000]},
+    "Paid Media Manager / Paid Advertising Manager":{us:[65000,120000],ca:[60000,105000],au:[80000,135000],uk:[38000,70000]},
+    "Partner Marketing Manager":{us:[80000,140000],ca:[75000,125000],au:[95000,155000],uk:[45000,85000]},
+    "Performance Marketing Manager":{us:[75000,131000],ca:[68000,115000],au:[85000,140000],uk:[42000,80000]},
+    "Performance Marketing Specialist":{us:[55000,90000],ca:[52000,82000],au:[68000,105000],uk:[30000,55000]},
+    "Photography Director":{us:[60000,110000],ca:[55000,95000],au:[72000,120000],uk:[35000,65000]},
+    "PPC Specialist/Paid Social and PPC Specialist":{us:[48000,85000],ca:[45000,78000],au:[62000,100000],uk:[28000,52000]},
+    "Prepress and Workflow Operator":{us:[42000,68000],ca:[42000,62000],au:[58000,82000],uk:[25000,42000]},
+    "Producer":{us:[55000,95000],ca:[52000,85000],au:[68000,110000],uk:[32000,58000]},
+    "Product Catalog Specialist":{us:[42000,68000],ca:[42000,62000],au:[58000,85000],uk:[25000,42000]},
+    "Product Data Analyst":{us:[55000,90000],ca:[52000,82000],au:[68000,105000],uk:[30000,55000]},
+    "Product Data Team Lead":{us:[65000,105000],ca:[60000,95000],au:[78000,120000],uk:[38000,65000]},
+    "Product Management Consultant":{us:[70000,120000],ca:[65000,108000],au:[85000,135000],uk:[42000,75000]},
+    "Product Marketing Director":{us:[150000,235000],ca:[130000,200000],au:[150000,220000],uk:[85000,140000]},
+    "Product Specialist":{us:[45000,72000],ca:[45000,68000],au:[60000,90000],uk:[28000,48000]},
+    "Production Assistant":{us:[40000,62000],ca:[40000,58000],au:[55000,78000],uk:[23000,38000]},
+    "Production Manager (Media)":{us:[60000,100000],ca:[55000,90000],au:[72000,115000],uk:[35000,62000]},
+    "Production Team Lead":{us:[52000,85000],ca:[50000,78000],au:[65000,100000],uk:[30000,55000]},
+    "Property Administrator":{us:[42000,65000],ca:[42000,60000],au:[58000,80000],uk:[24000,40000]},
+    "Property Marketing Executive":{us:[50000,82000],ca:[48000,75000],au:[62000,100000],uk:[28000,52000]},
+    "Researcher":{us:[48000,80000],ca:[45000,72000],au:[62000,95000],uk:[28000,50000]},
+    "Scheduler":{us:[40000,62000],ca:[40000,58000],au:[55000,78000],uk:[23000,38000]},
+    "Script Writer":{us:[48000,85000],ca:[45000,78000],au:[60000,100000],uk:[28000,52000]},
+    "Senior Project Designer":{us:[65000,110000],ca:[60000,98000],au:[78000,125000],uk:[38000,68000]},
+    "Senior Vice President of Marketing (SVP)":{us:[230000,360000],ca:[185000,290000],au:[200000,320000],uk:[120000,200000]},
+    "SEO Specialist/Coordinator":{us:[48000,85000],ca:[45000,78000],au:[62000,100000],uk:[28000,52000]},
+    "Search and Social Media Manager":{us:[70000,125000],ca:[65000,110000],au:[82000,140000],uk:[40000,75000]},
+    "Social Media Coordinator With Graphic Design":{us:[42000,68000],ca:[42000,62000],au:[58000,85000],uk:[25000,42000]},
+    "Social Media Lead Gen Specialist":{us:[45000,75000],ca:[45000,70000],au:[60000,92000],uk:[27000,48000]},
+    "Social Media Manager":{us:[50000,95000],ca:[48000,85000],au:[65000,110000],uk:[30000,58000]},
+    "Social Media Marketer":{us:[42000,70000],ca:[42000,65000],au:[58000,88000],uk:[25000,45000]},
+    "Sound & Lighting Tech":{us:[42000,68000],ca:[42000,62000],au:[58000,85000],uk:[25000,42000]},
+    "Talent Marketing Insights Officer":{us:[60000,105000],ca:[55000,95000],au:[72000,120000],uk:[35000,65000]},
+    "Technical SEO Specialist":{us:[55000,95000],ca:[52000,85000],au:[68000,112000],uk:[32000,60000]},
+    "SEO Content Sepcialist":{us:[45000,75000],ca:[45000,70000],au:[60000,92000],uk:[27000,48000]},
+    "Video Editor":{us:[45000,85000],ca:[42000,72000],au:[58000,95000],uk:[26000,48000]},
+    "Video Production Specialist":{us:[45000,80000],ca:[42000,70000],au:[58000,92000],uk:[26000,46000]},
+    "Videographer":{us:[42000,78000],ca:[40000,68000],au:[56000,90000],uk:[25000,45000]},
+    "Voice Artist":{us:[35000,75000],ca:[38000,72000],au:[48000,85000],uk:[24000,55000]},
+    "UX/UI Designer":{us:[70000,140000],ca:[60000,110000],au:[70000,125000],uk:[30000,75000]},
+    "Website Administrator":{us:[48000,90000],ca:[45000,80000],au:[60000,100000],uk:[26000,55000]},
+    "Billing and Specialist":{us:[38000,62000],ca:[40000,60000],au:[55000,78000],uk:[24000,42000]},
+    "Billing and Coding Specialist":{us:[40000,68000],ca:[42000,62000],au:[58000,82000],uk:[25000,45000]},
+    "Company Nurse":{us:[60000,95000],ca:[62000,95000],au:[70000,100000],uk:[28000,48000]},
+    "Clinical Support Specialis/ Virtual Assistant":{us:[38000,62000],ca:[40000,60000],au:[55000,78000],uk:[23000,42000]},
+    "Dental Administration Assistant":{us:[36000,58000],ca:[38000,56000],au:[55000,75000],uk:[22000,38000]},
+    "Healthcare CSR":{us:[36000,56000],ca:[38000,55000],au:[55000,72000],uk:[22000,38000]},
+    "Insurance Verification Specialist CSR":{us:[37000,58000],ca:[39000,56000],au:[55000,75000],uk:[23000,40000]},
+    "Medical Biller":{us:[38000,60000],ca:[40000,58000],au:[56000,78000],uk:[24000,42000]},
+    "Medical Coder":{us:[45000,82000],ca:[45000,72000],au:[60000,90000],uk:[26000,48000]},
+    "Medical Crendentialing Specialist":{us:[42000,70000],ca:[44000,66000],au:[58000,85000],uk:[25000,45000]},
+    "Medical Scribe/Transcriptionist":{us:[34000,52000],ca:[36000,52000],au:[52000,70000],uk:[21000,36000]},
+    "Medical Virtual Assistant":{us:[36000,56000],ca:[38000,55000],au:[54000,74000],uk:[22000,40000]},
+    "Pharma Coder":{us:[50000,88000],ca:[50000,78000],au:[65000,95000],uk:[28000,52000]},
+    "Registered Nurse":{us:[62000,110000],ca:[65000,100000],au:[67000,105000],uk:[29000,48000]},
+    "US RNs":{us:[68000,120000],ca:[68000,105000],au:[70000,108000],uk:[30000,50000]},
+    "Accounts Administrator":{us:[40000,62000],ca:[42000,62000],au:[58000,80000],uk:[24000,42000]},
+    "Tenancy Applications Specialist":{us:[40000,62000],ca:[42000,60000],au:[58000,80000],uk:[24000,42000]},
+    "Tenant Support Administrator":{us:[38000,58000],ca:[40000,58000],au:[56000,76000],uk:[23000,40000]},
+    "Arrears Administrator":{us:[38000,60000],ca:[40000,58000],au:[57000,78000],uk:[23000,42000]},
+    "Routine Inspection Administrator":{us:[38000,58000],ca:[40000,58000],au:[56000,76000],uk:[23000,40000]},
+    "Maintenance Administrator":{us:[40000,62000],ca:[42000,60000],au:[58000,80000],uk:[24000,42000]},
+    "Lease Renewals Specialist":{us:[40000,62000],ca:[42000,60000],au:[58000,80000],uk:[24000,42000]},
+    "Invoicing Specialist":{us:[38000,60000],ca:[40000,58000],au:[56000,78000],uk:[23000,40000]},
+    "Marketing Administrator":{us:[42000,68000],ca:[44000,66000],au:[60000,85000],uk:[25000,45000]},
+    "New Business Administrator":{us:[48000,80000],ca:[48000,75000],au:[65000,95000],uk:[28000,52000]},
+    "Smoke Alarm Administrator":{us:[36000,55000],ca:[38000,55000],au:[55000,74000],uk:[22000,38000]},
+    "Data Entry Specialist":{us:[33000,50000],ca:[35000,50000],au:[52000,68000],uk:[21000,34000]},
+    "Sales Assistant":{us:[34000,55000],ca:[36000,54000],au:[52000,72000],uk:[21000,38000]},
+    "Contracts Admnistrator":{us:[45000,78000],ca:[46000,74000],au:[62000,90000],uk:[26000,50000]},
+    "Listings Administrator":{us:[36000,56000],ca:[38000,55000],au:[55000,74000],uk:[22000,38000]},
+    "Administration Support":{us:[36000,56000],ca:[38000,55000],au:[55000,74000],uk:[22000,38000]},
+    "Receptionist":{us:[34000,50000],ca:[36000,50000],au:[52000,68000],uk:[21000,34000]},
+    "Trust Accounting Assistant":{us:[42000,68000],ca:[44000,66000],au:[60000,85000],uk:[25000,45000]},
+    "Commercial Property Manager":{us:[70000,135000],ca:[65000,115000],au:[80000,135000],uk:[32000,70000]},
+    "Mortgage Broker Support / Loan Processing":{us:[42000,75000],ca:[44000,72000],au:[58000,90000],uk:[25000,48000]},
+    "Account Manager":{us:[50000,130000],ca:[50000,110000],au:[65000,125000],uk:[26000,65000]},
+    "Account Manager, Programmatic":{us:[55000,135000],ca:[52000,115000],au:[68000,130000],uk:[28000,68000]},
+    "Administrative Support / Admin Assistants / Admin Staff / Admin Specialist":{us:[36000,58000],ca:[38000,58000],au:[55000,78000],uk:[22000,40000]},
+    "Admin Manager":{us:[60000,100000],ca:[58000,92000],au:[80000,120000],uk:[32000,60000]},
+    "Admin Supervisor":{us:[48000,75000],ca:[48000,72000],au:[65000,92000],uk:[28000,48000]},
+    "Allocation Officer":{us:[42000,68000],ca:[44000,66000],au:[60000,85000],uk:[25000,45000]},
+    "Allocation Manager":{us:[65000,105000],ca:[62000,95000],au:[85000,125000],uk:[35000,65000]},
+    "Appointment Setter":{us:[35000,55000],ca:[37000,54000],au:[55000,75000],uk:[22000,38000]},
+    "Assistant Operations Manager":{us:[58000,90000],ca:[55000,85000],au:[70000,105000],uk:[35000,55000]},
+    "Automotive Finance & Insurance Sales Manager":{us:[60000,110000],ca:[60000,100000],au:[70000,120000],uk:[35000,60000]},
+    "Collections Specialist":{us:[38000,58000],ca:[42000,62000],au:[55000,75000],uk:[24000,38000]},
+    "Collections Officer":{us:[40000,60000],ca:[44000,64000],au:[58000,78000],uk:[25000,40000]},
+    "Commercial Analyst":{us:[60000,100000],ca:[58000,95000],au:[75000,120000],uk:[35000,65000]},
+    "Branch Administrator/Coordinator":{us:[40000,62000],ca:[42000,62000],au:[60000,85000],uk:[24000,40000]},
+    "Bid Coordinator/Manager":{us:[55000,100000],ca:[55000,95000],au:[80000,130000],uk:[35000,65000]},
+    "BPO / Account Specialist":{us:[38000,58000],ca:[40000,60000],au:[55000,78000],uk:[24000,40000]},
+    "Business Development":{us:[55000,95000],ca:[55000,90000],au:[70000,120000],uk:[32000,60000]},
+    "Business Development Representative":{us:[50000,80000],ca:[48000,75000],au:[65000,100000],uk:[28000,50000]},
+    "Business Development Manager":{us:[75000,140000],ca:[80000,150000],au:[100000,180000],uk:[45000,90000]},
+    "Customer Service Consultant":{us:[36000,52000],ca:[38000,55000],au:[55000,72000],uk:[22000,34000]},
+    "CSR/Customer Support":{us:[36000,55000],ca:[38000,56000],au:[55000,75000],uk:[22000,35000]},
+    "Call Center Team Lead/Team Leader/Customer Care":{us:[45000,72000],ca:[45000,68000],au:[65000,95000],uk:[28000,48000]},
+    "Chat Support Representative":{us:[34000,48000],ca:[36000,50000],au:[52000,68000],uk:[21000,32000]},
+    "Client Renewal Executive":{us:[42000,68000],ca:[42000,65000],au:[60000,90000],uk:[26000,45000]},
+    "Client Relation Manager":{us:[60000,110000],ca:[60000,100000],au:[80000,135000],uk:[38000,70000]},
+    "Client Services":{us:[38000,58000],ca:[40000,58000],au:[55000,80000],uk:[24000,40000]},
+    "Faults and Helpdesk":{us:[40000,62000],ca:[42000,62000],au:[58000,82000],uk:[24000,40000]},
+    "Client Services Representative / Para Client Services Coordinator":{us:[38000,58000],ca:[40000,58000],au:[55000,80000],uk:[24000,40000]},
+    "Contracts/Systems Administrator":{us:[45000,72000],ca:[48000,72000],au:[65000,95000],uk:[28000,48000]},
+    "Contracts Management / Legal Support/ Legal Assistant":{us:[48000,80000],ca:[48000,78000],au:[65000,105000],uk:[28000,55000]},
+    "Corporate Secretarial Consultant":{us:[48000,78000],ca:[48000,75000],au:[65000,100000],uk:[30000,55000]},
+    "CRO Specialist":{us:[55000,95000],ca:[55000,90000],au:[75000,120000],uk:[35000,65000]},
+    "Customer Experience Team Lead":{us:[48000,78000],ca:[48000,72000],au:[68000,100000],uk:[30000,52000]},
+    "Customer Success Specialist":{us:[50000,85000],ca:[50000,80000],au:[70000,110000],uk:[32000,58000]},
+    "Cyber Security Specialist":{us:[85000,150000],ca:[80000,130000],au:[100000,170000],uk:[45000,90000]},
+    "Data Visualization Associate":{us:[55000,90000],ca:[55000,85000],au:[70000,110000],uk:[32000,58000]},
+    "Dispute Consultant":{us:[48000,80000],ca:[48000,75000],au:[65000,100000],uk:[28000,52000]},
+    "E-commerce Support":{us:[40000,62000],ca:[42000,62000],au:[58000,85000],uk:[24000,42000]},
+    "Executive Assistant":{us:[45000,90000],ca:[50000,85000],au:[65000,105000],uk:[28000,55000]},
+    "Excel Expert/Specialist":{us:[45000,75000],ca:[45000,72000],au:[62000,95000],uk:[28000,50000]},
+    "General Admin Support":{us:[36000,55000],ca:[40000,58000],au:[55000,78000],uk:[22000,38000]},
+    "Helpdesk Admin Assistant":{us:[38000,58000],ca:[40000,60000],au:[55000,78000],uk:[23000,40000]},
+    "HR Assistant / Associate":{us:[40000,60000],ca:[42000,62000],au:[58000,80000],uk:[24000,40000]},
+    "HR Administrator":{us:[42000,65000],ca:[45000,65000],au:[60000,85000],uk:[25000,42000]},
+    "HR Executive/Specialist":{us:[50000,85000],ca:[52000,82000],au:[70000,105000],uk:[32000,58000]},
+    "HR Manager / Human Resources Manager":{us:[75000,135000],ca:[80000,140000],au:[100000,170000],uk:[45000,85000]},
+    "HR Supervisor":{us:[60000,100000],ca:[60000,95000],au:[85000,130000],uk:[38000,68000]},
+    "Human Resources Officer":{us:[48000,78000],ca:[50000,78000],au:[68000,100000],uk:[30000,52000]},
+    "Inbound Mail Specialist":{us:[34000,48000],ca:[36000,50000],au:[52000,68000],uk:[21000,32000]},
+    "Sales Representative":{us:[40000,70000],ca:[42000,68000],au:[58000,95000],uk:[24000,45000]},
+    "Inside Sales Representative":{us:[45000,80000],ca:[42000,80000],au:[65000,115000],uk:[28000,55000]},
+    "Instructional Designer":{us:[60000,110000],ca:[55000,95000],au:[75000,120000],uk:[35000,65000]},
+    "Inventory Coordinator | E-Commerce Admin":{us:[40000,62000],ca:[42000,62000],au:[58000,82000],uk:[24000,42000]},
+    "Loan Assessor":{us:[45000,72000],ca:[48000,72000],au:[65000,95000],uk:[28000,48000]},
+    "Loan Processor":{us:[45000,72000],ca:[44000,68000],au:[58000,82000],uk:[24000,40000]},
+    "Logistic Coordinator":{us:[45000,68000],ca:[44000,65000],au:[60000,85000],uk:[26000,42000]},
+    "Logistics/Shipping/Inventory":{us:[42000,72000],ca:[42000,68000],au:[58000,88000],uk:[24000,44000]},
+    "Recruitment Market Research":{us:[50000,85000],ca:[48000,78000],au:[65000,100000],uk:[28000,50000]},
+    "Management Consultant":{us:[75000,150000],ca:[70000,135000],au:[90000,165000],uk:[40000,90000]},
+    "Merchandising Development Analyst/Merchandising Analyst":{us:[55000,95000],ca:[52000,88000],au:[70000,110000],uk:[30000,58000]},
+    "Mortgage Administrator":{us:[42000,65000],ca:[42000,62000],au:[58000,80000],uk:[24000,38000]},
+    "Mortgage Broker Support / Loan Processing (AU)":{us:[45000,72000],ca:[44000,68000],au:[60000,90000],uk:[25000,42000]},
+    "Onboarding and Compliance Specialist":{us:[50000,82000],ca:[48000,76000],au:[65000,98000],uk:[28000,50000]},
+    "Onboarding Coordinator":{us:[45000,70000],ca:[44000,66000],au:[60000,85000],uk:[26000,42000]},
+    "Operations Director":{us:[140000,250000],ca:[130000,220000],au:[160000,260000],uk:[80000,160000]},
+    "Operations Assistant":{us:[42000,62000],ca:[42000,60000],au:[58000,78000],uk:[24000,38000]},
+    "Operations Coordinator":{us:[45000,68000],ca:[44000,65000],au:[60000,82000],uk:[26000,42000]},
+    "Operations Manager":{us:[75000,135000],ca:[70000,125000],au:[95000,150000],uk:[40000,80000]},
+    "Operations Supervisor":{us:[60000,100000],ca:[58000,92000],au:[78000,120000],uk:[34000,60000]},
+    "Outbound Sales Representative":{us:[42000,72000],ca:[42000,68000],au:[58000,90000],uk:[24000,45000]},
+    "Outbound Telemarketing":{us:[38000,58000],ca:[38000,55000],au:[55000,75000],uk:[23000,36000]},
+    "Patient Monitoring Specialist":{us:[42000,70000],ca:[42000,64000],au:[60000,88000],uk:[24000,40000]},
+    "Para Broker":{us:[45000,72000],ca:[44000,66000],au:[62000,90000],uk:[26000,44000]},
+    "Paralegal":{us:[51000,90000],ca:[48000,82000],au:[65000,100000],uk:[24000,55000]},
+    "Partner/Customer Success Manager":{us:[65000,130000],ca:[60000,110000],au:[85000,150000],uk:[35000,75000]},
+    "Permitting Specialist/Licensing":{us:[45000,75000],ca:[44000,70000],au:[60000,90000],uk:[26000,46000]},
+    "Prepress & Workflow Operator":{us:[42000,68000],ca:[42000,64000],au:[58000,82000],uk:[24000,42000]},
+    "Planning Assistant":{us:[42000,65000],ca:[42000,62000],au:[58000,80000],uk:[24000,40000]},
+    "Process Improvement Specialist":{us:[55000,95000],ca:[52000,88000],au:[72000,115000],uk:[32000,62000]},
+    "Product Mapping Coordinator/Product Data Coordinator":{us:[42000,68000],ca:[42000,64000],au:[58000,82000],uk:[24000,42000]},
+    "Procurement Manager":{us:[85000,150000],ca:[80000,135000],au:[100000,165000],uk:[45000,90000]},
+    "Program Coordinator":{us:[48000,78000],ca:[46000,72000],au:[65000,95000],uk:[28000,50000]},
+    "Project Coordinator":{us:[48000,80000],ca:[46000,74000],au:[65000,98000],uk:[28000,52000]},
+    "Procurement Officer":{us:[48000,80000],ca:[46000,74000],au:[65000,98000],uk:[28000,52000]},
+    "Project Manager":{us:[75000,140000],ca:[72000,130000],au:[100000,170000],uk:[42000,85000]},
+    "Project Scheduler":{us:[55000,90000],ca:[52000,84000],au:[72000,115000],uk:[32000,60000]},
+    "Property Management / Admin Assistant":{us:[42000,62000],ca:[42000,60000],au:[58000,78000],uk:[24000,38000]},
+    "Property Manager":{us:[55000,100000],ca:[52000,88000],au:[65000,110000],uk:[30000,55000]},
+    "Purchasing & Inventory Officer":{us:[45000,72000],ca:[44000,68000],au:[60000,88000],uk:[26000,46000]},
+    "Purchasing & Inventory Manager":{us:[65000,110000],ca:[62000,100000],au:[85000,130000],uk:[36000,68000]},
+    "Purchasing Officer":{us:[42000,68000],ca:[42000,64000],au:[58000,82000],uk:[25000,44000]},
+    "Public Relations Manager":{us:[70000,130000],ca:[66000,115000],au:[90000,150000],uk:[40000,80000]},
+    "Programmatic Trading Specialist":{us:[55000,100000],ca:[52000,90000],au:[72000,120000],uk:[32000,65000]},
+    "QA Specialist":{us:[55000,95000],ca:[52000,88000],au:[72000,115000],uk:[32000,62000]},
+    "Quality Control Assurance":{us:[42000,70000],ca:[42000,66000],au:[58000,88000],uk:[24000,44000]},
+    "Real Estate Admins (AU/US RE VA - Leasing / Property Management / Maintenance)":{us:[42000,65000],ca:[42000,62000],au:[58000,82000],uk:[24000,40000]},
+    "Recruiter":{us:[50000,95000],ca:[48000,82000],au:[65000,110000],uk:[28000,55000]},
+    "Recruiter Technical":{us:[60000,120000],ca:[56000,105000],au:[78000,135000],uk:[35000,70000]},
+    "Real Estate Assistant":{us:[42000,62000],ca:[42000,60000],au:[58000,78000],uk:[24000,38000]},
+    "Real Estate Specialist":{us:[42000,68000],ca:[42000,64000],au:[58000,82000],uk:[24000,42000]},
+    "Real Time Analyst":{us:[48000,72000],ca:[50000,72000],au:[60000,85000],uk:[26000,40000]},
+    "Recruitment Coordinator/Administrator":{us:[42000,62000],ca:[45000,65000],au:[55000,75000],uk:[24000,35000]},
+    "Recruitment Marketing":{us:[50000,85000],ca:[52000,85000],au:[65000,100000],uk:[28000,48000]},
+    "Recruitment Manager":{us:[75000,135000],ca:[70000,120000],au:[95000,155000],uk:[42000,80000]},
+    "Reservation & Guest Services Agent":{us:[34000,48000],ca:[36000,50000],au:[55000,68000],uk:[22000,30000]},
+    "Sales Trainer/Membership Sales Trainer":{us:[50000,80000],ca:[52000,80000],au:[65000,95000],uk:[28000,45000]},
+    "Sales Admin Specialist/Coordinator":{us:[40000,58000],ca:[42000,60000],au:[55000,72000],uk:[23000,34000]},
+    "Sales Analyst / Pricing Analyst":{us:[55000,90000],ca:[55000,90000],au:[70000,110000],uk:[30000,55000]},
+    "Sales Development Representative (B2B)":{us:[50000,80000],ca:[50000,78000],au:[60000,90000],uk:[28000,45000]},
+    "Sales Account Manager (E2E Sales)":{us:[60000,110000],ca:[60000,105000],au:[75000,130000],uk:[32000,65000]},
+    "Sales Team Leader":{us:[55000,95000],ca:[55000,92000],au:[75000,120000],uk:[32000,58000]},
+    "Sales Support/Cold Caller":{us:[38000,58000],ca:[40000,58000],au:[55000,75000],uk:[22000,35000]},
+    "Scheduling and Document Control Support":{us:[42000,65000],ca:[45000,68000],au:[60000,85000],uk:[24000,38000]},
+    "Scrum Master":{us:[80000,150000],ca:[80000,130000],au:[100000,160000],uk:[45000,85000]},
+    "Service Delivery Manager":{us:[75000,130000],ca:[75000,125000],au:[100000,160000],uk:[45000,80000]},
+    "Service Desk Coordinator":{us:[42000,62000],ca:[45000,65000],au:[60000,82000],uk:[24000,38000]},
+    "Service Desk Lead":{us:[55000,90000],ca:[58000,90000],au:[75000,115000],uk:[32000,55000]},
+    "Senior Broker Administrator":{us:[48000,75000],ca:[50000,75000],au:[65000,95000],uk:[28000,45000]},
+    "Senior Operations Manager":{us:[90000,160000],ca:[90000,150000],au:[120000,190000],uk:[55000,100000]},
+    "Shopify Specialist":{us:[50000,85000],ca:[52000,85000],au:[65000,100000],uk:[28000,50000]},
+    "Site Director / Executive Director":{us:[120000,230000],ca:[115000,210000],au:[150000,260000],uk:[70000,140000]},
+    "Operation Director":{us:[120000,230000],ca:[115000,210000],au:[150000,260000],uk:[70000,140000]},
+    "Sustainability Manager":{us:[70000,120000],ca:[70000,115000],au:[95000,150000],uk:[40000,75000]},
+    "Surface Pattern Design":{us:[45000,80000],ca:[48000,80000],au:[60000,95000],uk:[26000,48000]},
+    "Supply Chain Manager":{us:[75000,135000],ca:[75000,130000],au:[100000,160000],uk:[42000,80000]},
+    "Supply Operations Supervisor":{us:[55000,90000],ca:[58000,90000],au:[75000,115000],uk:[32000,55000]},
+    "Supply Operations Analyst":{us:[50000,80000],ca:[52000,80000],au:[65000,100000],uk:[28000,50000]},
+    "Team Leader - Data Analysis & Campaigns Management":{us:[60000,100000],ca:[60000,98000],au:[80000,125000],uk:[35000,62000]},
+    "Team Leader (Sales Operations)":{us:[55000,90000],ca:[55000,90000],au:[75000,115000],uk:[32000,58000]},
+    "Technical Support Representative (TSR)":{us:[40000,60000],ca:[42000,62000],au:[58000,80000],uk:[24000,36000]},
+    "Telecommunications Project Manager":{us:[75000,130000],ca:[75000,125000],au:[100000,160000],uk:[45000,80000]},
+    "Telemarketing":{us:[33000,48000],ca:[35000,50000],au:[55000,70000],uk:[21000,30000]},
+    "Training / Learning & Development":{us:[50000,85000],ca:[52000,85000],au:[70000,110000],uk:[30000,55000]},
+    "Training Manager":{us:[70000,120000],ca:[70000,115000],au:[95000,150000],uk:[42000,75000]},
+    "Travel Manager":{us:[60000,100000],ca:[60000,98000],au:[80000,125000],uk:[38000,68000]},
+    "Travel Consultants/ Reservation Agents":{us:[38000,58000],ca:[40000,58000],au:[55000,75000],uk:[23000,35000]},
+    "Virtual Assistant/Admin Assistant":{us:[38000,58000],ca:[40000,58000],au:[55000,75000],uk:[22000,34000]},
+    "Digital Marketing & SEO/SEM Specialist":{us:[50000,90000],ca:[52000,88000],au:[65000,105000],uk:[28000,52000]},
+  };
+
   var LS_RATES="oa_calc_rates", LS_RATES_TS="oa_calc_rates_ts", LS_PRIMARY="oa_calc_primary", LS_PERIOD="oa_calc_period", LS_FEES="oa_calc_fees", LS_STAT="oa_calc_stat";
-  var LS_AUTO="oa_calc_auto_on", LS_AUTO_DATE="oa_calc_auto_date", LS_AUTO_SRC="oa_calc_auto_src";
+  var LS_AUTO="oa_calc_auto_on", LS_AUTO_DATE="oa_calc_auto_date", LS_AUTO_SRC="oa_calc_auto_src", LS_LOAD="oa_calc_load";
 
   var FEE_DEFAULTS={wfh:350, onsite:600}; // OA monthly service fee in USD
   // Statutory + benefits (monthly), derived from the rate sheet: SSS/Pag-IBIG/HMO flat ₱, PhilHealth % of salary, 13th = salary/12
   var STAT_DEFAULTS={sss:3220, pagibig:224, hmo:3413, philPct:2.5};
+  // Onshore employer loading — % added to base salary for taxes/benefits/super/pension/leave (fully-loaded cost). Editable.
+  var LOAD_DEFAULTS={us:35, ca:25, au:30, uk:28};
+  var ONSHORE_KEY={USD:"us", CAD:"ca", AUD:"au", GBP:"uk"};  // currency code → ONSHORE data key
 
   var HOURS_PER_MONTH=174; // ~40h/wk standard FTE month, for hourly conversion
 
@@ -850,6 +1340,7 @@
   var selectedRole=null;   // role object when chosen from search; null = custom/free text
   var fees=loadFees();
   var stat=loadStat();
+  var load=loadLoad();
   var autoOn=localStorage.getItem(LS_AUTO)!=="0";   // default ON
 
   function loadFees(){
@@ -877,6 +1368,20 @@
   function statMonthlyPHP(salaryMonthly){
     return stat.sss + stat.pagibig + stat.hmo + (stat.philPct/100)*salaryMonthly + salaryMonthly/12;
   }
+
+  function loadLoad(){
+    var s=null;
+    try{s=JSON.parse(localStorage.getItem(LS_LOAD)||"null");}catch(e){}
+    return {
+      us:(s&&typeof s.us==="number")?s.us:LOAD_DEFAULTS.us,
+      ca:(s&&typeof s.ca==="number")?s.ca:LOAD_DEFAULTS.ca,
+      au:(s&&typeof s.au==="number")?s.au:LOAD_DEFAULTS.au,
+      uk:(s&&typeof s.uk==="number")?s.uk:LOAD_DEFAULTS.uk
+    };
+  }
+  function saveLoad(){ localStorage.setItem(LS_LOAD,JSON.stringify(load)); }
+  // Onshore base salary for selected tier from a [low,high] range
+  function onshoreBase(range){ return tier==="low"?range[0] : tier==="high"?range[1] : Math.round((range[0]+range[1])/2); }
 
   // ---- Live FX (daily auto-update) ----
   function round2(n){ return Math.round(n*100)/100; }
@@ -986,23 +1491,41 @@
     var salaryMonthly=pm?php/pm:0;
     var statPHP=has?statMonthlyPHP(salaryMonthly)*pm:0;   // govt + HMO + 13th, in selected period
     var feePHP=has?(fees[setup]*pm)*rates.USD:0;          // OA fee (USD) → PHP
+    var oaMonthlyPHP=has?(salaryMonthly + statMonthlyPHP(salaryMonthly) + fees[setup]*rates.USD):0; // period-independent monthly all-in
     var periodWord=period==="annual"?"per year":period==="hourly"?"per hour":"per month";
+    var CSHORT={USD:"US",CAD:"Canada",AUD:"Australia",GBP:"UK"};
+    var od0=(has&&selectedRole&&ONSHORE[selectedRole.t])?ONSHORE[selectedRole.t]:null;
     resultsEl.innerHTML="";
     CURRENCIES.forEach(function(c){
       var salary=php/rates[c.code];
       var statc=statPHP/rates[c.code];
       var fee=feePHP/rates[c.code];
       var total=salary+statc+fee;
+      var vsHtml="";
+      if(od0){
+        var rng=od0[ONSHORE_KEY[c.code]];
+        var loadedAnnual=onshoreBase(rng)*(1+load[ONSHORE_KEY[c.code]]/100);
+        var loadedMonthly=loadedAnnual/12;
+        var oaMo=oaMonthlyPHP/rates[c.code];
+        var savePct=loadedMonthly>0?Math.round((loadedMonthly-oaMo)/loadedMonthly*100):0;
+        vsHtml=
+          '<div class="vs">'+
+            '<div class="vs-row"><span>Onshore '+CSHORT[c.code]+' hire</span><b>'+fmt(c.code,loadedAnnual)+'/yr</b></div>'+
+            '<div class="vs-row vs-mo"><span>fully-loaded</span><b>'+fmt(c.code,loadedMonthly)+'/mo</b></div>'+
+            (savePct>0?'<div class="save">Save ~'+savePct+'% vs local hire</div>':'')+
+          '</div>';
+      }
       var div=document.createElement("div");
       div.className="res"+(c.code===primary?" primary":"");
       div.innerHTML=
         (c.code===primary?'<div class="badge">CLIENT</div>':'')+
         '<div class="cur-head"><span class="flag">'+c.flag+'</span>'+c.code+' · '+c.name+'</div>'+
         '<div class="amount">'+fmt(c.code,total)+'</div>'+
-        '<div class="sub">All-in '+periodWord+' · 1 '+c.code+' = ₱'+rates[c.code]+'</div>'+
+        '<div class="sub">OA all-in '+periodWord+' · 1 '+c.code+' = ₱'+rates[c.code]+'</div>'+
         '<div class="bd"><span>Salary</span><b>'+fmt(c.code,salary)+'</b></div>'+
         '<div class="bd"><span>Gov’t, HMO, 13th</span><b>'+fmt(c.code,statc)+'</b></div>'+
-        '<div class="bd fee"><span>OA fee</span><b>'+fmt(c.code,fee)+'</b></div>';
+        '<div class="bd fee"><span>OA fee</span><b>'+fmt(c.code,fee)+'</b></div>'+
+        vsHtml;
       resultsEl.appendChild(div);
     });
     renderSummary(php,statPHP,feePHP);
@@ -1272,6 +1795,10 @@
     document.getElementById("statPagibig").value=stat.pagibig;
     document.getElementById("statHMO").value=stat.hmo;
     document.getElementById("statPhil").value=stat.philPct;
+    document.getElementById("loadUS").value=load.us;
+    document.getElementById("loadCA").value=load.ca;
+    document.getElementById("loadAU").value=load.au;
+    document.getElementById("loadUK").value=load.uk;
     document.getElementById("autoToggle").checked=autoOn;
     showFxSaved();
     showUpdated();
@@ -1298,13 +1825,20 @@
     if(isFinite(pg)&&pg>=0) stat.pagibig=pg;
     if(isFinite(hm)&&hm>=0) stat.hmo=hm;
     if(isFinite(ph)&&ph>=0) stat.philPct=ph;
-    saveRates(); saveFees(); saveStat(); updateFeeLabels(); renderResults(); showUpdated(); closeDrawer();
+    var lu=parseFloat(document.getElementById("loadUS").value), lc=parseFloat(document.getElementById("loadCA").value),
+        la=parseFloat(document.getElementById("loadAU").value), lk=parseFloat(document.getElementById("loadUK").value);
+    if(isFinite(lu)&&lu>=0) load.us=lu;
+    if(isFinite(lc)&&lc>=0) load.ca=lc;
+    if(isFinite(la)&&la>=0) load.au=la;
+    if(isFinite(lk)&&lk>=0) load.uk=lk;
+    saveRates(); saveFees(); saveStat(); saveLoad(); updateFeeLabels(); renderResults(); showUpdated(); closeDrawer();
   };
   document.getElementById("resetRates").onclick=function(){
     CURRENCIES.forEach(function(c){ rates[c.code]=c.def; });
     fees={wfh:FEE_DEFAULTS.wfh, onsite:FEE_DEFAULTS.onsite};
     stat={sss:STAT_DEFAULTS.sss, pagibig:STAT_DEFAULTS.pagibig, hmo:STAT_DEFAULTS.hmo, philPct:STAT_DEFAULTS.philPct};
-    saveRates(); saveFees(); saveStat(); updateFeeLabels(); buildRateInputs(); renderResults();
+    load={us:LOAD_DEFAULTS.us, ca:LOAD_DEFAULTS.ca, au:LOAD_DEFAULTS.au, uk:LOAD_DEFAULTS.uk};
+    saveRates(); saveFees(); saveStat(); saveLoad(); updateFeeLabels(); buildRateInputs(); renderResults();
   };
 
   // ---- Live-FX controls ----
