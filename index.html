@@ -1222,7 +1222,9 @@
     box.innerHTML="";
     CURRENCIES.forEach(function(c){
       var salary=salaryMonthly/rates[c.code];
-      var total=(salaryMonthly+statPHP+feePHP)/rates[c.code];
+      var statc=statPHP/rates[c.code];
+      var fee=feePHP/rates[c.code];
+      var total=salary+statc+fee;
       var div=document.createElement("div");
       div.className="res"+(c.code===primary?" primary":"");
       div.innerHTML=
@@ -1230,7 +1232,9 @@
         '<div class="cur-head"><span class="flag">'+c.flag+'</span>'+c.code+' · '+c.name+'</div>'+
         '<div class="amount">'+fmt(c.code,total)+'</div>'+
         '<div class="sub">Part-time all-in / mo</div>'+
-        '<div class="bd"><span>Salary (½ FT)</span><b>'+fmt(c.code,salary)+'</b></div>';
+        '<div class="bd"><span>Salary (½ FT)</span><b>'+fmt(c.code,salary)+'</b></div>'+
+        '<div class="bd"><span>Gov’t, HMO, 13th</span><b>'+fmt(c.code,statc)+'</b></div>'+
+        '<div class="bd fee"><span>OA fee (seat lease)</span><b>'+fmt(c.code,fee)+'</b></div>';
       box.appendChild(div);
     });
   }
