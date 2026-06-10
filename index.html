@@ -98,6 +98,10 @@
   @media(max-width:640px){.incl-grid{grid-template-columns:1fr}}
   .incl-item{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--text);padding:3px 0}
   .incl-item .ck{color:var(--green);font-weight:900;flex:none}
+  .incl-item b{font-weight:700}
+  .incl-d{color:var(--muted);font-weight:400}
+  .incl-intro{font-size:12.5px;color:var(--muted);margin-bottom:4px;line-height:1.5}
+  .incl-intro b{color:var(--text)}
   .remote-row{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:12.5px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted);cursor:pointer}
   .remote-row input{width:16px;height:16px;accent-color:var(--accent);flex:none}
 
@@ -300,7 +304,7 @@
       <div class="setup-office" id="setupOffice">
         <div>
           <div class="so-title">🏢 Office-Based <span class="so-rec">RECOMMENDED</span></div>
-          <div class="so-desc">Dedicated secure workstation, full facility, IT &amp; fully-managed HR — <b><span id="feeOnsiteLbl">$600</span>/mo</b></div>
+          <div class="so-desc">A-grade office, IT &amp; facilities · full employment &amp; compliance · OA support services — <b><span id="feeOnsiteLbl">$600</span>/mo</b></div>
         </div>
         <button type="button" class="so-incl" id="inclToggle">See what's included ✓</button>
       </div>
@@ -2269,15 +2273,39 @@
 
   // What the Office-Based fee includes (extensive value list)
   var INCLUSIONS=[
-    {g:"Workspace & facility",items:["Dedicated office workstation & ergonomic chair","Secure, access-controlled office (24/7)","Electricity, water & all utilities","Air-conditioning, cleaning & maintenance","Backup power — generator + UPS","Pantry, breakout & meeting rooms"]},
-    {g:"Technology & IT",items:["Business-grade computer & peripherals","High-speed redundant business internet","Standard software licences & business email","On-site IT support & helpdesk","Network, firewall & data security","CCTV & physical security"]},
-    {g:"People & HR — fully managed",items:["End-to-end recruitment & sourcing","Dedicated account manager","HR management & employee relations","Payroll processing & disbursement","Govt benefits admin (SSS, PhilHealth, Pag-IBIG)","Statutory & labour-law compliance","Attendance & time tracking","Performance management & reporting","Onboarding, training & workspace setup","Employee engagement & retention"]}
+    {g:"🏢 Office, Hardware, IT & Facilities",items:[
+      {n:"A-Grade Office Space",d:"premium, secure, professional HQ"},
+      {n:"Office Furniture",d:"ergonomic desk & chair, fully set up"},
+      {n:"Meeting & Training Rooms",d:"on-demand for calls & training"},
+      {n:"IT Infrastructure",d:"business-grade PC, network & software"},
+      {n:"Power Redundancy",d:"backup generators + UPS, zero downtime"},
+      {n:"Water Redundancy",d:"backup supply keeps work uninterrupted"},
+      {n:"Staff Management",d:"hands-on, on-site daily management"}
+    ]},
+    {g:"📋 Employment & Compliance",items:[
+      {n:"Payroll",d:"accurate & on-time, handled end-to-end"},
+      {n:"HR",d:"full HR & employee relations"},
+      {n:"Legal & Compliance",d:"local labour law & statutory cover"},
+      {n:"Invoicing",d:"one simple consolidated monthly invoice"},
+      {n:"Employee & Client Support",d:"dedicated support for staff and you"},
+      {n:"Health Insurance & Benefits",d:"HMO + government-mandated benefits"}
+    ]},
+    {g:"🤝 OA Support Services",items:[
+      {n:"Strategic Planning",d:"guidance to scale your team"},
+      {n:"Data Security",d:"enterprise-grade data & network protection"},
+      {n:"Talent Acquisition",d:"end-to-end sourcing & recruitment"},
+      {n:"Training & Development",d:"continuous upskilling of your staff"},
+      {n:"Facilities Management",d:"cleaning, maintenance & utilities covered"},
+      {n:"Staff Engagement",d:"retention & engagement programs"},
+      {n:"Client Services Supervisor",d:"24/7 oversight of your delivery"}
+    ]}
   ];
   (function renderInclusions(){
     var p=document.getElementById("inclPanel");
-    p.innerHTML=INCLUSIONS.map(function(grp){
+    var intro='<div class="incl-intro">One flat fee bundles <b>everything</b> OA wraps around your staff — office, employment, and ongoing support. No hidden costs, no setup fees:</div>';
+    p.innerHTML=intro+INCLUSIONS.map(function(grp){
       return '<div class="incl-g">'+grp.g+'</div><div class="incl-grid">'+
-        grp.items.map(function(it){ return '<div class="incl-item"><span class="ck">✓</span><span>'+it+'</span></div>'; }).join("")+
+        grp.items.map(function(it){ return '<div class="incl-item"><span class="ck">✓</span><span><b>'+it.n+'</b> <span class="incl-d">— '+it.d+'</span></span></div>'; }).join("")+
         '</div>';
     }).join("");
   })();
