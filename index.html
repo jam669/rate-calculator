@@ -105,6 +105,30 @@
   .remote-row{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:12.5px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted);cursor:pointer}
   .remote-row input{width:16px;height:16px;accent-color:var(--accent);flex:none}
 
+  /* ---- Operational Oversight (optional) ---- */
+  .ovs-card{margin-top:16px;border:1.5px solid var(--accent-2);border-radius:13px;padding:16px;background:linear-gradient(180deg,rgba(192,38,211,.12),transparent);transition:.18s}
+  .ovs-card.on{box-shadow:0 0 0 1px var(--accent-2),0 8px 26px rgba(192,38,211,.18)}
+  .ovs-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+  .ovs-title{font-size:14.5px;font-weight:800;color:#fff;letter-spacing:.3px}
+  .ovs-sub{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.5;max-width:62ch}
+  .ovs-rate{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;font-size:13px;font-weight:600;color:var(--text);flex-wrap:wrap}
+  .ovs-rate input{width:62px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;color:var(--text);font-size:14px;font-weight:700;padding:6px 8px;text-align:center}
+  .ovs-mo{color:var(--accent-2);font-weight:800}
+  .ovs-models-btn{margin-top:13px;background:none;border:0;color:var(--accent-2);font-weight:700;font-size:12.5px;cursor:pointer;padding:0}
+  .ovs-models{display:none;margin-top:8px}
+  .ovs-models.open{display:block}
+  .ovs-model{padding:9px 0;border-top:1px solid var(--line);font-size:12.5px;line-height:1.5}
+  .ovs-model b{color:var(--text)}
+  .ovs-model span{color:var(--muted)}
+  /* toggle switch */
+  .switch{position:relative;display:inline-block;width:48px;height:26px;flex:none}
+  .switch input{opacity:0;width:0;height:0}
+  .switch .slider{position:absolute;inset:0;background:var(--line);border-radius:26px;transition:.2s;cursor:pointer}
+  .switch .slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+  .switch input:checked + .slider{background:var(--accent-2)}
+  .switch input:checked + .slider:before{transform:translateX(22px)}
+  .res .bd.ovs b{color:var(--accent-2)}
+
   /* ---- Combo (type-to-search role) ---- */
   .combo{position:relative}
   .combo-list{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;max-height:330px;overflow-y:auto;box-shadow:var(--shadow);display:none}
@@ -310,6 +334,27 @@
       </div>
       <div class="incl-panel" id="inclPanel"></div>
       <label class="remote-row"><input type="checkbox" id="remoteToggle"> Switch to Remote-based setup (<span id="feeWfhLbl">$350</span>/mo)</label>
+    </div>
+
+    <!-- Optional: Operational Oversight (co-managed delivery) -->
+    <div class="ovs-card" id="ovsCard">
+      <div class="ovs-head">
+        <div>
+          <div class="ovs-title">⭐ OPTIONAL · Operational Oversight</div>
+          <div class="ovs-sub">Co-managed delivery — service design, KPI ownership, performance governance &amp; accountability. Ideal when scaling multiple headcounts. Turn on or off anytime.</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="ovsToggle"><span class="slider"></span></label>
+      </div>
+      <div class="ovs-rate">
+        <span>$<input type="number" id="ovsRate" value="1.5" step="0.5" min="1" max="2" inputmode="decimal"> / hour per person</span>
+        <span class="ovs-mo" id="ovsMo">≈ $261/mo per person</span>
+      </div>
+      <button type="button" class="ovs-models-btn" id="ovsModelsBtn">See delivery models ▾</button>
+      <div class="ovs-models" id="ovsModels">
+        <div class="ovs-model"><b>Fully Co-Managed <span style="color:var(--accent-2)">(this option)</span></b> <span>— hands-off for you. OA owns delivery oversight, KPIs, performance governance &amp; accountability; dedicated Ops leadership funded by you.</span></div>
+        <div class="ovs-model"><b>Client-Managed Operations</b> <span>— you directly manage local leadership (funded by you). OA provides infrastructure &amp; admin (HR, payroll, IT, compliance, facilities) with no co-management fee.</span></div>
+        <div class="ovs-model"><b>Infrastructure-Only</b> <span>— best if you already have management in place. OA provides infrastructure support only; performance &amp; delivery fully owned by you.</span></div>
+      </div>
     </div>
 
     <div class="loc-label">Client location — highlight their currency</div>
@@ -1864,6 +1909,8 @@
   var setup="onsite";   // Office-Based is the default
   var selectedRole=null;   // role object when chosen from search; null = custom/free text
   var team=[];             // multi-role comparison: [{t,tier,setup,role}]
+  var oversightOn=false;   // optional co-managed operational oversight
+  var oversightRate=1.5;   // USD per hour per person ($1–$2)
   var fees=loadFees();
   var stat=loadStat();
   var load=loadLoad();
@@ -2016,8 +2063,9 @@
     var pf=feePeriodMultiplier();        // display factor: monthly 1, annual 12, hourly 1/174
     var statMonthly=has?statMonthlyPHP(php):0;
     var feeMonthly=has?fees[setup]*rates.USD:0;
-    var oaMonthlyPHP=has?(php + statMonthly + feeMonthly):0;            // monthly all-in (period-independent)
-    var salaryDisp=php*pf, statDisp=statMonthly*pf, feeDisp=feeMonthly*pf;  // amounts for the selected period
+    var ovsMonthly=has?ovsMonthlyPHP():0;                               // optional ops oversight (per person)
+    var oaMonthlyPHP=has?(php + statMonthly + feeMonthly + ovsMonthly):0; // monthly all-in (period-independent)
+    var salaryDisp=php*pf, statDisp=statMonthly*pf, feeDisp=feeMonthly*pf, ovsDisp=ovsMonthly*pf;
     var periodWord=period==="annual"?"per year":period==="hourly"?"per hour":"per month";
     var CSHORT={USD:"US",CAD:"Canada",AUD:"Australia",GBP:"UK"};
     var od0=(has&&selectedRole&&ONSHORE[selectedRole.t])?ONSHORE[selectedRole.t]:null;
@@ -2026,7 +2074,8 @@
       var salary=salaryDisp/rates[c.code];
       var statc=statDisp/rates[c.code];
       var fee=feeDisp/rates[c.code];
-      var total=salary+statc+fee;
+      var ovsc=ovsDisp/rates[c.code];
+      var total=salary+statc+fee+ovsc;
       var vsHtml="";
       if(od0){
         var rng=od0[ONSHORE_KEY[c.code]];
@@ -2051,6 +2100,7 @@
         '<div class="bd"><span>Salary</span><b>'+fmt(c.code,salary)+'</b></div>'+
         '<div class="bd"><span>Gov’t, HMO, 13th</span><b>'+fmt(c.code,statc)+'</b></div>'+
         '<div class="bd fee"><span>OA fee</span><b>'+fmt(c.code,fee)+'</b></div>'+
+        (oversightOn?'<div class="bd ovs"><span>Ops oversight</span><b>'+fmt(c.code,ovsc)+'</b></div>':'')+
         vsHtml;
       resultsEl.appendChild(div);
     });
@@ -2070,7 +2120,7 @@
     var totOA=0, totOn=0, anyOn=false;
     document.getElementById("teamList").innerHTML=team.map(function(m,idx){
       var salaryM=m.role[m.tier];
-      var oaMo=(salaryM + statMonthlyPHP(salaryM) + fees[m.setup]*rates.USD)/rates[primary];
+      var oaMo=(salaryM + statMonthlyPHP(salaryM) + fees[m.setup]*rates.USD + (oversightOn?ovsMonthlyPHP():0))/rates[primary];
       totOA+=oaMo;
       var onTxt="Onshore n/a";
       var od=ONSHORE[m.t];
@@ -2314,6 +2364,30 @@
     var open=p.classList.toggle("open");
     this.textContent=open?"Hide details":"See what's included ✓";
   });
+
+  // ---- Operational Oversight (optional co-managed) ----
+  function updateOvsMo(){
+    var mo=Math.round(oversightRate*HOURS_PER_MONTH);
+    document.getElementById("ovsMo").textContent="≈ $"+mo+"/mo per person";
+  }
+  document.getElementById("ovsToggle").addEventListener("change",function(){
+    oversightOn=this.checked;
+    document.getElementById("ovsCard").classList.toggle("on",oversightOn);
+    renderResults();
+  });
+  document.getElementById("ovsRate").addEventListener("input",function(){
+    var v=parseFloat(this.value);
+    oversightRate=(isFinite(v)&&v>0)?v:0;
+    updateOvsMo();
+    renderResults();
+  });
+  document.getElementById("ovsModelsBtn").addEventListener("click",function(){
+    var open=document.getElementById("ovsModels").classList.toggle("open");
+    this.textContent=open?"Hide delivery models ▴":"See delivery models ▾";
+  });
+  // per-person monthly oversight cost in PHP (0 when off)
+  function ovsMonthlyPHP(){ return oversightOn?(oversightRate*HOURS_PER_MONTH)*rates.USD:0; }
+  updateOvsMo();
 
   // ---- PHP manual edit ----
   document.getElementById("phpRate").addEventListener("input",renderResults);
