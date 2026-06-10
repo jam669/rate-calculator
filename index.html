@@ -82,6 +82,25 @@
   .seg-full button{flex:1}
   .hint{font-size:12px;color:var(--muted);margin-top:6px}
 
+  /* ---- Setup (Office-Based emphasis) ---- */
+  .setup-office{display:flex;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(180deg,var(--accent-soft),transparent);border:1.5px solid var(--accent);border-radius:12px;padding:14px 16px}
+  .so-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .so-rec{font-size:9.5px;font-weight:800;letter-spacing:.5px;background:var(--grad);color:#fff;padding:2px 7px;border-radius:6px}
+  .so-desc{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .so-desc b{color:var(--text)}
+  .so-incl{flex:none;background:var(--panel-2);border:1px solid var(--line);color:var(--text);font-size:12px;font-weight:700;padding:9px 13px;border-radius:9px;cursor:pointer;white-space:nowrap}
+  .so-incl:hover{border-color:var(--accent)}
+  .incl-panel{display:none;margin-top:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:14px 16px}
+  .incl-panel.open{display:block}
+  .incl-g{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin:14px 0 6px}
+  .incl-g:first-child{margin-top:0}
+  .incl-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 18px}
+  @media(max-width:640px){.incl-grid{grid-template-columns:1fr}}
+  .incl-item{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--text);padding:3px 0}
+  .incl-item .ck{color:var(--green);font-weight:900;flex:none}
+  .remote-row{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:12.5px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted);cursor:pointer}
+  .remote-row input{width:16px;height:16px;accent-color:var(--accent);flex:none}
+
   /* ---- Combo (type-to-search role) ---- */
   .combo{position:relative}
   .combo-list{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;max-height:330px;overflow-y:auto;box-shadow:var(--shadow);display:none}
@@ -125,6 +144,33 @@
   .res .vs-mo b{font-size:12px;font-weight:600;color:var(--muted)}
   .res .save{margin-top:9px;background:rgba(52,211,153,.14);color:var(--green);font-size:12px;font-weight:800;text-align:center;padding:6px 8px;border-radius:8px;letter-spacing:.2px}
   .onshore-note{margin-top:14px;font-size:11.5px;color:var(--muted);line-height:1.5;font-style:italic}
+
+  /* ---- Role responsibilities ---- */
+  .role-tasks .rt-head{font-size:16px;font-weight:700;margin-bottom:14px}
+  .role-tasks .rt-head span{color:var(--accent)}
+  .rt-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 20px}
+  @media(max-width:640px){.rt-grid{grid-template-columns:1fr}}
+  .rt-item{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;color:var(--text);padding:3px 0}
+  .rt-item .rk{color:var(--accent);font-weight:900;flex:none}
+
+  /* ---- Team comparison ---- */
+  .team-add{margin-top:14px;width:100%;background:var(--panel-2);border:1px dashed var(--accent);color:var(--accent);font-weight:700;font-size:13.5px;padding:11px;border-radius:10px;cursor:pointer;transition:.15s}
+  .team-add:hover{background:var(--accent-soft)}
+  .team-head{font-size:16px;font-weight:700;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .team-clear{font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;border:1px solid var(--line);padding:5px 10px;border-radius:8px}
+  .team-clear:hover{color:var(--text);border-color:var(--accent)}
+  .team-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .team-item .ti-name{font-weight:700;font-size:13.5px}
+  .team-item .ti-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .team-item .ti-cost{text-align:right;white-space:nowrap;margin-left:auto}
+  .team-item .ti-oa{font-weight:800;font-size:14px}
+  .team-item .ti-on{font-size:11.5px;color:var(--muted)}
+  .team-item .ti-x{flex:none;cursor:pointer;color:var(--muted);border:1px solid var(--line);border-radius:7px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:700}
+  .team-item .ti-x:hover{color:#fff;background:#c0392b;border-color:#c0392b}
+  .team-tot{margin-top:14px;padding-top:14px;border-top:2px solid var(--line)}
+  .team-tot .tt-row{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;margin-top:6px;color:var(--muted)}
+  .team-tot .tt-row b{font-size:19px;font-weight:800;color:var(--text)}
+  .team-tot .tt-save{margin-top:12px;background:rgba(52,211,153,.14);color:var(--green);font-weight:800;text-align:center;padding:11px;border-radius:9px;font-size:14px}
 
   .summary{margin-top:22px;background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:16px 18px;font-size:14px;color:var(--muted);display:none}
   .summary b{color:var(--text)}
@@ -251,10 +297,15 @@
 
     <div style="margin-top:16px">
       <label>Setup — OA service fee (on top of salary)</label>
-      <div class="seg seg-full" id="setupSeg">
-        <button data-setup="wfh" class="active">🏠 Work-from-home · <span id="feeWfhLbl">$350</span>/mo</button>
-        <button data-setup="onsite">🏢 Onsite · <span id="feeOnsiteLbl">$600</span>/mo</button>
+      <div class="setup-office" id="setupOffice">
+        <div>
+          <div class="so-title">🏢 Office-Based <span class="so-rec">RECOMMENDED</span></div>
+          <div class="so-desc">Dedicated secure workstation, full facility, IT &amp; fully-managed HR — <b><span id="feeOnsiteLbl">$600</span>/mo</b></div>
+        </div>
+        <button type="button" class="so-incl" id="inclToggle">See what's included ✓</button>
       </div>
+      <div class="incl-panel" id="inclPanel"></div>
+      <label class="remote-row"><input type="checkbox" id="remoteToggle"> Switch to Remote-based setup (<span id="feeWfhLbl">$350</span>/mo)</label>
     </div>
 
     <div class="loc-label">Client location — highlight their currency</div>
@@ -267,6 +318,20 @@
       <button class="copy" id="copyBtn">Copy</button>
       <span id="summaryText"></span>
     </div>
+    <button class="team-add" id="teamAdd" type="button">+ Add this role to a team comparison</button>
+  </div>
+
+  <!-- Team comparison (multi-role) — appears once roles are added -->
+  <div class="input-card team-card" id="teamCard" style="display:none">
+    <div class="team-head">Team comparison <span class="team-clear" id="teamClear">Clear all</span></div>
+    <div id="teamList"></div>
+    <div class="team-tot" id="teamTot"></div>
+  </div>
+
+  <!-- What this role can do (populated when a role is selected) -->
+  <div class="input-card role-tasks" id="roleTasksCard" style="display:none">
+    <div class="rt-head">What a <span id="rtRole">role</span> can take off your plate</div>
+    <div class="rt-grid" id="rtGrid"></div>
   </div>
 
   <!-- Part-time quick check (optional, collapsed by default) -->
@@ -1319,6 +1384,462 @@
     "Digital Marketing & SEO/SEM Specialist":{us:[50000,90000],ca:[52000,88000],au:[65000,105000],uk:[28000,52000]},
   };
 
+  // Per-role responsibilities — 'what this person can do for you'.
+  var TASKS={
+    "Accounting Assistant/specialist":["Process and code journal entries daily","Reconcile bank statements and accounts","File invoices and supporting documentation","Prepare GL trial balances","Respond to vendor and client inquiries","Data entry for accounting systems"],
+    "Accounting Officer":["Manage accounts payable and receivable","Reconcile balance sheet accounts monthly","Prepare financial statements and reports","Ensure compliance with accounting standards","Process payroll and tax filings","Monitor and control cash flow"],
+    "Finance Lead/Officer":["Oversee accounting and finance operations","Review and approve financial transactions","Direct financial reporting and analysis","Manage team accounting functions","Ensure regulatory and audit compliance","Drive financial planning and forecasting"],
+    "Accountant":["Prepare and audit financial statements","Maintain general ledger accounts","Reconcile subsidiary ledgers monthly","Prepare tax compliance documentation","Analyze variance and prepare reports","Support external audit engagements"],
+    "Accounts Payable/Receivable Manager":["Manage AP/AR teams and operations","Oversee invoice processing and payment","Ensure timely collections and payments","Reconcile vendor and customer accounts","Analyze aging reports and arrears","Implement controls and policies"],
+    "Accounts Payable/Receivable":["Process vendor invoices and payments","Record accounts receivable transactions","Follow up on overdue invoices","Match POs, receipts, and invoices","Reconcile accounts payable balances","Respond to vendor and customer queries"],
+    "Associate/Clerk/Adminstrator":["Execute general accounting entry tasks","File and organize financial documents","Support month-end closing processes","Prepare routine financial reports","Coordinate with accounting teams","Maintain spreadsheets and databases"],
+    "Fund Accountant":["Track fund assets and performance","Reconcile fund accounts and positions","Prepare fund reporting and statements","Monitor compliance with fund mandates","Process fund transactions and trades","Support fund audit and regulatory filings"],
+    "General Accountant (AU/US)":["Manage general ledger entries","Prepare GAAP/AASB compliant statements","Reconcile accounts monthly and quarterly","Coordinate tax preparation filings","Analyze financial variance reports","Support quarterly and annual audits"],
+    "Accountant CPA":["Provide CPA-level accounting advice","Prepare and review financial statements","Manage tax planning and compliance","Lead audit preparation and coordination","Ensure GAAP and regulatory adherence","Drive accounting process improvements"],
+    "Accountant Non-CPA":["Execute general accounting transactions","Maintain accounting records accurately","Reconcile accounts on schedule","Prepare routine financial reports","Support audit and compliance tasks","Process month-end closing activities"],
+    "Senior Accounting Officer/Team Lead":["Supervise accounting team activities","Review and approve accounting entries","Manage accounting process improvements","Ensure compliance and controls","Prepare financial reports and analysis","Mentor and develop accounting staff"],
+    "Accounting Manager/Senior Manager":["Direct accounting department operations","Oversee financial reporting and closing","Manage accounting team and budgets","Implement accounting policies and controls","Lead audit preparation and coordination","Drive process automation initiatives"],
+    "Tax Agent":["Prepare tax returns and filings","Provide tax advisory and planning","Represent clients in tax matters","Ensure tax compliance obligations","Coordinate with tax authorities","Track changes in tax regulations"],
+    "Tax Accountant":["Prepare corporate and individual tax returns","Analyze tax situations and optimize","Maintain tax provision calculations","Ensure timely tax filing deadlines","Research tax law and regulations","Support tax audit preparation"],
+    "Trust Accountant":["Manage trust accounting records","Reconcile trust accounts monthly","Prepare trust financial statements","Process trust distributions correctly","Maintain trust compliance documentation","Support trust audits and reporting"],
+    "Tax Preparer":["Prepare individual and business tax returns","Gather necessary tax documentation","Calculate tax liabilities and refunds","File tax returns with authorities","Respond to tax notices and inquiries","Organize tax records and documents"],
+    "Bookkeeper":["Record transactions in accounting system","Reconcile bank statements monthly","Manage accounts payable and receivable","Prepare trial balance and reports","Process payroll data for processing","Maintain accurate financial records"],
+    "Bookkeeping Manager/Lead":["Direct bookkeeping team operations","Oversee accounting entry accuracy","Manage month-end closing procedures","Ensure records reconciliation accuracy","Implement bookkeeping policies","Train and supervise bookkeeping staff"],
+    "Payroll Admin/Officer":["Process employee payroll accurately","Calculate deductions and tax withholding","Prepare payroll reports and registers","Maintain payroll records and data","Ensure compliance with payroll regulations","Respond to employee payroll inquiries"],
+    "Payroll Manager":["Manage payroll processing and systems","Oversee payroll team and compliance","Process complex multi-jurisdiction payrolls","Prepare payroll reports and reconciliation","Ensure data integrity and security","Implement payroll policy changes"],
+    "Finance Administrator":["Support general finance operations","Prepare financial reports and data","Process accounting transactions accurately","Maintain financial records and files","Coordinate with accounting teams","Assist with month-end closing activities"],
+    "Financial Analyst":["Analyze financial data and trends","Prepare financial reports and summaries","Build financial models and forecasts","Conduct variance analysis and investigation","Support budgeting and planning cycles","Present findings to management"],
+    "Financial Planner":["Develop client financial plans","Analyze investment and savings strategies","Prepare financial recommendations","Monitor and rebalance portfolios","Track client goals and progress","Provide ongoing financial guidance"],
+    "Finance Controller":["Oversee all accounting and finance","Ensure accurate financial reporting","Manage accounting team and processes","Implement financial controls and policies","Direct budgeting and forecasting","Support external audits and compliance"],
+    "Finance Manager":["Direct finance operations and reporting","Manage finance team and budgets","Prepare financial analysis and forecasts","Implement financial policies and controls","Ensure regulatory compliance","Drive continuous improvement initiatives"],
+    "Financial Reporting Manager":["Oversee financial statement preparation","Manage consolidation and reporting processes","Ensure GAAP and regulatory compliance","Coordinate with external auditors","Analyze accounting records accuracy","Prepare management financial reports"],
+    "Sr. Finance Controller/Director/Head":["Lead finance department and strategy","Direct all accounting and reporting","Manage finance team and budgets","Ensure financial controls and compliance","Drive financial planning and forecasting","Represent finance in executive meetings"],
+    "External/Internal Auditor/Auditors":["Conduct financial audits independently","Test accounting controls and transactions","Prepare audit reports and findings","Identify compliance risks and gaps","Assess internal control effectiveness","Recommend process improvements"],
+    "Audit Manager":["Direct audit team and engagements","Plan and oversee audit procedures","Review audit workpapers and findings","Manage audit timelines and budgets","Communicate findings to stakeholders","Ensure audit quality and standards"],
+    "Paraplanner":["Prepare financial planning documents","Gather and organize client data","Draft financial plans and analyses","Conduct financial research","Assist with client meetings","Support compliance and documentation"],
+    "Mergers & Acquisitions Corporate Deal Analyst":["Analyze target company financials","Prepare due diligence reports","Build financial models for deals","Conduct valuation analysis","Identify integration risks","Support transaction documentation"],
+    "Logistics and Finance Administrator":["Process logistics and financial transactions","Track shipment and inventory costs","Reconcile logistics and accounting records","Prepare cost analysis reports","Manage vendor payments","Coordinate finance and operations teams"],
+    "Web Developer (HTML, CSS, JS)":["Build responsive websites and pages","Code HTML, CSS, JavaScript features","Fix bugs and optimize performance","Implement design mockups accurately","Test cross-browser compatibility","Update and maintain website code"],
+    "Wordpress Developer":["Build and customize WordPress sites","Develop and integrate plugins","Design custom WordPress themes","Optimize site speed and SEO","Fix technical issues and bugs","Manage site updates and security"],
+    "Shopify Developer":["Build and customize Shopify stores","Develop Shopify apps and features","Integrate third-party applications","Optimize checkout and conversion","Fix bugs and technical issues","Support store updates and launches"],
+    "SQL Developer":["Design and optimize database structures","Write complex SQL queries","Build data reporting and dashboards","Manage database performance tuning","Develop stored procedures","Ensure data integrity and security"],
+    "Magento Developer":["Build Magento e-commerce sites","Develop custom Magento extensions","Customize store functionality","Optimize site speed and performance","Fix technical issues and bugs","Support store launches and updates"],
+    "Drupal Developer":["Build and customize Drupal sites","Develop Drupal modules and themes","Integrate third-party systems","Optimize site functionality","Fix technical issues and bugs","Manage site security and updates"],
+    "Xamarin Developer":["Build cross-platform mobile apps","Code iOS and Android solutions","Integrate APIs and data","Fix bugs and optimize performance","Test on multiple devices","Support app updates and releases"],
+    "iOS Developer":["Develop iPhone and iPad apps","Code Swift and iOS features","Integrate APIs and data","Test app functionality thoroughly","Fix bugs and optimize performance","Support app updates and releases"],
+    "Android Developer":["Develop Android mobile applications","Code Java and Kotlin solutions","Integrate APIs and data services","Test on multiple Android devices","Fix bugs and optimize performance","Support app updates and releases"],
+    "Fullstack Developer":["Build frontend and backend systems","Develop databases and APIs","Code responsive user interfaces","Integrate third-party services","Fix bugs and optimize performance","Support application launches"],
+    "React Native Developer":["Build iOS and Android apps","Code React Native components","Integrate APIs and data","Optimize app performance","Fix technical issues and bugs","Support app updates and releases"],
+    "Data Analyst/Business Analyst":["Analyze business data and trends","Build reports and dashboards","Prepare data visualizations","Identify process improvements","Support decision-making with insights","Document findings and recommendations"],
+    "Drafting Analyst":["Create technical drawings and designs","Prepare CAD documentation","Review and revise specifications","Maintain design standards","Support engineering projects","Prepare bid and proposal documents"],
+    ".Net Core Developer (Senior)":["Build scalable backend APIs and services","Write clean, maintainable C# code","Design database schemas and migrations","Mentor junior developers on best practices","Implement authentication and security protocols"],
+    "Javascript Developer (2 or more: JQuery, React, Vue, Angular)":["Build interactive web interfaces","Develop responsive single-page applications","Manage state across complex UI flows","Optimize front-end performance metrics","Write reusable component libraries"],
+    "Angular Developer":["Build enterprise-scale Angular applications","Create dynamic component architectures","Manage RxJS observables and data streams","Implement routing and lazy-loaded modules","Deliver pixel-perfect UI implementations"],
+    "ReactJS Developer":["Develop modern React components and hooks","Build state management with Context or Redux","Create responsive, accessible user interfaces","Optimize rendering and performance tuning","Integrate third-party libraries seamlessly"],
+    "VueJS Developer":["Build Vue applications with Composition API","Create reusable Vue components","Implement Vue Router navigation flows","Manage application state management","Develop progressive enhancement features"],
+    "NodeJS Developer":["Build server-side applications and APIs","Create database integrations and queries","Implement middleware and authentication layers","Handle real-time communication with WebSockets","Deploy and maintain Node.js services"],
+    "UX/UI Designer (Lead)":["Direct design strategy and visual systems","Create comprehensive design systems documentation","Conduct user research and usability testing","Mentor design team members","Deliver high-fidelity prototypes and specifications"],
+    "UI Developer":["Translate designs into pixel-perfect code","Build responsive grid and component layouts","Implement CSS animations and interactions","Ensure cross-browser compatibility","Optimize UI rendering performance"],
+    "UI/UX Developer":["Design and code user interface components","Conduct usability testing and analysis","Build interactive prototypes and mockups","Implement accessibility standards","Create design documentation and guidelines"],
+    "C#.Net Developer":["Develop Windows and web applications","Build RESTful APIs with C#","Implement LINQ queries and data access","Create unit tests and maintain code quality","Deploy applications to production servers"],
+    "ASP.Net Developer":["Build ASP.NET web applications and APIs","Implement MVC or ASP.NET Core patterns","Create database connections and ORM models","Manage authentication and authorization","Deploy to hosting platforms"],
+    "PHP Developer":["Develop PHP web applications","Build database-driven websites","Implement PHP frameworks like Laravel","Create REST APIs and integrations","Manage server-side logic and workflows"],
+    "Java Developer":["Build enterprise Java applications","Implement Spring Framework solutions","Create scalable microservices","Write unit and integration tests","Deploy Java applications to servers"],
+    "JavaScript Developer":["Develop web applications with JavaScript","Create browser-based interactive features","Implement DOM manipulation and events","Build and maintain JavaScript libraries","Optimize JavaScript performance"],
+    "Oodo Developer":["Customize Odoo ERP modules","Develop Odoo extensions and plugins","Create Odoo workflows and automations","Integrate Odoo with external systems","Deploy Odoo configurations"],
+    "PIMcore Developer":["Build PIM solutions and extensions","Manage product data and catalogs","Create custom workflows and automations","Integrate with e-commerce platforms","Optimize PIMcore performance"],
+    "Python Developer":["Build Python applications and scripts","Create data processing pipelines","Develop web frameworks like Django","Write automated testing suites","Implement machine learning models"],
+    "Ruby on Rails Developer":["Build Rails web applications","Create database models and migrations","Implement Rails authentication systems","Build APIs with Rails","Deploy Rails applications to production"],
+    "MuleSoft Developer":["Design integration flows and APIs","Connect enterprise systems and data","Build MuleSoft connectors and transformations","Implement error handling and security","Monitor and maintain API health"],
+    "Cloud Engineer (AWS, Azure, Google Cloud)":["Design cloud infrastructure and architecture","Implement auto-scaling and load balancing","Manage cloud databases and storage","Implement security and compliance controls","Monitor cloud costs and optimization"],
+    "Zoho Developer":["Develop Zoho CRM customizations","Build Zoho APIs and integrations","Create Zoho workflows and automations","Customize Zoho modules and forms","Deploy Zoho configurations"],
+    "Microsoft Dynamics CRM Developer":["Customize Microsoft Dynamics CRM modules","Develop Dynamics plugins and workflows","Create CRM integrations with other systems","Build custom forms and business logic","Deploy Dynamics configurations"],
+    "Salesforce Developer":["Develop Apex code for Salesforce","Create Lightning components and flows","Build Salesforce integrations via APIs","Implement custom business logic","Deploy Salesforce configurations"],
+    "Salesforce Administrator":["Manage Salesforce users and permissions","Configure Salesforce objects and fields","Create and maintain Salesforce workflows","Support end-users and troubleshoot issues","Generate Salesforce reports and dashboards"],
+    "Salesforce Technical Analyst/Admin":["Configure Salesforce technical architecture","Manage system upgrades and maintenance","Create custom reports and dashboards","Troubleshoot Salesforce technical issues","Implement Salesforce security protocols"],
+    "Salesforce Consultant Engineer":["Design Salesforce solutions for clients","Architect custom Salesforce implementations","Advise on Salesforce best practices","Build Salesforce solutions and integrations","Lead Salesforce project implementations"],
+    "Salesforce Functional Analyst":["Gather Salesforce business requirements","Design functional Salesforce solutions","Configure Salesforce business processes","Conduct user training and support","Document functional specifications"],
+    "CRM Specialist":["Manage CRM system configuration","Optimize CRM data quality and processes","Create CRM workflows and automations","Support CRM end-users","Generate CRM analytics and reports"],
+    "ERP Developer":["Develop ERP modules and customizations","Build ERP integrations with systems","Create ERP workflows and reports","Implement ERP data migrations","Deploy ERP configurations"],
+    "Acumatica Developer":["Develop Acumatica customizations","Build Acumatica integrations","Create Acumatica workflows","Implement Acumatica business logic","Deploy Acumatica configurations"],
+    "NetSuite Developer":["Develop NetSuite SuiteScripts","Create NetSuite customizations and workflows","Build NetSuite integrations and APIs","Implement NetSuite business logic","Deploy NetSuite configurations"],
+    "NetSuite Administrator":["Manage NetSuite user access and roles","Configure NetSuite modules and processes","Create NetSuite reports and dashboards","Support NetSuite end-users","Maintain NetSuite security protocols"],
+    "NetSuite Specialist":["Configure NetSuite systems and modules","Manage NetSuite users and permissions","Create NetSuite workflows and automations","Support NetSuite operations","Generate NetSuite reports"],
+    "SAP Support Consultant":["Provide technical SAP system support","Troubleshoot SAP module issues","Create SAP reports and configurations","Support SAP end-users","Document SAP issues and resolutions"],
+    "Manual Tester":["Execute manual test cases","Document test results and bugs","Create test scenarios and cases","Verify bug fixes and regressions","Conduct exploratory testing"],
+    "Automation Tester":["Write automated test scripts","Build test automation frameworks","Maintain automated test suites","Execute continuous integration testing","Report and track automation results"],
+    "DevOps Engineer":["Design CI/CD pipelines and workflows","Manage containerization and orchestration","Implement infrastructure as code","Monitor and optimize system performance","Manage deployment automation"],
+    "DevOps Officer":["Oversee DevOps operations and processes","Manage deployment and release processes","Monitor infrastructure and system health","Implement DevOps best practices","Lead DevOps team initiatives"],
+    "IT Project Manager / Software Development Project Manager":["Plan and manage project timelines","Coordinate development team activities","Track project budgets and resources","Manage project risks and issues","Report project status to stakeholders"],
+    "Document Controller":["Manage and organize project documents","Control document versions and revisions","Maintain document repositories","Ensure document compliance and standards","Archive and retrieve documents"],
+    "IT Infrastructure":["Design and manage IT infrastructure","Implement network and server systems","Manage IT security and compliance","Support IT infrastructure operations","Optimize infrastructure performance"],
+    "Business Analyst":["Gather and document business requirements","Analyze business processes and workflows","Create functional specifications","Recommend process improvements","Support system implementations"],
+    "Solutions Architect":["Design comprehensive technology solutions","Create system architecture documentation","Evaluate technology options and vendors","Lead solution implementation planning","Advise on best practices"],
+    "Azure Solutions Architect":["Design Azure cloud solutions","Create Azure architecture documentation","Implement Azure security and compliance","Optimize Azure costs and performance","Lead Azure implementations"],
+    "System Administrator / Engineer/Support/Network":["Manage users and system access","Support IT systems and infrastructure","Troubleshoot network and system issues","Implement IT security protocols","Maintain system and network documentation"],
+    "Database Administrator":["Manage database servers and instances","Create backup and recovery procedures","Monitor database performance metrics","Optimize database queries and indexes","Implement database security protocols"],
+    "Penetration Tester":["Identify and exploit security vulnerabilities in systems","Document findings with risk ratings and remediation steps","Conduct penetration tests across network infrastructure","Test application security for weaknesses","Generate professional penetration test reports","Recommend security controls and hardening measures"],
+    "Security Analyst":["Monitor security alerts and suspicious activities","Investigate security incidents and breaches","Analyze logs for threats and anomalies","Implement security policies and procedures","Conduct vulnerability assessments and remediation","Prepare security compliance documentation"],
+    "Head of IT":["Lead IT strategy and infrastructure planning","Manage IT department budget and resources","Oversee IT team performance and hiring","Ensure system uptime and disaster recovery","Drive digital transformation initiatives","Report IT metrics to executive leadership"],
+    "IT Director":["Direct IT operations and technology roadmap","Manage IT department personnel and budgets","Ensure business continuity and disaster recovery","Align IT investments with business goals","Oversee vendor relationships and contracts","Report IT performance to senior management"],
+    "RPA Developer":["Design and build robotic process automation workflows","Automate manual, repetitive business processes","Configure RPA tools and platforms","Test and deploy automation bots","Monitor bot performance and optimize workflows","Document automation procedures and changes"],
+    "Reports Analyst":["Create and maintain business intelligence reports","Extract data from multiple systems and databases","Build dashboards and visualizations","Deliver scheduled reports to stakeholders","Analyze data trends and performance metrics","Document reporting processes and data sources"],
+    "Application Security Engineer":["Review code for security vulnerabilities","Design secure application architectures","Conduct application penetration testing","Implement authentication and authorization","Lead secure software development practices","Create application security policies"],
+    "Security Engineer":["Design and implement security infrastructure","Manage firewalls and access controls","Conduct vulnerability and threat assessments","Implement encryption and data protection","Monitor security systems for anomalies","Develop incident response procedures"],
+    "Network Security Engineer":["Design secure network architectures","Configure firewalls and intrusion detection","Monitor network traffic for threats","Implement VPN and secure protocols","Conduct network security assessments","Respond to security incidents and attacks"],
+    "Senior Network Operations Engineer":["Lead network operations and team management","Design and optimize network performance","Manage network infrastructure and upgrades","Ensure network availability and uptime","Mentor junior network operations staff","Lead incident response and resolution"],
+    "Network Engineer":["Design and maintain network infrastructure","Configure routers, switches, and firewalls","Monitor network performance and uptime","Plan network capacity and upgrades","Troubleshoot network connectivity issues","Document network topology and changes"],
+    "Information Security Analysts":["Monitor and analyze security threats","Investigate information security incidents","Implement security awareness programs","Assess and audit security controls","Develop information security policies","Track compliance with security standards"],
+    "IT Security Specialist":["Implement and maintain security solutions","Monitor systems for security threats","Respond to security incidents","Enforce security policies across organization","Conduct security awareness training","Audit security controls and compliance"],
+    "Cybersecurity Analyst":["Monitor networks for cyber attacks","Analyze security logs and alerts","Investigate security breaches and incidents","Implement defensive security measures","Test systems for vulnerabilities","Document security incidents and findings"],
+    "IT Service Delivery Lead":["Lead IT support team and ticket handling","Manage SLA compliance and service quality","Coordinate IT service delivery with business","Oversee IT support processes and tools","Train and mentor support team members","Report on service metrics and improvements"],
+    "IT Systems Administrator":["Manage servers, storage, and infrastructure","Deploy and maintain operating systems","Administer user accounts and permissions","Perform system backups and recovery","Monitor system performance and uptime","Apply patches and security updates"],
+    "IT Support Team Lead":["Lead helpdesk and support team members","Manage ticket queues and SLA compliance","Train support staff on policies","Escalate complex technical issues","Monitor team performance and quality","Report support metrics to management"],
+    "Software Tester":["Execute manual and automated test cases","Identify and document software bugs","Verify requirements are met through testing","Perform regression testing on updates","Report test results and coverage metrics","Collaborate with developers on fixes"],
+    "Software Developer":["Write and maintain application code","Develop new software features and functionality","Debug and fix code issues","Participate in code reviews","Document code and technical specifications","Deploy applications to production"],
+    "Software Engineer":["Design and develop software solutions","Build scalable and maintainable applications","Write clean, efficient code","Conduct unit testing and debugging","Participate in architecture decisions","Deploy and support production systems"],
+    "Software Architect":["Design enterprise software solutions","Define system architecture and technology stack","Lead technical design reviews","Ensure scalability and performance","Establish coding standards and best practices","Guide development teams on implementation"],
+    "Support Analyst":["Provide technical support to end users","Resolve support tickets and incidents","Document solutions in knowledge base","Troubleshoot hardware and software issues","Train users on systems and tools","Escalate complex issues appropriately"],
+    "Programmer Analyst":["Analyze business requirements for solutions","Develop and maintain programs and applications","Identify process improvements and automation","Create technical documentation","Perform code reviews and testing","Support applications in production"],
+    "IT Analyst / Analyst":["Analyze business and technical requirements","Design solutions for IT infrastructure","Evaluate tools and technology options","Conduct business process improvements","Document systems and procedures","Support implementation of new solutions"],
+    "QA Engineer":["Develop and execute comprehensive test plans","Identify and document defects","Verify requirements are implemented correctly","Establish quality assurance standards","Perform regression and performance testing","Report quality metrics to management"],
+    "AI Automation Engineer":["Design AI-powered automation solutions","Develop machine learning models and pipelines","Implement intelligent process automation","Train and optimize AI algorithms","Monitor AI system performance and accuracy","Document AI automation workflows"],
+    "QA Engineer (Automation)":["Develop automated test frameworks","Write and maintain test automation scripts","Conduct continuous testing of applications","Identify and report test failures","Optimize test execution and coverage","Support CI/CD pipeline testing"],
+    "Mobile Developer":["Develop mobile applications for iOS or Android","Design responsive mobile user interfaces","Integrate APIs and backend services","Perform mobile app testing and debugging","Optimize app performance and battery usage","Deploy apps to app stores"],
+    "Data Scientist":["Analyze complex datasets and trends","Build predictive and statistical models","Extract actionable insights from data","Create data visualizations and dashboards","Develop machine learning solutions","Present data findings to stakeholders"],
+    "Power BI Developer":["Create interactive Power BI dashboards","Design business intelligence reports","Connect data sources and models","Develop custom visuals and measures","Optimize dashboard performance","Train users on Power BI tools"],
+    "ERP Systems & Power BI Developer":["Configure and customize ERP systems","Develop Power BI reports from ERP data","Integrate ERP with other business systems","Manage data flows and transformations","Train users on ERP and reporting","Support system implementations"],
+    "Master Data Specialist":["Manage master data governance and quality","Establish data standards and definitions","Cleanse and validate data across systems","Maintain data catalogs and documentation","Resolve data quality issues","Implement data governance policies"],
+    "Joomla Web Developer":["Develop and maintain Joomla websites","Create custom Joomla components and modules","Design responsive website layouts","Integrate plugins and extensions","Optimize website performance and SEO","Manage website updates and deployments"],
+    "Technical Project Manager":["Plan and manage technical projects","Define project scope and timelines","Coordinate technical teams and resources","Monitor project progress and budgets","Manage stakeholder communication","Report project status to leadership"],
+    "Google Workspace Consultant":["Implement and configure Google Workspace","Migrate to Google Workspace from other platforms","Design custom solutions using Google tools","Train users on Google Workspace features","Manage security and compliance settings","Optimize Google Workspace utilization"],
+    "Machine Learning Engineer":["Develop and deploy machine learning models","Build ML pipelines and infrastructure","Optimize algorithms for performance","Analyze model accuracy and metrics","Implement model monitoring and retraining","Document ML solutions and processes"],
+    "Technical Support Engineer L1-L2":["Provide technical support to users","Troubleshoot hardware and software issues","Escalate complex technical problems","Document and track support tickets","Create technical knowledge articles","Perform system diagnostics and repairs"],
+    "Site Reliability Engineer":["Ensure application availability and uptime","Automate operational and deployment processes","Monitor systems and respond to incidents","Optimize infrastructure and performance","Develop incident response procedures","Establish SLOs and reliability metrics"],
+    "Integration Consultant/Support":["Design system integration solutions","Implement API and middleware integrations","Configure data synchronization between systems","Troubleshoot integration issues","Document integration architectures","Support integration implementation projects"],
+    "Operations UC (Avaya) Engineer":["Manage Avaya unified communications systems","Configure voicemail and call routing","Monitor UC system performance","Support user issues and troubleshooting","Perform system upgrades and maintenance","Optimize voice quality and connectivity"],
+    "Marketing Cloud Specialist":["Manage marketing automation campaigns","Design email marketing workflows","Configure Marketing Cloud integrations","Analyze campaign performance metrics","Segment audiences and personalize content","Support marketing cloud implementations"],
+    "IT Audit":["Conduct IT audits and compliance reviews","Assess IT control effectiveness","Verify compliance with regulations","Document audit findings and recommendations","Track remediation of audit issues","Report audit results to management"],
+    "IT Helpdesk":["Provide first-line technical support","Resolve user hardware and software issues","Log and track support tickets","Escalate complex issues appropriately","Maintain IT asset inventory","Deliver user technical training"],
+    "IT Helpdesk & Cybersecuirty Specialist":["Provide helpdesk support and troubleshooting","Monitor systems for security threats","Implement security policies and controls","Respond to security incidents","Conduct security awareness training","Maintain IT security documentation"],
+    "TIER 2 IT HELPDESK - TECHNICAL SUPPORT OFFICER":["Resolve escalated technical support tickets","Troubleshoot complex software and hardware","Provide remote technical assistance","Document solutions in knowledge base","Train junior support staff","Manage ticket escalations and priorities"],
+    "TIER 3 IT HELPDESK - TECHNICAL SUPERVISOR":["Supervise IT helpdesk and support teams","Resolve complex technical issues","Manage escalation queue and priorities","Train and mentor support staff","Monitor team performance and SLAs","Report support metrics to management"],
+    "Architect":["Design building layouts and spatial planning","Create technical blueprints and specifications","Review construction documentation and permits","Coordinate with engineering and contractor teams","Ensure compliance with building codes","Manage revisions throughout project lifecycle"],
+    "CAD Designer/Operator":["Create precise 2D and 3D technical drawings","Convert sketches and specifications to CAD models","Update and maintain design documentation","Prepare drawings for manufacturing or construction","Collaborate with designers on revisions","Organize and manage drawing files"],
+    "Civil Engineer":["Design infrastructure projects and systems","Analyze soil, structural, and environmental data","Create construction plans and specifications","Supervise site surveys and testing","Ensure project compliance with regulations","Manage budgets and project timelines"],
+    "Civil Estimator":["Calculate material and labor costs","Prepare detailed project cost estimates","Analyze bid requirements and specifications","Research current material pricing","Track cost variances and updates","Support bid proposal development"],
+    "Control Engineer":["Design automated control systems","Program PLCs and industrial controllers","Test and troubleshoot control logic","Create system documentation and schematics","Optimize system performance and efficiency","Support equipment commissioning"],
+    "Cost Estimator":["Analyze project scope and specifications","Calculate total project costs","Prepare competitive bids and proposals","Track material and labor pricing trends","Adjust estimates for changes","Document estimation methodology"],
+    "Data Engineer":["Build and maintain data pipelines","Design database schemas and structures","Extract and transform raw data","Optimize data systems for performance","Implement data quality controls","Support analytics and reporting needs"],
+    "Draftsperson/Drafter":["Translate designs into technical drawings","Create architectural and engineering documents","Maintain drawing accuracy and standards","Update plans based on feedback","Organize project documentation","Prepare drawings for production"],
+    "Engineering Technician":["Assist engineers with technical projects","Perform equipment testing and calibration","Gather and record field data","Prepare technical reports and documentation","Support laboratory or workshop operations","Troubleshoot technical issues"],
+    "Geological Engineer":["Analyze soil and rock formations","Conduct site investigations and testing","Assess geotechnical project risks","Develop foundation and stability solutions","Prepare geological reports","Support environmental assessments"],
+    "GIS Specialist":["Create and analyze geographic information maps","Collect and process spatial data","Develop GIS databases and systems","Prepare mapping reports and analysis","Support data visualization projects","Troubleshoot geospatial issues"],
+    "Integration Engineer":["Connect systems and software platforms","Design and implement integration solutions","Test system compatibility and performance","Document integration specifications","Troubleshoot integration issues","Support system deployment"],
+    "Industrial Engineer":["Optimize production processes","Design manufacturing workflows","Analyze efficiency and cost reduction","Create process documentation","Plan capacity and resource allocation","Support operational improvements"],
+    "Marine Engineer":["Design marine structures and systems","Analyze hydrodynamic and structural loads","Create detailed marine drawings","Develop marine equipment specifications","Support vessel maintenance planning","Ensure marine safety compliance"],
+    "Mechanical Engineer":["Design mechanical systems and components","Perform stress analysis and simulations","Create detailed technical specifications","Support product testing and prototyping","Optimize mechanical performance","Ensure design compliance"],
+    "Nuclear Engineering":["Design nuclear systems and safety systems","Analyze reactor physics and operations","Develop nuclear safety procedures","Support regulatory compliance documentation","Troubleshoot nuclear equipment issues","Assist with decommissioning projects"],
+    "Petroleum Engineer":["Design oil and gas extraction systems","Analyze reservoir geology and conditions","Develop production optimization strategies","Create well design specifications","Support drilling operations planning","Assess reserve and resource data"],
+    "Design Support Specialist (CAD)":["Maintain design file organization","Create and modify CAD drawings","Prepare drawings for production review","Update documentation and revisions","Organize design databases","Support design team workflow"],
+    "Survey CAD Technician":["Convert survey data to CAD drawings","Create site maps and survey plans","Process GPS and field measurements","Prepare survey documentation","Organize survey project files","Update baseline drawings"],
+    "CAD Technician (Drone Data Processing)":["Process drone imagery and point clouds","Create 3D models from drone surveys","Generate orthomosaic maps","Extract measurements from drone data","Prepare drone survey reports","Organize aerial survey files"],
+    "Technical Drawings CAD":["Create production-ready CAD drawings","Convert engineering sketches to digital","Maintain drawing libraries and standards","Prepare technical documentation","Update drawings for design changes","Support manufacturing departments"],
+    "CAD Draftsman/Operator":["Produce architectural and technical drawings","Translate design specifications into CAD","Maintain drawing accuracy and standards","Organize and archive design files","Prepare drawings for review","Support revision and coordination"],
+    "Plastic Injection Design Engineer":["Design injection-molded plastic components","Analyze mold flow and cooling","Create mold specifications and drawings","Optimize component design for manufacturing","Support tooling and production planning","Reduce manufacturing defects"],
+    "HVAC Estimator":["Calculate HVAC system material costs","Prepare detailed HVAC estimates","Analyze equipment specifications and sizing","Research and track equipment pricing","Support HVAC bid development","Document estimation methodology"],
+    "Design Engineer II":["Lead design of complex systems","Create detailed design specifications","Mentor junior design staff","Review and approve design solutions","Support continuous design improvements","Ensure design quality standards"],
+    "Engineer II":["Manage engineering projects","Develop technical solutions independently","Lead cross-functional technical teams","Review and approve technical work","Support engineering standards compliance","Mentor junior engineers"],
+    "Graphic Engineer II":["Create advanced graphics and visualizations","Develop rendering and graphics solutions","Optimize graphics performance","Support technical graphics requirements","Lead graphics projects","Document graphics specifications"],
+    "Sr. Design Engineer":["Direct complex design initiatives","Establish design standards and processes","Lead cross-functional design teams","Mentor design engineers","Validate design solutions","Support strategic design planning"],
+    "Senior Graphic Engineer":["Lead graphics and visualization projects","Develop advanced rendering solutions","Establish graphics standards and best practices","Support high-complexity graphics requirements","Mentor graphics team members","Optimize visual communication"],
+    "Senior Structural Estimator":["Lead structural cost estimation projects","Develop advanced estimation methodologies","Manage estimation teams","Review and approve estimates","Support strategic bidding decisions","Ensure estimation accuracy"],
+    "Senior Technical Support":["Lead technical support operations","Resolve complex technical issues","Mentor support team members","Develop support procedures and documentation","Manage customer technical relationships","Support product improvement"],
+    "Technical Support I 1 & 2":["Respond to technical inquiries","Troubleshoot customer issues","Provide technical guidance","Document technical problems and solutions","Update knowledge base articles","Support product quality"],
+    "Estimator":["Calculate project costs and quotes","Prepare detailed cost estimates","Analyze bid requirements","Track pricing and material costs","Document estimation basis","Support sales teams with estimates"],
+    "Electrical Engineer":["Design electrical systems and circuits","Create electrical schematics and drawings","Analyze power requirements and loads","Ensure electrical code compliance","Support equipment selection and sizing","Troubleshoot electrical systems"],
+    "Quantity Surveyor":["Calculate material quantities from plans","Prepare detailed quantity take-offs","Track material usage and costs","Support cost estimation process","Prepare quantity reports","Monitor project cost performance"],
+    "Bid Writer/Proposal Writer":["Draft professional bid and proposal documents","Organize bid information and requirements","Develop compelling client proposals","Ensure proposal accuracy and compliance","Support bid submission deadlines","Incorporate technical specifications"],
+    "3D Artist":["Create detailed 3D models and assets","Develop visual concepts and designs","Produce high-quality renders","Support animation and visual projects","Optimize 3D assets for performance","Maintain asset libraries"],
+    "3D Animator":["Create character and object animations","Develop motion and movement sequences","Produce animation deliverables","Edit and refine animation timing","Support video and media projects","Ensure animation quality standards"],
+    "Affiliate Marketing Specialist":["Recruit and manage affiliate partners","Create affiliate marketing materials","Track affiliate performance metrics","Develop affiliate promotional campaigns","Optimize affiliate commission structures","Support revenue growth initiatives"],
+    "Amazon FBA Specialist":["Manage Amazon FBA product listings","Optimize product descriptions and keywords","Monitor inventory levels","Handle shipping and fulfillment logistics","Analyze sales performance metrics","Manage product reviews"],
+    "Amazon Marketing Manager":["Lead Amazon advertising campaigns","Optimize product bidding strategies","Manage Amazon A+ content","Analyze marketing performance data","Develop pricing strategies","Support revenue and sales growth"],
+    "Amazon Virtual Assistant":["Manage Amazon seller account operations","Update product listings and inventory","Process customer inquiries","Monitor account metrics and alerts","Prepare seller reports","Support daily operations"],
+    "Amazon & E-Commerce General Manager":["Lead e-commerce operations","Manage product sourcing strategy","Optimize sales and profitability","Oversee marketplace management","Develop marketing and pricing strategies","Build and mentor e-commerce teams"],
+    "Animator":["Create animation sequences","Develop character and motion design","Produce animation deliverables","Edit and refine animation timing","Support multimedia projects","Ensure animation quality"],
+    "Assistant Producer":["Coordinate production logistics and schedules","Support production team coordination","Manage production documentation","Track production timelines and deadlines","Assist with crew and talent coordination","Support post-production workflow"],
+    "Business Development Specialist":["Identify new business opportunities","Develop partnership proposals","Support sales pipeline development","Research market and competitor insights","Prepare business opportunity analysis","Support strategic growth initiatives"],
+    "Inside Sales Specialist":["Follow up with qualified leads daily","Close deals via email and phone","Maintain pipeline in CRM system","Generate qualified sales opportunities","Track customer interactions and outcomes"],
+    "Campaign Coordinator":["Schedule and launch marketing campaigns","Monitor campaign performance metrics","Coordinate deliverables across teams","Brief stakeholders on campaign status","Compile weekly campaign performance reports"],
+    "Category Manager - Ecommerce":["Research and analyze product demand trends","Optimize product mix and pricing strategy","Create product assortment recommendations","Monitor competitor pricing and positioning","Manage category P&L and margins"],
+    "Content Administrator":["Upload and organize website content daily","Update product information and descriptions","Maintain content calendars and schedules","Fix broken links and outdated content","Audit website for accuracy and compliance"],
+    "Content Processing Agent":["Format and structure raw content","Process bulk content for publishing","Quality check content before launch","Organize files in content management system","Update metadata for published content"],
+    "Content Strategist":["Define quarterly content themes and pillars","Plan editorial calendar six months ahead","Audit competitor content strategy","Map content to customer journey stages","Align messaging with brand voice and goals"],
+    "Content Writer":["Write SEO-optimized blog posts weekly","Create product descriptions and guides","Draft email and social copy","Research industry trends for articles","Edit and revise team writing"],
+    "Copywriter":["Write ad copy and landing page headlines","Craft compelling sales email sequences","Develop brand messaging and taglines","Test multiple copy variations for ads","Refine messaging based on performance data"],
+    "CRM Administrator":["Update customer records with new information","Ensure data accuracy and compliance","Create and manage user profiles","Troubleshoot data entry errors","Generate monthly CRM usage reports"],
+    "CRM Data Analyst":["Clean and audit CRM data quality","Build dashboards for sales team insights","Analyze pipeline velocity and conversion rates","Generate weekly sales performance reports","Identify data trends and anomalies"],
+    "Customer Insights and Data Analytics":["Analyze customer behavior and preferences","Segment customers for targeted campaigns","Generate monthly business intelligence reports","Track key performance indicators","Identify opportunities to improve retention"],
+    "Digital Designer":["Design social media graphics and ads","Create email templates and layouts","Develop website mockups and wireframes","Design infographics from data","Maintain brand consistency across visuals"],
+    "Digital Marketer":["Manage social media channels daily","Create and execute digital campaigns","Optimize landing pages for conversions","Track digital marketing KPIs","Test ads for best performance"],
+    "Digital Marketing Coordinator":["Schedule social media posts weekly","Coordinate promotional calendar","Assist with campaign execution","Track marketing metrics","Manage email distribution lists"],
+    "Digital Marketing Specialist":["Plan and execute digital campaigns","Manage paid advertising accounts","Optimize conversion rates and ROI","Create content marketing strategy","Analyze campaign performance data"],
+    "Digital Marketing Administrator":["Schedule and post social content","Update marketing calendar and deadlines","File and organize marketing assets","Send marketing communications","Track campaign metrics and reports"],
+    "Marketing Manager":["Develop and execute annual marketing plan","Oversee campaign budgets and spending","Lead creative team and freelancers","Track ROI across marketing channels","Report quarterly results to leadership"],
+    "Digital Media Specialist/Buyer":["Purchase and manage media placements","Negotiate vendor contracts and rates","Analyze media performance metrics","Optimize media spend for best ROI","Track impressions and click-through rates"],
+    "Digital Merchandise Manager":["Analyze product performance and sales trends","Optimize product placement online","Manage inventory levels by category","Create promotional strategies","Update product descriptions and photos"],
+    "Digital Platform and Community Support":["Monitor and respond to customer messages","Manage community discussions and forums","Create community guidelines and standards","Escalate issues to management","Build relationships with active community members"],
+    "Digital Marketing Support Graphic Designer":["Create social media templates","Design email marketing graphics","Produce quick-turnaround visual assets","Format graphics for multiple platforms","Update brand asset library"],
+    "Digital Marketing Manager":["Lead digital marketing strategy and planning","Oversee team and freelancer deliverables","Manage digital marketing budget","Report digital metrics to leadership","Optimize channels for performance"],
+    "Ecommerce Digital Marketing Specialist/Assistant":["Manage product feed optimization","Create ecommerce email campaigns","Design product listing pages","Track ecommerce conversion metrics","A/B test product page layouts"],
+    "Ecommerce Digital Marketing Executive":["Drive ecommerce revenue growth","Develop multi-channel marketing strategy","Optimize customer acquisition cost","Manage third-party marketplace listings","Lead ecommerce team performance"],
+    "Ecommerce Marketing Manager":["Oversee ecommerce marketing operations","Plan product launch campaigns","Manage ecommerce marketing budget","Track revenue and conversion goals","Lead cross-functional ecommerce projects"],
+    "Email Marketing":["Design and launch email campaigns","Build email subscriber lists","Segment audiences for personalization","Test subject lines and timing","Analyze email performance metrics"],
+    "Editor":["Edit written content for clarity","Proofread marketing materials","Ensure brand voice consistency","Revise articles and blog posts","Fact-check published content"],
+    "Director of Events/Events Director":["Plan and coordinate event logistics","Manage event budgets and vendors","Promote events and track registrations","Oversee event day operations","Collect and analyze event feedback"],
+    "Google Ads Manager":["Build and optimize Google Ad campaigns","Manage ad spend and budgets","Monitor keyword performance daily","A/B test ad copy and landing pages","Generate campaign performance reports"],
+    "Graphic Animation":["Create animated explainer videos","Design motion graphics for ads","Produce animated social content","Build animation storyboards","Export files for multiple platforms"],
+    "Graphic Designer / Artist":["Design print and digital marketing materials","Create brand logos and style guides","Develop visual concepts for campaigns","Design product packaging mockups","Maintain design asset libraries"],
+    "Graphic Design & Marketing Assistant":["Assist with graphic design projects","Organize and file marketing assets","Format designs for social media","Manage design approval workflows","Update marketing templates"],
+    "Graphic Designer/ Video Editor":["Edit marketing videos and reels","Create animated social content","Design graphics for video projects","Produce promotional video content","Manage video asset libraries"],
+    "Graphic Designer/WebMaster/Social Media":["Design website and social graphics","Manage website updates and maintenance","Schedule and post social content","Design email templates","Update brand visual standards"],
+    "HubSpot Reporting and Data Manager":["Build dashboards and custom reports","Track and analyze sales metrics","Monitor pipeline and forecast accuracy","Generate weekly performance reports","Ensure CRM data quality"],
+    "Investment Writer":["Research and write investment analysis","Create investment opportunity summaries","Draft investor communications","Analyze financial performance data","Write case studies and testimonials"],
+    "Lead Generation Specialist":["Identify and qualify new leads","Conduct lead research and outreach","Manage lead nurturing campaigns","Track lead generation ROI","Update lead database regularly"],
+    "Learning & Content Lead":["Develop training content and curricula","Create instructional guides and videos","Design learning paths for users","Update documentation","Coordinate employee learning programs"],
+    "Merchandising Specialist":["Analyze product sales performance","Create product assortment strategies","Plan seasonal merchandise presentations","Design promotional displays","Track merchandising effectiveness"],
+    "Marketing Analyst":["Analyze marketing campaign performance","Track ROI across channels","Generate weekly performance reports","Identify optimization opportunities","Build marketing dashboards"],
+    "Marketing Assistant":["Support marketing team tasks","Organize marketing files and assets","Schedule calendar and communications","Data entry for marketing systems","Assist with event coordination"],
+    "Marketing Expert":["Develop marketing strategy and tactics","Lead cross-functional projects","Mentor marketing team members","Research industry trends","Present strategic recommendations"],
+    "Marketing Coordinator":["Coordinate marketing campaign execution","Maintain marketing project calendars","Track vendor and budget expenses","Assist with event planning","Compile monthly marketing reports"],
+    "Marketing Director":["Develop annual marketing strategy","Lead and manage marketing team","Oversee marketing budget allocation","Report results to senior leadership","Drive brand and revenue growth"],
+    "Marketing Specialist":["Plan and execute marketing campaigns","Manage marketing channels and content","Track campaign performance metrics","Optimize marketing spend","Analyze customer insights"],
+    "Marketing Automation Specialist":["Build marketing automation workflows","Manage email marketing programs","Create lead scoring models","Develop customer journey automations","Analyze marketing funnel performance"],
+    "Marketing Funnel Specialist":["Design and optimize lead capture pages","Segment audiences for targeted campaigns","Track conversion metrics across funnel stages","Build automated nurture email sequences","Improve sales-to-lead handoff process"],
+    "Marketing Operations Specialist":["Manage marketing technology stack and integrations","Create and maintain campaign tracking systems","Generate weekly reporting dashboards","Audit data quality in CRM","Configure lead scoring rules","Document standard operating procedures"],
+    "Marketing Operations Manager":["Oversee marketing tech platforms and vendors","Lead quarterly performance reviews","Build scalable campaign frameworks","Manage team of operations coordinators","Align marketing and sales reporting","Optimize database health and compliance"],
+    "Marketing Project Manager":["Schedule campaigns and manage timelines","Coordinate cross-team project deliverables","Track budget spend against plan","Create project briefs for creative teams","Report on project milestones","Remove blockers and escalate risks"],
+    "Marketing Support":["Schedule meetings and manage calendars","Organize marketing collateral and assets","Draft templates and email campaigns","Process marketing requests and approvals","Manage event logistics coordination"],
+    "Monday.com Administrator":["Set up and maintain Monday.com workflows","Configure automations and notifications","Train users on platform best practices","Manage team permissions and access","Create custom dashboards and reports","Troubleshoot integration issues"],
+    "Multimedia Specialist":["Produce engaging video and audio content","Edit multimedia for social platforms","Optimize files for web and mobile","Manage media asset library","Create motion graphics animations","Package content for distribution"],
+    "Multimedia Designer":["Design graphics for digital and print","Create animated video presentations","Build interactive web design mockups","Develop brand-consistent templates","Produce photo editing and retouching","Design infographics and data visualizations"],
+    "MPR Specialist":["Pitch media outlets with story angles","Monitor media coverage and mentions","Prepare press releases and statements","Build journalist relationship database","Coordinate press event logistics","Report on PR campaign reach"],
+    "Paid Media Manager / Paid Advertising Manager":["Manage budgets across Google and social ads","Optimize campaigns for ROI improvement","Create and test ad copy variations","Monitor daily spend and performance","Build audience segments for retargeting","Report on campaign efficiency metrics"],
+    "Partner Marketing Manager":["Develop co-marketing program strategies","Negotiate partnership and revenue terms","Execute joint campaigns with partners","Track partner performance metrics","Manage partner communications","Create partner marketing collateral"],
+    "Performance Marketing Manager":["Drive measurable ROI across channels","Test and scale high-performing campaigns","Manage conversion rate optimization","Analyze customer acquisition costs","Build attribution modeling systems","Report on performance dashboards"],
+    "Performance Marketing Specialist":["Monitor campaign performance daily","Optimize bids and targeting parameters","Create A/B test plans and analysis","Manage PPC account quality scores","Document campaign learnings","Report on cost-per-acquisition trends"],
+    "Photography Director":["Direct product and lifestyle photo shoots","Manage photographers and production crew","Create shot lists and brand guidelines","Review and approve final images","Organize photo asset library","Ensure on-brand visual consistency"],
+    "PPC Specialist/Paid Social and PPC Specialist":["Manage Google Ads and Facebook campaigns","Write compelling ad copy and headlines","Optimize keyword bids and budgets","Create landing page tests","Monitor quality scores and CTR","Prepare weekly performance reports"],
+    "Prepress and Workflow Operator":["Prepare files for print production","Perform color correction and proofing","Manage print workflow and scheduling","Ensure print quality standards","Coordinate with printing vendors","Archive print materials for compliance"],
+    "Producer":["Manage video and content production timelines","Coordinate production crew and vendors","Budget and track production expenses","Oversee quality control on deliverables","Schedule post-production workflows","Manage asset delivery and archiving"],
+    "Product Catalog Specialist":["Maintain accurate product data and descriptions","Upload and optimize catalog listings","Audit product information across channels","Manage product images and attributes","Update pricing and inventory","Monitor catalog quality metrics"],
+    "Product Data Analyst":["Analyze product performance trends","Create data dashboards for insights","Identify high-performing SKUs","Monitor inventory and stock levels","Report on customer product preferences","Support pricing strategy with data"],
+    "Product Data Team Lead":["Oversee product data accuracy and quality","Manage data analyst team members","Set data quality standards and processes","Report on product KPIs to leadership","Build data dashboards and tools","Coordinate with product and sales teams"],
+    "Product Management Consultant":["Define product roadmap priorities","Conduct competitive product analysis","Gather and prioritize customer feedback","Create product requirement documents","Support product launch planning","Advise on feature enhancements"],
+    "Product Marketing Director":["Lead product launch strategies","Develop positioning and messaging","Create product marketing materials","Align product and sales messaging","Manage product marketing budget","Report on product adoption metrics"],
+    "Product Specialist":["Provide expert product knowledge","Create product comparison documents","Support sales with product information","Compile customer product feedback","Document product features and benefits","Train teams on product updates"],
+    "Production Assistant":["Support production team on set","Manage production supplies and logistics","Handle equipment setup and breakdown","Assist with scheduling and coordination","Record production notes and timecodes","Support post-production file management"],
+    "Production Manager (Media)":["Oversee end-to-end media production","Manage production budgets and timelines","Coordinate production teams and vendors","Ensure quality standards on deliverables","Handle licensing and clearances","Manage post-production workflow"],
+    "Production Team Lead":["Lead and mentor production staff","Schedule production resources","Monitor production quality and deadlines","Resolve production workflow issues","Report on production metrics","Optimize production processes"],
+    "Property Administrator":["Manage property listings and listings","Update property details and photos","Coordinate property showings","Process tenant and rental inquiries","Maintain property records","Support property management operations"],
+    "Property Marketing Executive":["Market properties across channels","Create property marketing campaigns","Manage property website listings","Generate property leads and inquiries","Coordinate property events","Report on property marketing performance"],
+    "Researcher":["Conduct market and competitive research","Compile industry trend reports","Analyze customer behavior and insights","Document research findings","Support product and strategy decisions","Maintain research databases"],
+    "Scheduler":["Manage executive and team calendars","Schedule meetings and conference rooms","Coordinate travel logistics","Send calendar invites and reminders","Manage schedule conflicts","Track meeting notes and follow-ups"],
+    "Script Writer":["Write engaging video and ad scripts","Adapt scripts for different platforms","Refine scripts based on feedback","Create dialogue and voiceover scripts","Write website copy and messaging","Document brand voice guidelines"],
+    "Senior Project Designer":["Lead large-scale design projects","Mentor junior designers on techniques","Develop design standards and systems","Present designs to stakeholders","Oversee design quality and consistency","Drive design innovation initiatives"],
+    "Senior Vice President of Marketing (SVP)":["Set annual marketing strategy","Lead marketing budget allocation","Build and manage marketing team","Report marketing performance to C-suite","Drive competitive positioning","Lead major marketing initiatives"],
+    "SEO Specialist/Coordinator":["Conduct keyword research and analysis","Optimize website pages for search","Build internal linking strategies","Monitor search rankings and traffic","Analyze SEO competitor performance","Report on organic growth metrics"],
+    "Search and Social Media Manager":["Manage search and social ad campaigns","Optimize bidding and audience targeting","Create and approve ad content","Monitor daily campaign performance","Generate performance reports","Test and refine messaging"],
+    "Social Media Coordinator With Graphic Design":["Create graphics for social posts","Schedule social media content","Engage with audience comments","Track social media analytics","Design branded templates","Compile social performance reports"],
+    "Social Media Lead Gen Specialist":["Generate leads through social platforms","Create lead capture campaigns","Manage social media lead follow-up","Monitor lead quality and conversion","Test lead generation ad variations","Report on lead volume and cost"],
+    "Social Media Manager":["Create and schedule social content","Engage with audience and comments","Monitor social media trends","Manage community and brand reputation","Analyze social media metrics","Report on audience growth and engagement"],
+    "Social Media Marketer":["Execute social media campaigns","Create platform-specific content","Manage social media posting calendar","Respond to customer inquiries","Track engagement and reach metrics","Identify viral content opportunities"],
+    "Sound & Lighting Tech":["Set up and test audio equipment","Manage sound levels during production","Design and operate lighting setups","Troubleshoot audio and lighting issues","Maintain equipment in working order","Document technical specifications"],
+    "Talent Marketing Insights Officer":["Analyze talent recruitment trends","Create talent market reports","Monitor competitor talent strategies","Support recruitment marketing campaigns","Track talent acquisition metrics","Advise on talent positioning"],
+    "Technical SEO Specialist":["Audit technical SEO issues","Improve website speed and performance","Fix crawlability and indexation issues","Implement structured data markup","Monitor Core Web Vitals","Report on technical SEO improvements"],
+    "SEO Content Sepcialist":["Write SEO-optimized content","Research target keywords","Create content outlines","Optimize meta titles and descriptions","Build internal linking strategy","Track content ranking performance"],
+    "Video Editor":["Edit raw footage into finished videos","Add graphics and transitions","Color correct and grade video","Mix audio and add music","Export for multiple platforms","Maintain video asset library"],
+    "Video Production Specialist":["Manage video production workflow","Coordinate production shoots","Oversee post-production process","Ensure video quality and consistency","Handle video file management","Report on video content performance"],
+    "Videographer":["Shoot product and brand videos","Frame and compose video shots","Manage camera equipment and settings","Capture interviews and testimonials","Organize video files and footage","Deliver edited video content"],
+    "Voice Artist":["Record professional voiceovers for projects","Edit and master audio files for quality","Perform multiple voice styles and accents","Deliver studio-quality recordings on deadline","Manage recording session logistics and scheduling","Revise takes based on client feedback"],
+    "UX/UI Designer":["Design user interfaces for web and apps","Create wireframes and interactive prototypes","Conduct user research and usability testing","Develop design systems and style guides","Iterate designs based on stakeholder feedback","Document specifications for developer handoff"],
+    "Website Administrator":["Manage website content and updates daily","Monitor site performance and uptime","Implement security patches and backups","Optimize page speed and SEO elements","Troubleshoot technical issues and errors","Handle domain and hosting administration"],
+    "Billing and Specialist":["Process patient billing and payments","Verify insurance coverage and eligibility","Submit claims to insurance companies","Follow up on denied or pending claims","Prepare patient statements and invoices"],
+    "Billing and Coding Specialist":["Assign medical codes to patient records","Process healthcare claims for reimbursement","Verify insurance authorization before treatment","Resolve billing discrepancies with insurers","Maintain HIPAA compliance throughout process","Generate billing reports and reconciliations"],
+    "Company Nurse":["Manage employee health and wellness programs","Conduct occupational health assessments","Respond to workplace injuries and incidents","Maintain confidential health records compliance","Provide health education to staff","Coordinate with external medical providers"],
+    "Clinical Support Specialis/ Virtual Assistant":["Schedule patient appointments and reminders","Handle patient intake and paperwork","Assist physicians during patient consultations","Manage electronic health records accurately","Process prescription requests and refills","Coordinate care between departments"],
+    "Dental Administration Assistant":["Manage dental office scheduling and appointments","Handle patient registration and insurance verification","Process dental billing and payments","Sterilize instruments and maintain clinic supplies","Answer patient phone calls and inquiries","Assist with treatment coordination"],
+    "Healthcare CSR":["Answer patient calls and inquiries","Schedule appointments and manage calendars","Process refunds and payment arrangements","Resolve patient complaints and concerns","Direct patients to appropriate departments","Maintain professional and empathetic communication"],
+    "Insurance Verification Specialist CSR":["Verify patient insurance coverage and benefits","Obtain pre-authorization for treatments","Communicate coverage details to patients","Submit insurance inquiry requests","Resolve insurance coverage discrepancies","Maintain accurate verification documentation"],
+    "Medical Biller":["Submit insurance claims for procedures","Process patient payments and statements","Follow up on unpaid claims and denials","Research billing discrepancies and errors","Maintain accurate billing records","Generate billing reports and analysis"],
+    "Medical Coder":["Assign ICD-10 codes to diagnoses","Assign CPT codes to medical procedures","Review clinical documentation for completeness","Ensure accurate code assignment for billing","Stay current with coding standards changes","Audit claims for coding accuracy"],
+    "Medical Crendentialing Specialist":["Verify healthcare provider credentials","Process licensing and certification applications","Maintain credential databases and records","Conduct background checks and screenings","Monitor license renewal deadlines","Ensure regulatory compliance documentation"],
+    "Medical Scribe/Transcriptionist":["Transcribe physician-patient interactions","Document medical histories accurately","Type clinical notes in real-time","Maintain HIPAA confidentiality standards","Correct transcription errors and inaccuracies","Organize medical records by patient"],
+    "Medical Virtual Assistant":["Manage patient appointments and reminders","Prepare medical documents and reports","Handle insurance verification and authorization","Process patient intake forms","Coordinate between patients and physicians","Maintain electronic health record accuracy"],
+    "Pharma Coder":["Assign codes to pharmaceutical procedures","Review clinical documentation for pharmacy","Ensure compliance with pharmacy regulations","Code medication interactions and treatments","Maintain accurate pharmacy billing records","Stay current with pharmaceutical coding updates"],
+    "Registered Nurse":["Assess and monitor patient conditions","Administer medications and treatments","Document patient progress in records","Collaborate with care team members","Educate patients on health conditions","Respond to patient emergencies and concerns"],
+    "US RNs":["Provide clinical patient care and assessment","Manage medication administration and timing","Monitor vital signs and patient status","Document all nursing interventions","Collaborate with physicians on care plans","Support patient discharge planning"],
+    "Accounts Administrator":["Process vendor invoices and payments","Maintain accounts payable records","Reconcile bank statements monthly","Track accounts receivable and collections","Prepare financial reports and analysis","Manage account coding and classifications"],
+    "Tenancy Applications Specialist":["Review rental applications for completeness","Conduct tenant background and credit checks","Communicate application decisions to applicants","Verify employment and rental history","Maintain secure application documentation","Process approved tenancy documents"],
+    "Tenant Support Administrator":["Respond to tenant maintenance requests","Schedule and coordinate repair appointments","Document tenant issues and resolutions","Handle tenant payment reminders","Process tenant complaints professionally","Maintain tenant communication logs"],
+    "Arrears Administrator":["Track and collect overdue rent payments","Send payment reminder notices to tenants","Process partial and late payments","Escalate arrears to collections when needed","Maintain payment arrangement documentation","Report arrears status to management"],
+    "Routine Inspection Administrator":["Schedule property inspections with tenants","Document inspection findings and photos","Assess property condition and maintenance needs","Communicate inspection results to owners","Track inspection compliance and deadlines","Maintain inspection records"],
+    "Maintenance Administrator":["Coordinate maintenance requests from tenants","Schedule contractor visits and inspections","Track maintenance work orders and costs","Document repairs and completion dates","Manage maintenance budget tracking","Maintain vendor contact information"],
+    "Lease Renewals Specialist":["Contact tenants about lease expiration","Prepare updated lease documents","Negotiate renewal terms with tenants","Process signed lease renewal documents","Track renewal deadlines and deadlines","Communicate renewal terms to all parties"],
+    "Invoicing Specialist":["Generate property management invoices","Process invoice payments from clients","Reconcile invoicing discrepancies","Maintain invoice documentation and records","Send timely invoice reminders","Generate financial reports from invoices"],
+    "Marketing Administrator":["Manage property marketing and listings","Coordinate with marketing team campaigns","Update property descriptions and photos","Track marketing performance metrics","Schedule property showings and open houses","Maintain marketing calendar and deadlines"],
+    "New Business Administrator":["Process new property onboarding","Gather required documentation from owners","Set up property accounts and systems","Conduct orientation with new clients","Coordinate initial property assessments","Maintain new business checklist items"],
+    "Smoke Alarm Administrator":["Schedule smoke alarm testing and inspections","Track compliance with fire safety regulations","Document alarm testing results and dates","Coordinate repairs for faulty alarms","Maintain testing compliance records","Send testing notifications to tenants"],
+    "Data Entry Specialist":["Enter property data into management systems","Verify data accuracy and completeness","Update tenant and owner information","Process lease documents into system","Maintain database consistency","Organize files and records systematically"],
+    "Sales Assistant":["Qualify and respond to sales inquiries","Schedule sales consultations and tours","Prepare sales documentation and contracts","Follow up with interested prospects","Assist with proposal preparation","Coordinate with sales team members"],
+    "Contracts Admnistrator":["Review contracts for accuracy and compliance","Prepare property management contracts","Maintain contract filing and organization","Track contract renewal dates","Coordinate contract negotiations","Ensure all parties sign documents"],
+    "Listings Administrator":["Post property listings on platforms","Update listing information and photos","Manage listing inquiries and responses","Coordinate property showings","Track listing performance metrics","Remove sold or inactive listings"],
+    "Administration Support":["Handle general administrative tasks","Organize files and office documentation","Schedule meetings and manage calendars","Process correspondence and communications","Support multiple team members","Maintain organized filing systems"],
+    "Receptionist":["Answer and route incoming calls","Schedule appointments and meetings","Greet visitors and clients professionally","Maintain front desk organization","Process visitor sign-in and parking","Manage office supplies and ordering"],
+    "Trust Accounting Assistant":["Manage trust account transactions","Reconcile trust account statements","Process client trust fund deposits","Maintain trust accounting records","Report trust account balances","Ensure trust account compliance"],
+    "Commercial Property Manager":["Oversee commercial property operations","Manage tenant relationships and leases","Coordinate maintenance and repairs","Collect rent and manage finances","Plan property renovations and upgrades","Handle lease negotiations and renewals"],
+    "Mortgage Broker Support / Loan Processing":["Process loan applications and documentation","Verify borrower employment and income","Order appraisals and property inspections","Coordinate with underwriting team","Track loan pipeline and deadlines","Communicate status updates to clients"],
+    "Account Manager":["Build relationships with key clients","Identify upsell and cross-sell opportunities","Resolve client issues and concerns","Prepare quarterly business reviews","Track account metrics and performance","Manage contract renewals with clients"],
+    "Account Manager, Programmatic":["Manage programmatic advertising accounts","Optimize campaign performance and ROI","Analyze data and reporting metrics","Communicate results to clients","Identify advertising opportunities","Troubleshoot platform and technical issues"],
+    "Administrative Support / Admin Assistants / Admin Staff / Admin Specialist":["Handle general office administration tasks","Manage executive calendars and scheduling","Prepare documents and presentations","Process expense reports and reimbursements","Coordinate travel and logistics","Maintain confidential filing systems"],
+    "Admin Manager":["Supervise administrative staff and teams","Delegate tasks and manage workload","Train staff on processes and systems","Monitor team performance and productivity","Handle HR-related administrative matters","Report administrative metrics to leadership"],
+    "Admin Supervisor":["Oversee daily administrative operations","Schedule staff shifts and coverage","Train administrative team members","Review and approve administrative work","Address staff performance issues","Report to management on operations"],
+    "Allocation Officer":["Allocate resources to projects","Track resource utilization rates","Analyze allocation efficiency","Manage resource scheduling requests","Report allocation metrics","Optimize resource distribution"],
+    "Allocation Manager":["Oversee resource allocation across teams","Forecast resource needs and capacity","Balance resource priorities","Monitor allocation compliance","Report allocation analytics","Manage stakeholder requests for resources"],
+    "Appointment Setter":["Call prospects to schedule meetings","Qualify leads before scheduling","Confirm appointment times with clients","Track scheduled appointments","Follow up on missed appointments","Maintain appointment calendar database"],
+    "Assistant Operations Manager":["Coordinate daily operations and team workflows","Manage scheduling, staffing, and resource allocation","Process administrative requests and documentation","Monitor performance metrics and reporting","Handle vendor and supplier communications","Support compliance and audit requirements"],
+    "Automotive Finance & Insurance Sales Manager":["Close auto finance and insurance packages","Manage sales pipeline and customer follow-ups","Train and oversee finance sales team","Achieve monthly sales targets and quotas","Handle complex deal structures and negotiations","Maintain regulatory compliance documentation"],
+    "Collections Specialist":["Contact delinquent customers via phone and email","Negotiate payment plans and settlements","Update account status and payment records","Prepare collection reports and aging analysis","Escalate hardship cases to management","Maintain detailed customer interaction logs"],
+    "Collections Officer":["Pursue high-value or complex debt collections","Conduct collections interviews and negotiations","Investigate account histories and payment patterns","Document collection efforts and resolutions","Coordinate with legal teams on enforcement","Monitor portfolio performance and recoveries"],
+    "Commercial Analyst":["Analyze commercial contracts and pricing","Review proposals and cost structures","Prepare competitive analysis and market intelligence","Support tender and bid processes","Monitor spend trends and supplier performance","Generate commercial reports and recommendations"],
+    "Branch Administrator/Coordinator":["Manage branch schedules and administrative tasks","Coordinate events, meetings, and facility logistics","Process invoices and expense reports","Maintain branch files and document management","Handle phone calls and customer inquiries","Support branch manager with operational needs"],
+    "Bid Coordinator/Manager":["Compile and submit competitive bids","Track bid deadlines and requirements","Coordinate bid team and gather documentation","Analyze bid results and competitor activity","Maintain bid tracking and compliance records","Follow up on tender outcomes"],
+    "BPO / Account Specialist":["Manage client accounts and day-to-day communications","Process transactions and account updates","Resolve customer issues and complaints","Generate account reports and reconciliations","Coordinate with multiple internal departments","Ensure service level agreements are met"],
+    "Business Development":["Identify and pursue new business opportunities","Research target markets and potential clients","Develop partnerships and strategic relationships","Prepare proposals and pitch decks","Track pipeline and conversion metrics","Attend industry events and networking activities"],
+    "Business Development Representative":["Prospect and qualify inbound leads","Schedule discovery calls with prospects","Gather account intelligence and research","Maintain CRM data and activity logs","Follow up on demo requests and inquiries","Report on pipeline and activity metrics"],
+    "Business Development Manager":["Manage sales pipeline and revenue targets","Close enterprise and mid-market deals","Develop long-term client relationships","Create custom proposals and presentations","Mentor junior sales staff and reps","Analyze win/loss data and market trends"],
+    "Customer Service Consultant":["Resolve customer inquiries via multiple channels","Troubleshoot product and service issues","Document customer interactions and resolutions","Process refunds and adjustments","Escalate complex issues appropriately","Maintain high satisfaction scores"],
+    "CSR/Customer Support":["Answer customer calls and live chat","Process orders and account changes","Troubleshoot technical and product issues","Escalate unresolved complaints to management","Update customer records and systems","Track resolution time and satisfaction"],
+    "Call Center Team Lead/Team Leader/Customer Care":["Supervise and coach call center representatives","Monitor call quality and adherence to schedules","Handle escalated customer issues","Track team performance metrics and KPIs","Provide feedback and performance coaching","Coordinate staff coverage and training"],
+    "Chat Support Representative":["Respond to customer chat inquiries in real-time","Resolve product and billing questions","Manage multiple conversations simultaneously","Process simple refunds and requests","Document chat interactions and resolutions","Maintain chat response time targets"],
+    "Client Renewal Executive":["Contact clients approaching contract renewal dates","Negotiate renewal terms and pricing","Prepare renewal proposals and quotes","Manage renewal pipeline and forecasts","Upsell additional products or services","Ensure timely contract execution"],
+    "Client Relation Manager":["Build and maintain strategic client relationships","Handle account issues and complaints","Coordinate service delivery with internal teams","Prepare quarterly business reviews","Identify upsell and cross-sell opportunities","Report on client satisfaction and retention"],
+    "Client Services":["Provide ongoing support to assigned clients","Process service requests and changes","Monitor service delivery and quality","Communicate status updates to clients","Gather feedback and suggestions","Track client satisfaction metrics"],
+    "Faults and Helpdesk":["Log and prioritize technical fault tickets","Perform initial troubleshooting steps","Escalate complex issues to specialists","Track resolution time and ticket status","Provide workarounds and solutions","Document technical issues and resolutions"],
+    "Client Services Representative / Para Client Services Coordinator":["Respond to routine client service inquiries","Process service requests and documentation","Update client records and systems","Prepare client reports and statements","Coordinate between clients and internal teams","Track client communications and follow-ups"],
+    "Contracts/Systems Administrator":["Maintain contract repository and filing system","Upload and organize contracts in systems","Update contract databases and records","Pull contract copies and documentation","Support contract renewals and amendments","Ensure contract compliance and tracking"],
+    "Contracts Management / Legal Support/ Legal Assistant":["Prepare and review legal documents","Maintain contract files and records","Support legal proceedings and depositions","Research legal precedents and regulations","Draft correspondence and legal notices","Coordinate with external counsel"],
+    "Corporate Secretarial Consultant":["Prepare board and shareholder meeting materials","Maintain corporate records and minutes","File regulatory and statutory documents","Manage corporate governance compliance","Coordinate with company secretarial functions","Track regulatory deadlines and filings"],
+    "CRO Specialist":["Optimize website conversion funnels","Conduct A/B testing and analyze results","Implement conversion tracking and analytics","Identify and fix conversion bottlenecks","Generate conversion performance reports","Recommend and prioritize improvements"],
+    "Customer Experience Team Lead":["Oversee customer experience initiatives","Coordinate service improvements and changes","Coach team on customer-centric behaviors","Monitor customer satisfaction and feedback","Handle complex customer escalations","Track experience metrics and trends"],
+    "Customer Success Specialist":["Onboard new customers and provide training","Proactively engage customers on success goals","Troubleshoot product adoption issues","Identify upsell and expansion opportunities","Track customer health and satisfaction","Prevent churn through targeted interventions"],
+    "Cyber Security Specialist":["Monitor systems for security threats","Implement security protocols and updates","Conduct security audits and assessments","Respond to security incidents","Manage user access and permissions","Provide security training and awareness"],
+    "Data Visualization Associate":["Create dashboards and visual reports","Extract and transform data for analysis","Design charts and infographics","Troubleshoot data quality issues","Automate reporting and refresh schedules","Support stakeholder reporting needs"],
+    "Dispute Consultant":["Investigate customer disputes and claims","Gather evidence and supporting documentation","Communicate resolution options to customers","Process dispute refunds and adjustments","Maintain detailed dispute records","Report on dispute trends and patterns"],
+    "E-commerce Support":["Manage product listings and updates","Process online orders and shipments","Handle customer inquiries about products","Update inventory and stock levels","Resolve payment and delivery issues","Support website troubleshooting needs"],
+    "Executive Assistant":["Schedule meetings and manage executive calendars","Prepare presentations and meeting materials","Handle executive correspondence and emails","Arrange travel and logistics","Maintain confidential files and records","Support special projects and initiatives"],
+    "Excel Expert/Specialist":["Build complex spreadsheets and models","Create automated dashboards and reports","Optimize spreadsheet performance","Train staff on Excel functions","Develop custom formulas and macros","Migrate data between systems"],
+    "General Admin Support":["Answer phones and manage communications","Schedule meetings and maintain calendars","Process expense reports and invoices","File and organize documents","Support multiple departments as needed","Handle general office administrative tasks"],
+    "Helpdesk Admin Assistant":["Log IT support tickets and issues","Provide first-level technical support","Reset passwords and manage access","Escalate tickets to specialists","Track ticket resolution and status","Maintain IT knowledge base articles"],
+    "HR Assistant / Associate":["Post job openings and screen resumes","Schedule interviews and coordinate hiring","Process onboarding paperwork","Maintain employee records and files","Support payroll and benefits administration","Assist with employee relations issues"],
+    "HR Administrator":["Manage employee records and databases","Process payroll and benefits changes","Prepare HR reports and analytics","Coordinate recruitment and hiring","Maintain compliance with HR regulations","Support employee development programs"],
+    "HR Executive/Specialist":["Develop and implement HR policies","Manage talent acquisition and retention","Conduct performance reviews and feedback","Handle employee relations and disputes","Support organizational development","Ensure employment law compliance"],
+    "HR Manager / Human Resources Manager":["Lead HR team and strategy","Manage recruiting and hiring processes","Oversee compensation and benefits","Handle employee relations and compliance","Develop talent management programs","Drive organizational performance initiatives"],
+    "HR Supervisor":["Supervise HR administrative staff","Support recruitment and onboarding","Assist with employee relations matters","Coordinate HR programs and events","Monitor HR compliance and regulations","Provide HR guidance to managers"],
+    "Human Resources Officer":["Execute HR policies and procedures","Manage employee files and records","Support recruitment and hiring","Process employee changes and requests","Maintain HR systems and databases","Ensure HR compliance and documentation"],
+    "Inbound Mail Specialist":["Sort, scan, and distribute incoming mail","Process mail receipts and acknowledgments","Maintain mail logs and tracking","Handle confidential and sensitive correspondence","Scan documents for electronic filing","Coordinate with departments on mail distribution"],
+    "Sales Representative":["Prospect and close new business deals","Manage customer accounts and relationships","Develop sales proposals and quotes","Achieve monthly sales targets","Maintain CRM and activity records","Conduct product demonstrations"],
+    "Inside Sales Representative":["Make outbound calls to prospects","Qualify leads and schedule demos","Present products and solutions","Close deals over the phone","Maintain pipeline and activity logs","Meet or exceed sales quotas"],
+    "Instructional Designer":["Develop training courses and content","Create learning materials and resources","Design engaging educational experiences","Test and refine training programs","Incorporate feedback into courses","Track learning outcomes and effectiveness"],
+    "Inventory Coordinator | E-Commerce Admin":["Track inventory levels and stock","Process purchase orders and receipts","Manage warehouse and storage locations","Update inventory management systems","Reconcile inventory discrepancies","Support e-commerce order fulfillment"],
+    "Loan Assessor":["Review loan applications and documentation","Assess creditworthiness and risk","Verify applicant income and assets","Prepare loan assessment reports","Recommend approval or denial","Support underwriting and compliance"],
+    "Loan Processor":["Process and verify loan applications accurately","Prepare documentation for underwriting review","Conduct credit and income verification checks","Track loan status and communicate with applicants","Input data into processing systems efficiently","Prepare disclosure documents for compliance"],
+    "Logistic Coordinator":["Schedule and coordinate shipments daily","Track inventory levels across warehouses","Manage carrier communications and quotes","Resolve shipping delays and routing issues","Prepare shipping documentation and labels","Update clients on delivery status proactively"],
+    "Logistics/Shipping/Inventory":["Manage inbound and outbound shipments","Monitor inventory accuracy and stock levels","Process orders and arrange transportation","Track package movements and deliveries","Handle freight documentation and customs","Coordinate with suppliers and carriers"],
+    "Recruitment Market Research":["Research job market trends and compensation","Identify talent pools and competitor benchmarks","Compile industry salary and skills data","Analyze hiring patterns across sectors","Create market research reports monthly","Track employment landscape shifts"],
+    "Management Consultant":["Analyze business processes and identify inefficiencies","Develop strategic recommendations for improvement","Facilitate workshops and stakeholder meetings","Create detailed implementation roadmaps","Monitor KPIs and track progress metrics","Present findings to executive leadership"],
+    "Merchandising Development Analyst/Merchandising Analyst":["Analyze sales trends and seasonal patterns","Develop product assortments for markets","Review inventory and markdown strategies","Create visual merchandising plans","Track competitor pricing and positioning","Prepare merchandising forecast reports"],
+    "Mortgage Administrator":["Process mortgage applications and documentation","Verify borrower information and employment","Prepare loan files for underwriting","Track mortgage compliance requirements","Coordinate with appraisers and title companies","Update borrowers on application status"],
+    "Mortgage Broker Support / Loan Processing (AU)":["Process mortgage applications end-to-end","Verify documents against lender requirements","Manage broker communications and submissions","Track regulatory compliance and deadlines","Liaise with valuers and settlement teams","Prepare settlement documentation packages"],
+    "Onboarding and Compliance Specialist":["Conduct employee onboarding programs","Verify compliance with regulatory requirements","Prepare onboarding documentation and policies","Conduct compliance training and assessments","Maintain compliance audit trails","Monitor policy adherence across teams"],
+    "Onboarding Coordinator":["Schedule and facilitate new hire onboarding","Prepare orientation materials and systems access","Track employee progress during ramp period","Coordinate training schedules across departments","Collect and process onboarding documentation","Follow up on onboarding completion tasks"],
+    "Operations Director":["Oversee daily operations and strategic planning","Manage budgets and allocate resources","Lead cross-functional teams and departments","Monitor KPIs and operational metrics","Develop process improvements and initiatives","Report performance to executive leadership"],
+    "Operations Assistant":["Support daily operations and administrative tasks","Organize schedules and coordinate meetings","Prepare reports and compile operational data","Assist with process documentation","Handle filing and records management","Support team with ad hoc requests"],
+    "Operations Coordinator":["Coordinate daily operations across functions","Track metrics and generate reports","Schedule resources and manage calendars","Process documents and maintain records","Support workflow optimization initiatives","Communicate updates across departments"],
+    "Operations Manager":["Manage daily operations and team performance","Develop and implement process improvements","Monitor budgets and control costs","Ensure regulatory compliance and standards","Lead and mentor operations team members","Report metrics and strategic updates"],
+    "Operations Supervisor":["Supervise operations team and workflow","Monitor quality and process adherence","Track daily metrics and KPIs","Schedule shifts and manage staffing","Ensure compliance with company policies","Address operational issues immediately"],
+    "Outbound Sales Representative":["Prospect and qualify potential customers","Make outbound calls to close deals","Prepare proposals and negotiate contracts","Follow up on leads consistently","Update CRM with activity and results","Meet monthly sales targets and quotas"],
+    "Outbound Telemarketing":["Call prospects to generate qualified leads","Deliver value proposition and handle objections","Book appointments and forward to sales","Track calling metrics and completion rates","Update prospect data in system","Achieve daily and monthly dialing goals"],
+    "Patient Monitoring Specialist":["Monitor patient vital signs and symptoms","Document patient health data accurately","Alert clinicians to concerning changes","Maintain patient confidentiality and HIPAA","Respond to patient inquiries promptly","Prepare reports for care teams"],
+    "Para Broker":["Support brokers with client interactions","Prepare quotes and policy documentation","Process applications and renewals","Research coverage options for clients","Coordinate with insurers on claims","Maintain organized client files"],
+    "Paralegal":["Conduct legal research and analysis","Prepare contracts and legal documents","Manage case files and deadlines","Coordinate with courts and opposing counsel","Maintain legal confidentiality and compliance","Support attorneys on litigation matters"],
+    "Partner/Customer Success Manager":["Manage partner relationships and accounts","Ensure customer satisfaction and retention","Track partner KPIs and performance","Handle escalations and resolve issues","Identify upsell and expansion opportunities","Conduct quarterly business reviews"],
+    "Permitting Specialist/Licensing":["Prepare and submit permit applications","Track regulatory requirements and deadlines","Coordinate with government agencies","Maintain compliance documentation and records","Monitor license renewals and expiration dates","Handle regulatory inquiries and responses"],
+    "Prepress & Workflow Operator":["Prepare files for printing production","Check color accuracy and quality standards","Manage workflow and job scheduling","Handle plates and prepress setup","Troubleshoot technical printing issues","Monitor production timeline and deadlines"],
+    "Planning Assistant":["Support planning projects and initiatives","Gather data for planning processes","Schedule meetings and coordinate timelines","Prepare planning documents and presentations","Track action items and deliverables","Assist with analysis and research"],
+    "Process Improvement Specialist":["Analyze workflows and identify bottlenecks","Design and implement process improvements","Measure efficiency gains and ROI","Train teams on new processes","Document procedures and best practices","Drive continuous improvement initiatives"],
+    "Product Mapping Coordinator/Product Data Coordinator":["Map products across catalogs and systems","Maintain accurate product data and attributes","Ensure data consistency across platforms","Upload and manage product information","Flag data quality issues for correction","Support product launches and updates"],
+    "Procurement Manager":["Manage vendor relationships and contracts","Negotiate pricing and terms with suppliers","Oversee purchasing budget and spend","Ensure procurement compliance and standards","Track deliveries and resolve issues","Develop supplier performance metrics"],
+    "Program Coordinator":["Organize and schedule program activities","Manage participant registration and communications","Track program metrics and attendance","Prepare program materials and resources","Coordinate with vendors and stakeholders","Report program results and outcomes"],
+    "Project Coordinator":["Support project teams on deliverables","Track project timelines and milestones","Manage documentation and communications","Schedule meetings and coordinate resources","Monitor project budget and expenses","Prepare status reports and updates"],
+    "Procurement Officer":["Process purchase orders and requisitions","Source suppliers and obtain quotes","Manage vendor relationships efficiently","Track procurement compliance and approvals","Monitor delivery and resolve discrepancies","Maintain supplier and contract records"],
+    "Project Manager":["Plan and oversee project execution","Manage project budget and resources","Track progress against timelines","Coordinate cross-functional teams effectively","Manage risks and scope changes","Deliver projects on time and budget"],
+    "Project Scheduler":["Develop and maintain project schedules","Track schedule performance and variances","Identify and resolve schedule conflicts","Update stakeholders on timeline changes","Monitor critical path and dependencies","Prepare schedule reports regularly"],
+    "Property Management / Admin Assistant":["Handle tenant communications and requests","Process rent collection and payments","Schedule maintenance and repairs","Manage leases and renewal agreements","Maintain property records and documentation","Assist with showings and applications"],
+    "Property Manager":["Oversee daily property operations","Manage tenant relationships and leases","Handle maintenance and repair coordination","Monitor property budgets and expenses","Ensure compliance with regulations","Maximize occupancy and rental income"],
+    "Purchasing & Inventory Officer":["Process purchase orders and requisitions","Monitor inventory levels and stock","Manage vendor relationships and deliveries","Track procurement compliance and approvals","Resolve order discrepancies and issues","Maintain purchasing and inventory records"],
+    "Purchasing & Inventory Manager":["Manage purchasing strategy and vendors","Optimize inventory levels and costs","Oversee inventory systems and accuracy","Negotiate contracts and pricing terms","Monitor supply chain performance","Report inventory metrics and forecasts"],
+    "Purchasing Officer":["Source and procure goods and services","Evaluate suppliers and obtain quotes","Process purchase orders systematically","Track deliveries and verify invoices","Maintain vendor and contract files","Monitor procurement budgets and spend"],
+    "Public Relations Manager":["Develop and execute PR campaigns","Write press releases and media materials","Manage media relationships and inquiries","Monitor brand reputation and coverage","Coordinate events and announcements","Report PR metrics and outcomes"],
+    "Programmatic Trading Specialist":["Manage programmatic advertising campaigns","Optimize bids and targeting parameters","Monitor campaign performance and ROI","Analyze data and refine strategies","Troubleshoot technical ad delivery issues","Prepare campaign reports and insights"],
+    "QA Specialist":["Test software and identify bugs","Execute test cases and validate functionality","Document quality issues and defects","Verify fixes and conduct regression testing","Maintain test documentation and procedures","Report quality metrics and trends"],
+    "Quality Control Assurance":["Inspect products for quality standards","Test and validate product functionality","Document defects and nonconformities","Verify corrections before shipment","Maintain quality control documentation","Report quality metrics and improvements"],
+    "Real Estate Admins (AU/US RE VA - Leasing / Property Management / Maintenance)":["Process lease applications and agreements","Schedule property showings and tours","Handle maintenance requests and coordination","Manage tenant communications","Process rent and utility payments","Maintain property records and documentation"],
+    "Recruiter":["Source and screen job candidates","Post job openings and manage applications","Conduct phone screens and interviews","Present candidates to hiring managers","Track recruitment metrics and pipelines","Coordinate offer and onboarding process"],
+    "Recruiter Technical":["Source technical talent and candidates","Assess technical skills and qualifications","Conduct technical screening interviews","Present candidates to engineering teams","Manage technical talent pipelines","Coordinate technical assessments"],
+    "Real Estate Assistant":["Support real estate agents with clients","Prepare contracts and transaction documents","Schedule showings and coordinate viewings","Manage listing databases and information","Handle client communications and inquiries","Track closings and transaction status"],
+    "Real Estate Specialist":["Manage property listings and marketing","Show properties and qualify buyers","Negotiate contracts and terms","Coordinate inspections and appraisals","Track transaction timelines to closing","Manage client relationships and expectations"],
+    "Real Time Analyst":["Monitor live data streams and performance metrics","Identify anomalies and flag critical operational issues","Generate real-time reports for stakeholder visibility","Alert teams to system outages or performance degradation","Track KPIs and trending metrics continuously","Escalate urgent situations to management"],
+    "Recruitment Coordinator/Administrator":["Screen resumes and schedule candidate interviews","Coordinate scheduling between candidates and hiring teams","Maintain recruitment databases and candidate pipelines","Send offer letters and onboarding documentation","Track hiring metrics and time-to-fill reporting","Manage job postings across multiple platforms"],
+    "Recruitment Marketing":["Create job descriptions and candidate-facing content","Deploy recruitment campaigns across social channels","Manage employer branding and career site content","Track recruitment funnel metrics and conversion rates","Design recruitment email campaigns and nurture sequences","Produce recruitment videos and visual materials"],
+    "Recruitment Manager":["Build and manage recruitment team performance","Set hiring targets and recruitment strategy","Partner with departments on talent requirements","Own end-to-end hiring process for multiple roles","Manage recruitment agency relationships and costs","Mentor and coach recruitment team members"],
+    "Reservation & Guest Services Agent":["Process room and service reservations","Answer guest inquiries via phone, email, or chat","Update reservation systems in real-time","Handle cancellations and booking modifications","Provide recommendations and upsell services","Resolve guest complaints and issues"],
+    "Sales Trainer/Membership Sales Trainer":["Design sales training curriculum and materials","Conduct live training sessions for sales teams","Develop role-play scenarios and case studies","Track training completion and competency assessments","Provide ongoing coaching and skill development","Update training content based on market changes"],
+    "Sales Admin Specialist/Coordinator":["Process orders and customer contracts","Maintain CRM databases and customer records","Generate sales reports and pipeline dashboards","Schedule sales meetings and manage calendars","Prepare proposals and sales collateral","Track commissions and payment processing"],
+    "Sales Analyst / Pricing Analyst":["Analyze sales data and performance trends","Develop pricing strategies and discount models","Monitor competitor pricing and market positioning","Generate forecasting reports and sales insights","Optimize pricing for profitability","Create sales performance dashboards"],
+    "Sales Development Representative (B2B)":["Prospect and qualify inbound leads","Make cold outreach calls and personalized emails","Schedule discovery meetings with qualified prospects","Research target accounts and decision-makers","Track pipeline metrics and conversion rates","Update CRM with prospect information"],
+    "Sales Account Manager (E2E Sales)":["Own full sales cycle from prospecting to close","Manage accounts and drive revenue growth","Negotiate contracts and pricing with clients","Prepare customized proposals and presentations","Build relationships with key decision-makers","Forecast deals and report pipeline status"],
+    "Sales Team Leader":["Lead sales team to quota and strategic goals","Conduct one-on-ones and performance reviews","Coach team members on sales techniques","Monitor team metrics and activity levels","Represent team in management meetings","Develop hiring and succession plans"],
+    "Sales Support/Cold Caller":["Execute cold calling campaigns to prospects","Qualify leads and set meetings for sales team","Update prospect information in CRM system","Research target companies and key contacts","Maintain detailed call logs and outcomes","Assist with data entry and administrative tasks"],
+    "Scheduling and Document Control Support":["Manage executive and team calendars","Coordinate meeting logistics and room bookings","Maintain document repositories and file systems","Track document versions and approval workflows","Ensure compliance with document retention policies","Schedule calls across time zones"],
+    "Scrum Master":["Facilitate daily standups and sprint ceremonies","Remove roadblocks and impediments for teams","Track sprint velocity and team capacity","Mentor team on agile best practices","Manage sprint backlogs and priorities","Report on sprint progress and metrics"],
+    "Service Delivery Manager":["Manage service delivery timelines and quality","Coordinate with clients on project status","Track team productivity and utilization rates","Resolve escalations and service issues","Monitor SLAs and performance metrics","Prepare client reports and dashboards"],
+    "Service Desk Coordinator":["Log and categorize incoming support tickets","Route tickets to appropriate support specialists","Follow up on ticket resolution and closure","Update knowledge base with solutions","Track ticket metrics and response times","Provide first-level troubleshooting support"],
+    "Service Desk Lead":["Supervise service desk team operations","Monitor ticket queue and SLA compliance","Coach team on customer service excellence","Escalate complex technical issues","Report on service metrics and trends","Manage knowledge base and documentation"],
+    "Senior Broker Administrator":["Process insurance and brokerage transactions","Manage client accounts and policy documents","Reconcile accounts and handle billing","Coordinate with underwriters and carriers","Maintain compliance and regulatory documentation","Prepare client statements and communications"],
+    "Senior Operations Manager":["Oversee operations team and strategic goals","Optimize processes and workflows","Manage budgets and operational expenses","Report on operational metrics and KPIs","Lead continuous improvement initiatives","Mentor and develop operations staff"],
+    "Shopify Specialist":["Build and optimize Shopify online stores","Configure products, inventory, and pricing","Set up payment gateways and shipping methods","Troubleshoot technical issues and bugs","Implement conversion optimization features","Monitor analytics and sales performance"],
+    "Site Director / Executive Director":["Provide strategic leadership for entire site","Ensure profitability and operational excellence","Manage budgets and resource allocation","Develop site strategy and growth plans","Lead and develop management team","Report to corporate on site metrics"],
+    "Operation Director":["Direct all operational functions and teams","Set operational strategy and goals","Manage P&L and operational budgets","Ensure compliance with policies and regulations","Drive process improvements and efficiency","Monitor KPIs and operational metrics"],
+    "Sustainability Manager":["Develop and implement sustainability initiatives","Track environmental and social impact metrics","Coordinate waste reduction and recycling programs","Ensure compliance with sustainability standards","Educate teams on sustainable practices","Report on ESG performance"],
+    "Surface Pattern Design":["Create original patterns for products or textiles","Develop design concepts from brief requirements","Revise designs based on client feedback","Prepare files for production or printing","Research design trends and competitors","Collaborate with product and marketing teams"],
+    "Supply Chain Manager":["Manage sourcing and vendor relationships","Optimize inventory levels and reduce costs","Plan logistics and distribution networks","Track shipments and delivery schedules","Forecast demand and procurement needs","Monitor supply chain metrics and KPIs"],
+    "Supply Operations Supervisor":["Oversee warehouse and inventory operations","Manage receiving, storage, and shipping processes","Train and supervise warehouse staff","Track inventory accuracy and cycle counts","Ensure compliance with safety standards","Report on inventory and operations metrics"],
+    "Supply Operations Analyst":["Analyze supply chain and inventory data","Identify cost-saving opportunities","Prepare supply chain reports and forecasts","Monitor vendor performance and metrics","Optimize order quantities and reorder points","Track logistics costs and efficiency"],
+    "Team Leader - Data Analysis & Campaigns Management":["Lead data analysis and campaign execution teams","Develop campaign strategies and performance targets","Analyze data and generate actionable insights","Coach team on analytics and best practices","Report on campaign results and ROI","Manage campaign budgets and resources"],
+    "Team Leader (Sales Operations)":["Lead sales operations team and initiatives","Manage sales tools, systems, and automation","Monitor sales metrics and pipeline health","Coach team on process optimization","Prepare reports and dashboards for leadership","Improve sales enablement and efficiency"],
+    "Technical Support Representative (TSR)":["Provide technical support to end users","Diagnose and troubleshoot technical issues","Provide solutions via phone, email, or chat","Escalate complex issues to engineering","Document solutions in knowledge base","Maintain customer satisfaction and resolve tickets"],
+    "Telecommunications Project Manager":["Plan and manage telecom infrastructure projects","Coordinate with vendors and contractors","Track project timeline and budget","Manage stakeholder communications and expectations","Test systems and resolve deployment issues","Document project deliverables and lessons learned"],
+    "Telemarketing":["Execute phone sales campaigns to prospects","Qualify leads and schedule appointments","Present products and overcome objections","Complete sales transactions over phone","Track call activity and conversion metrics","Update CRM with call results"],
+    "Training / Learning & Development":["Design training programs for employee development","Deliver online and in-person training sessions","Create training materials and documentation","Assess training effectiveness and ROI","Coordinate L&D budgets and vendor management","Track training completion and certifications"],
+    "Training Manager":["Build and manage training department","Develop training strategy and curriculum","Manage training budgets and resources","Report on training metrics and effectiveness","Hire and supervise training specialists","Partner with departments on training needs"],
+    "Travel Manager":["Arrange business travel and accommodations","Negotiate rates with airlines and hotels","Process travel expense reports","Manage corporate travel policy compliance","Track travel spend and optimize costs","Coordinate visa and passport requirements"],
+    "Travel Consultants/ Reservation Agents":["Book flights, hotels, and travel packages","Provide travel recommendations and advice","Handle cancellations and modifications","Process payments and issue confirmations","Answer travel inquiries and concerns","Arrange travel insurance and documentation"],
+    "Virtual Assistant/Admin Assistant":["Manage executive calendars and scheduling","Prepare documents, presentations, and reports","Handle email and correspondence management","Schedule meetings and coordinate logistics","Research and compile information for leadership","Process expense reports and travel arrangements"],
+    "Digital Marketing & SEO/SEM Specialist":["Execute SEO strategy to improve organic rankings","Manage PPC and paid search campaigns","Optimize website content and keywords","Analyze traffic and conversion metrics","Monitor competitor strategies and market trends","Create and test ad copy and landing pages"],
+  };
+
   var LS_RATES="oa_calc_rates", LS_RATES_TS="oa_calc_rates_ts", LS_PRIMARY="oa_calc_primary", LS_PERIOD="oa_calc_period", LS_FEES="oa_calc_fees", LS_STAT="oa_calc_stat";
   var LS_AUTO="oa_calc_auto_on", LS_AUTO_DATE="oa_calc_auto_date", LS_AUTO_SRC="oa_calc_auto_src", LS_LOAD="oa_calc_load";
 
@@ -1336,8 +1857,9 @@
   var primary=localStorage.getItem(LS_PRIMARY)||"USD";
   var period=localStorage.getItem(LS_PERIOD)||"monthly";
   var tier="mid";
-  var setup="wfh";
+  var setup="onsite";   // Office-Based is the default
   var selectedRole=null;   // role object when chosen from search; null = custom/free text
+  var team=[];             // multi-role comparison: [{t,tier,setup,role}]
   var fees=loadFees();
   var stat=loadStat();
   var load=loadLoad();
@@ -1529,7 +2051,63 @@
       resultsEl.appendChild(div);
     });
     renderSummary(php,salaryDisp,statDisp,feeDisp);
+    renderTasks();
+    renderTeam();
     ptRender();
+  }
+
+  // ---- Team comparison (multi-role) ----
+  function pickTier(range,tr){ return tr==="low"?range[0] : tr==="high"?range[1] : Math.round((range[0]+range[1])/2); }
+  function tierLabel(tr){ return {low:"Junior",mid:"Mid",high:"Senior"}[tr]; }
+  function renderTeam(){
+    var card=document.getElementById("teamCard"); if(!card) return;
+    if(!team.length){ card.style.display="none"; return; }
+    card.style.display="";
+    var totOA=0, totOn=0, anyOn=false;
+    document.getElementById("teamList").innerHTML=team.map(function(m,idx){
+      var salaryM=m.role[m.tier];
+      var oaMo=(salaryM + statMonthlyPHP(salaryM) + fees[m.setup]*rates.USD)/rates[primary];
+      totOA+=oaMo;
+      var onTxt="Onshore n/a";
+      var od=ONSHORE[m.t];
+      if(od){ var onMo=pickTier(od[ONSHORE_KEY[primary]],m.tier)*(1+load[ONSHORE_KEY[primary]]/100)/12; totOn+=onMo; anyOn=true; onTxt="Onshore "+fmt(primary,onMo)+"/mo"; }
+      return '<div class="team-item">'+
+        '<div><div class="ti-name">'+esc(m.t)+'</div><div class="ti-meta">'+tierLabel(m.tier)+' · '+(m.setup==="onsite"?"Office-based":"Remote")+'</div></div>'+
+        '<div class="ti-cost"><div class="ti-oa">'+fmt(primary,oaMo)+'/mo</div><div class="ti-on">'+onTxt+'</div></div>'+
+        '<div class="ti-x" data-i="'+idx+'" title="Remove">✕</div>'+
+      '</div>';
+    }).join("");
+    var savePct=(anyOn&&totOn>0)?Math.round((totOn-totOA)/totOn*100):0;
+    document.getElementById("teamTot").innerHTML=
+      '<div class="tt-row"><span>Team — OA all-in / month ('+team.length+' role'+(team.length>1?"s":"")+')</span><b>'+fmt(primary,totOA)+'</b></div>'+
+      (anyOn?'<div class="tt-row"><span>Onshore equivalent / month</span><b>'+fmt(primary,totOn)+'</b></div>':'')+
+      (anyOn&&savePct>0?'<div class="tt-save">Save ~'+savePct+'% — '+fmt(primary,(totOn-totOA)*12)+'/yr vs hiring locally</div>':'');
+  }
+  document.getElementById("teamAdd").addEventListener("click",function(){
+    var self=this;
+    if(!selectedRole){ self.textContent="Pick a role first…"; setTimeout(function(){self.textContent="+ Add this role to a team comparison";},1300); return; }
+    team.push({t:selectedRole.t, tier:tier, setup:setup, role:selectedRole});
+    renderTeam();
+    self.textContent="✓ Added — add another";
+    setTimeout(function(){self.textContent="+ Add this role to a team comparison";},1300);
+    document.getElementById("teamCard").scrollIntoView({behavior:"smooth",block:"nearest"});
+  });
+  document.getElementById("teamClear").addEventListener("click",function(){ team=[]; renderTeam(); });
+  document.getElementById("teamList").addEventListener("click",function(e){
+    var x=e.target.closest(".ti-x"); if(!x) return;
+    team.splice(parseInt(x.getAttribute("data-i"),10),1); renderTeam();
+  });
+
+  // ---- Role responsibilities ("what this role can do") ----
+  function renderTasks(){
+    var card=document.getElementById("roleTasksCard");
+    if(!card) return;
+    if(!selectedRole || !TASKS[selectedRole.t]){ card.style.display="none"; return; }
+    card.style.display="";
+    document.getElementById("rtRole").textContent=selectedRole.t;
+    document.getElementById("rtGrid").innerHTML=TASKS[selectedRole.t].map(function(t){
+      return '<div class="rt-item"><span class="rk">✓</span><span>'+String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")+'</span></div>';
+    }).join("");
   }
 
   // ---- Current role title (search selection or free text) ----
@@ -1549,7 +2127,7 @@
     var total=salary+stt+fee;
     var periodWord=period==="annual"?"per year":period==="hourly"?"per hour":"per month";
     var tierWord={low:"Junior",mid:"Mid-level",high:"Senior"}[tier];
-    var setupWord=setup==="onsite"?"onsite":"work-from-home";
+    var setupWord=setup==="onsite"?"office-based":"remote-based";
     var roleTxt=title?("<b>"+title+"</b>"+(selectedRole?" ("+tierWord+")":"")+" — "):"";
     document.getElementById("summaryText").innerHTML=
       roleTxt+"all-in <b>"+fmt(primary,total)+" "+primary+"</b> "+periodWord+
@@ -1679,16 +2257,34 @@
     applyRoleRate();
   });
 
-  // ---- Setup / service-fee toggle ----
+  // ---- Setup: Office-Based default, Remote demoted ----
   function updateFeeLabels(){
     document.getElementById("feeWfhLbl").textContent="$"+fees.wfh;
     document.getElementById("feeOnsiteLbl").textContent="$"+fees.onsite;
   }
-  document.getElementById("setupSeg").addEventListener("click",function(e){
-    var b=e.target.closest("button"); if(!b) return;
-    setup=b.dataset.setup;
-    Array.prototype.forEach.call(this.children,function(x){x.classList.toggle("active",x===b);});
+  document.getElementById("remoteToggle").addEventListener("change",function(){
+    setup=this.checked?"wfh":"onsite";
     renderResults();
+  });
+
+  // What the Office-Based fee includes (extensive value list)
+  var INCLUSIONS=[
+    {g:"Workspace & facility",items:["Dedicated office workstation & ergonomic chair","Secure, access-controlled office (24/7)","Electricity, water & all utilities","Air-conditioning, cleaning & maintenance","Backup power — generator + UPS","Pantry, breakout & meeting rooms"]},
+    {g:"Technology & IT",items:["Business-grade computer & peripherals","High-speed redundant business internet","Standard software licences & business email","On-site IT support & helpdesk","Network, firewall & data security","CCTV & physical security"]},
+    {g:"People & HR — fully managed",items:["End-to-end recruitment & sourcing","Dedicated account manager","HR management & employee relations","Payroll processing & disbursement","Govt benefits admin (SSS, PhilHealth, Pag-IBIG)","Statutory & labour-law compliance","Attendance & time tracking","Performance management & reporting","Onboarding, training & workspace setup","Employee engagement & retention"]}
+  ];
+  (function renderInclusions(){
+    var p=document.getElementById("inclPanel");
+    p.innerHTML=INCLUSIONS.map(function(grp){
+      return '<div class="incl-g">'+grp.g+'</div><div class="incl-grid">'+
+        grp.items.map(function(it){ return '<div class="incl-item"><span class="ck">✓</span><span>'+it+'</span></div>'; }).join("")+
+        '</div>';
+    }).join("");
+  })();
+  document.getElementById("inclToggle").addEventListener("click",function(){
+    var p=document.getElementById("inclPanel");
+    var open=p.classList.toggle("open");
+    this.textContent=open?"Hide details":"See what's included ✓";
   });
 
   // ---- PHP manual edit ----
