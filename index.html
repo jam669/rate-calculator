@@ -2520,73 +2520,88 @@
   // ---- Export PDF proposal (leave-behind) ----
   var P_LOGO='<svg viewBox="0 0 216 175" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M80.0151 153.565C67.6287 155.929 54.8273 154.77 43.0667 150.22C31.3062 145.67 21.0586 137.911 13.4893 127.825C5.91993 117.74 1.33267 105.733 0.249204 93.1692C-0.834262 80.6058 1.62955 67.9905 7.36041 56.758C13.0913 45.5255 21.8592 36.1265 32.667 29.63C43.4749 23.1335 55.8889 19.8003 68.4972 20.0093C81.1056 20.2183 93.4023 23.9611 103.989 30.8122C114.576 37.6633 123.027 47.3477 128.383 58.764L112.973 88.9678V87.6202C112.971 77.3598 109.495 67.4025 103.11 59.3708C96.7248 51.3391 87.808 45.7065 77.8122 43.391C67.8165 41.0754 57.3312 42.2133 48.065 46.6193C38.7987 51.0253 31.2978 58.4396 26.7846 67.6541C22.2714 76.8685 21.0119 87.3398 23.2114 97.3616C25.4108 107.383 30.9397 116.365 38.8968 122.843C46.854 129.32 56.7704 132.912 67.0301 133.033C77.2898 133.153 87.2881 129.796 95.3954 123.507L80.0151 153.565Z" fill="#001E94"/><path fill-rule="evenodd" clip-rule="evenodd" d="M191.721 155L136.059 45.3466L148.099 21.9102L215.714 155H191.721Z" fill="#001E94"/></svg>';
   function pEsc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-  function buildProposal(){
-    var cur=primary, key=ONSHORE_KEY[cur], role=selectedRole;
-    var php=role[tier];
-    var salaryMo=php/rates[cur], statMo=statMonthlyPHP(php)/rates[cur], feeMo=(fees[setup]*rates.USD)/rates[cur];
+  function pTier(tr){ return {low:"Junior",mid:"Mid-level",high:"Senior"}[tr]; }
+  function pSetup(s){ return s==="onsite"?"Office-Based":"Remote-Based"; }
+  function ppMember(mm,cur){
+    var php=mm.role[mm.tier];
+    var salaryMo=php/rates[cur], statMo=statMonthlyPHP(php)/rates[cur], feeMo=(fees[mm.setup]*rates.USD)/rates[cur];
     var ovsMo=oversightOn?((oversightRate*HOURS_PER_MONTH)*rates.USD)/rates[cur]:0;
     var oaMo=salaryMo+statMo+feeMo+ovsMo, oaYr=oaMo*12;
-    var od=ONSHORE[role.t], hasOn=!!od, onMo=0, onYr=0, saveMo=0, saveYr=0, savePct=0;
-    if(hasOn){ var base=pickTier(od[key],tier); onYr=base*(1+load[key]/100); onMo=onYr/12; saveMo=onMo-oaMo; saveYr=onYr-oaYr; savePct=onMo>0?Math.round(saveMo/onMo*100):0; }
+    var od=ONSHORE[mm.t], hasOn=!!od, onMo=0,onYr=0,saveMo=0,saveYr=0,savePct=0;
+    if(hasOn){ var b=pickTier(od[ONSHORE_KEY[cur]],mm.tier); onYr=b*(1+load[ONSHORE_KEY[cur]]/100); onMo=onYr/12; saveMo=onMo-oaMo; saveYr=onYr-oaYr; savePct=onMo>0?Math.round(saveMo/onMo*100):0; }
+    return {salaryMo:salaryMo,statMo:statMo,feeMo:feeMo,ovsMo:ovsMo,oaMo:oaMo,oaYr:oaYr,onMo:onMo,onYr:onYr,saveMo:saveMo,saveYr:saveYr,savePct:savePct,hasOn:hasOn};
+  }
+  function buildProposal(){
+    var cur=primary;
+    var roster = team.length ? team.slice() : (selectedRole ? [{t:selectedRole.t,tier:tier,setup:setup,role:selectedRole}] : []);
+    if(!roster.length){ return false; }
+    var multi=roster.length>1;
     var country={USD:"the United States",CAD:"Canada",AUD:"Australia",GBP:"the United Kingdom"}[cur];
     var cShort={USD:"US",CAD:"Canada",AUD:"Australia",GBP:"UK"}[cur];
-    var setupName=setup==="onsite"?"Office-Based":"Remote-Based";
-    var tierName={low:"Junior",mid:"Mid-level",high:"Senior"}[tier];
-    var dateStr=new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
     function m(v){ return fmt(cur,v); }
+    var dateStr=new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
 
-    var rows='<tr><td>Candidate salary</td><td class="num">'+m(salaryMo)+'</td><td class="num">'+m(salaryMo*12)+'</td></tr>'+
-      '<tr><td>Gov’t contributions, HMO &amp; 13th-month</td><td class="num">'+m(statMo)+'</td><td class="num">'+m(statMo*12)+'</td></tr>'+
-      '<tr><td>OA service fee ('+setupName+')</td><td class="num">'+m(feeMo)+'</td><td class="num">'+m(feeMo*12)+'</td></tr>'+
-      (oversightOn?'<tr><td>Operational oversight (co-managed)</td><td class="num">'+m(ovsMo)+'</td><td class="num">'+m(ovsMo*12)+'</td></tr>':'')+
-      '<tr class="total"><td>Total all-in</td><td class="num">'+m(oaMo)+'</td><td class="num">'+m(oaYr)+'</td></tr>';
+    var head='<div class="p-head"><div><div class="p-logo">'+P_LOGO+'</div><div class="p-brand">Outsource Accelerator</div><div class="p-title">Offshore Staffing Proposal</div></div>'+
+      '<div class="p-meta">Prepared '+dateStr+'<br>For a client in <b>'+country+'</b><br>Figures in <b>'+cur+'</b> · 1 '+cur+' = ₱'+rates[cur]+'</div></div>';
 
-    var incl=INCLUSIONS.map(function(g){
-      return '<div class="pill-g">'+pEsc(g.g)+'</div>'+g.items.map(function(it){
-        return '<div class="pill-i"><span class="ck">✓</span><b>'+pEsc(it.n)+'</b> <span>— '+pEsc(it.d)+'</span></div>';
-      }).join("");
-    }).join("");
-
-    var tasks="";
-    if(TASKS[role.t]){ tasks='<h2>What this role takes off your plate</h2><div class="tasks">'+TASKS[role.t].map(function(t){ return '<div><span class="ck">✓</span>'+pEsc(t)+'</div>'; }).join("")+'</div>'; }
+    var incl='<h2>What’s included in the OA service fee</h2><div class="pillars">'+INCLUSIONS.map(function(g){
+      return '<div class="pill-g">'+pEsc(g.g)+'</div>'+g.items.map(function(it){ return '<div class="pill-i"><span class="ck">✓</span><b>'+pEsc(it.n)+'</b> <span>— '+pEsc(it.d)+'</span></div>'; }).join("");
+    }).join("")+'</div>';
 
     var ovsSection="";
     if(oversightOn){
+      var ovsPP=((oversightRate*HOURS_PER_MONTH)*rates.USD)/rates[cur];
       ovsSection='<h2>Operational Oversight (included above)</h2><div class="ovs-box">'+
-        '<div class="ovs-price">Co-managed delivery — $'+oversightRate+'/hour per person (≈ '+m(ovsMo)+'/mo per person)</div>'+
+        '<div class="ovs-price">Co-managed delivery — $'+oversightRate+'/hour per person (≈ '+m(ovsPP)+'/mo per person)</div>'+
         '<div style="margin-top:6px;color:#3a4566">Fully co-managed: OA owns delivery oversight, KPI ownership, performance governance &amp; accountability; dedicated operations leadership funded by you. Switch on or off as the team scales.</div>'+
         '<div style="margin-top:8px;font-size:11px;color:#5b6685"><b>Other models:</b> Client-Managed Operations (you manage local leadership; OA provides infrastructure &amp; admin, no co-management fee) · Infrastructure-Only (OA provides infrastructure support only; delivery owned by you).</div></div>';
     }
 
-    var cmp="", saveBox="";
-    if(hasOn){
-      cmp='<h2>Offshore vs. local hire in '+country+'</h2>'+
-        '<table><thead><tr><th></th><th class="num">With Outsource Accelerator</th><th class="num">Hiring locally in '+cShort+'</th><th class="num">You save</th></tr></thead><tbody>'+
-        '<tr><td>Monthly cost</td><td class="num">'+m(oaMo)+'</td><td class="num">'+m(onMo)+'</td><td class="num">'+m(saveMo)+'</td></tr>'+
-        '<tr class="total"><td>Annual cost</td><td class="num">'+m(oaYr)+'</td><td class="num">'+m(onYr)+'</td><td class="num">'+m(saveYr)+'</td></tr>'+
-        '</tbody></table><div style="font-size:10px;color:#7b85a3;margin-top:5px">Local figure is fully-loaded (base salary + '+load[key]+'% employer on-costs). Indicative market benchmark.</div>';
-      saveBox='<h2>Estimated savings</h2><div class="save-box"><div><div class="sb-big">'+m(saveYr)+' / year</div>'+
-        '<div class="sb-sub">saved with '+pEsc(role.t)+' ('+tierName+') through OA vs. hiring in '+country+'</div></div>'+
-        '<div class="save-pct">~'+savePct+'%<div style="font-size:10px;font-weight:600;text-align:center">lower cost</div></div></div>';
+    var foot='<div class="p-foot">Figures are indicative and for discussion only; final pricing is confirmed in your service agreement. Offshore salary benchmarks from Outsource Accelerator market data; local-market salaries are indicative benchmarks from public salary guides, shown fully-loaded with employer on-costs. Exchange rate 1 '+cur+' = ₱'+rates[cur]+' (live-updated, editable). © Outsource Accelerator.</div>';
+
+    var totOAmo=0,totOAyr=0,totOnYr=0,totOnMo=0,anyOn=false,perRole="";
+    roster.forEach(function(mm,i){
+      var c=ppMember(mm,cur);
+      totOAmo+=c.oaMo; totOAyr+=c.oaYr; if(c.hasOn){anyOn=true; totOnYr+=c.onYr; totOnMo+=c.onMo;}
+      var rows='<tr><td>Candidate salary</td><td class="num">'+m(c.salaryMo)+'</td><td class="num">'+m(c.salaryMo*12)+'</td></tr>'+
+        '<tr><td>Gov’t contributions, HMO &amp; 13th-month</td><td class="num">'+m(c.statMo)+'</td><td class="num">'+m(c.statMo*12)+'</td></tr>'+
+        '<tr><td>OA service fee ('+pSetup(mm.setup)+')</td><td class="num">'+m(c.feeMo)+'</td><td class="num">'+m(c.feeMo*12)+'</td></tr>'+
+        (oversightOn?'<tr><td>Operational oversight (co-managed)</td><td class="num">'+m(c.ovsMo)+'</td><td class="num">'+m(c.ovsMo*12)+'</td></tr>':'')+
+        '<tr class="total"><td>Total all-in</td><td class="num">'+m(c.oaMo)+'</td><td class="num">'+m(c.oaYr)+'</td></tr>';
+      var tasks = TASKS[mm.t]?'<div style="margin-top:8px;font-weight:700;color:#001E94;font-size:11px">What this role takes off your plate</div><div class="tasks">'+TASKS[mm.t].map(function(t){ return '<div><span class="ck">✓</span>'+pEsc(t)+'</div>'; }).join("")+'</div>':'';
+      var cmp = c.hasOn?('<table style="margin-top:8px"><thead><tr><th></th><th class="num">With OA</th><th class="num">Local in '+cShort+'</th><th class="num">You save</th></tr></thead><tbody>'+
+        '<tr><td>Monthly</td><td class="num">'+m(c.oaMo)+'</td><td class="num">'+m(c.onMo)+'</td><td class="num">'+m(c.saveMo)+'</td></tr>'+
+        '<tr class="total"><td>Annual</td><td class="num">'+m(c.oaYr)+'</td><td class="num">'+m(c.onYr)+'</td><td class="num">'+m(c.saveYr)+'</td></tr></tbody></table>'+
+        '<div style="font-size:10px;color:#7b85a3;margin-top:4px">Local fully-loaded (base + '+load[ONSHORE_KEY[cur]]+'% employer on-costs) · save ~'+c.savePct+'%</div>'):'';
+      perRole+='<div style="break-inside:avoid;margin-top:14px"><h2>'+(multi?(i+1)+'. ':'')+pEsc(mm.t)+'</h2>'+
+        '<p class="lead"><b>Experience:</b> '+pTier(mm.tier)+' &nbsp;·&nbsp; <b>Setup:</b> '+pSetup(mm.setup)+'</p>'+
+        '<table><thead><tr><th>Component</th><th class="num">Monthly</th><th class="num">Annual</th></tr></thead><tbody>'+rows+'</tbody></table>'+tasks+cmp+'</div>';
+    });
+    var totSaveYr=totOnYr-totOAyr, blended=(anyOn&&totOnMo>0)?Math.round((totOnMo-totOAmo)/totOnMo*100):0;
+
+    var body="";
+    if(multi){
+      var sumRows=roster.map(function(mm){ var c=ppMember(mm,cur);
+        return '<tr><td>'+pEsc(mm.t)+'</td><td>'+pTier(mm.tier)+'</td><td class="num">'+m(c.oaMo)+'</td><td class="num">'+m(c.oaYr)+'</td><td class="num">'+(c.hasOn?m(c.onYr):"—")+'</td><td class="num">'+(c.hasOn?m(c.saveYr):"—")+'</td></tr>';
+      }).join("");
+      body+='<p class="lead"><b>Proposed team:</b> '+roster.length+' roles'+(oversightOn?' &nbsp;·&nbsp; <b>Operational oversight included</b>':'')+'</p>'+
+        '<h2>Team summary</h2><table><thead><tr><th>Role</th><th>Level</th><th class="num">OA / mo</th><th class="num">OA / yr</th><th class="num">Local / yr</th><th class="num">Save / yr</th></tr></thead><tbody>'+sumRows+
+        '<tr class="total"><td>Team total</td><td></td><td class="num">'+m(totOAmo)+'</td><td class="num">'+m(totOAyr)+'</td><td class="num">'+(anyOn?m(totOnYr):"—")+'</td><td class="num">'+(anyOn?m(totSaveYr):"—")+'</td></tr></tbody></table>';
+      if(anyOn){ body+='<h2>Estimated savings</h2><div class="save-box"><div><div class="sb-big">'+m(totSaveYr)+' / year</div><div class="sb-sub">total saved across '+roster.length+' roles through OA vs. hiring in '+country+'</div></div><div class="save-pct">~'+blended+'%<div style="font-size:10px;font-weight:600;text-align:center">lower cost</div></div></div>'; }
+      body+=incl+ovsSection+perRole;
+    } else {
+      var c0=ppMember(roster[0],cur);
+      body+=perRole+incl+ovsSection;
+      if(c0.hasOn){ body+='<h2>Estimated savings</h2><div class="save-box"><div><div class="sb-big">'+m(c0.saveYr)+' / year</div><div class="sb-sub">saved with '+pEsc(roster[0].t)+' ('+pTier(roster[0].tier)+') through OA vs. hiring in '+country+'</div></div><div class="save-pct">~'+c0.savePct+'%<div style="font-size:10px;font-weight:600;text-align:center">lower cost</div></div></div>'; }
     }
 
-    document.getElementById("proposal").innerHTML=
-      '<div class="p-head"><div><div class="p-logo">'+P_LOGO+'</div><div class="p-brand">Outsource Accelerator</div><div class="p-title">Offshore Staffing Proposal</div></div>'+
-        '<div class="p-meta">Prepared '+dateStr+'<br>For a client in <b>'+country+'</b><br>Figures in <b>'+cur+'</b> · 1 '+cur+' = ₱'+rates[cur]+'</div></div>'+
-      '<p class="lead"><b>Role:</b> '+pEsc(role.t)+' &nbsp;·&nbsp; <b>Experience:</b> '+tierName+' &nbsp;·&nbsp; <b>Setup:</b> '+setupName+'</p>'+
-      '<h2>Offshore cost breakdown (monthly &amp; annual)</h2>'+
-      '<table><thead><tr><th>Component</th><th class="num">Monthly</th><th class="num">Annual</th></tr></thead><tbody>'+rows+'</tbody></table>'+
-      tasks+
-      '<h2>What’s included in the OA service fee</h2><div class="pillars">'+incl+'</div>'+
-      ovsSection+
-      cmp+
-      saveBox+
-      '<div class="p-foot">Figures are indicative and for discussion only; final pricing is confirmed in your service agreement. Offshore salary benchmarks from Outsource Accelerator market data; local-market salaries are indicative benchmarks from public salary guides, shown fully-loaded with employer on-costs. Exchange rate 1 '+cur+' = ₱'+rates[cur]+' (live-updated, editable). © Outsource Accelerator.</div>';
+    document.getElementById("proposal").innerHTML=head+body+foot;
+    return true;
   }
   document.getElementById("exportPdf").addEventListener("click",function(){
     var self=this;
-    if(!selectedRole){ self.textContent="↑ Pick a role first"; setTimeout(function(){self.textContent="📄 Export as a PDF proposal";},1500); return; }
-    buildProposal();
+    if(!team.length && !selectedRole){ self.textContent="↑ Pick or add a role first"; setTimeout(function(){self.textContent="📄 Export as a PDF proposal";},1500); return; }
+    if(buildProposal()===false){ return; }
     setTimeout(function(){ window.print(); }, 80);
   });
 
